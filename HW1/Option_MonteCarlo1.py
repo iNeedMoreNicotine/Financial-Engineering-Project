@@ -22,8 +22,6 @@ times = 0
 stockSamples = []
 while times < 20:
     for i in range(100000):
-        # stockSamples.append(S0 * exp((r - q - 0.5 * sigma**2) * T + sigma * sqrt(T) * np.random.standard_normal()))
-        # lnSample = log(S0) + (r - q - 0.5*sigma**2) * T + sigma * sqrt(T) * np.random.standard_normal()
         lnSample = np.random.normal(loc = log(S0) + (r - q - 0.5*(sigma**2))* T, scale = sigma * sqrt(T))
         sample = exp(lnSample)
         stockSamples.append(sample)
@@ -46,10 +44,6 @@ while times < 20:
     meanValueLst.append(discounted)
     times += 1
 
-# for i in range(20):
-#   meanValueLst[i] = round(meanValueLst[i], 6)
-print(meanValueLst)
-
 sdOfRep = np.std(meanValueLst)
 meanOfRep = np.mean(meanValueLst)
 upperBound = meanOfRep + 2*sdOfRep
@@ -59,11 +53,6 @@ print("平均", end = " : ")
 print(meanOfRep)
 print("九十五趴信賴區間", end = " : ")
 print(bounds)
-counts = 0
-for i in meanValueLst:
-  if upperBound >= i >= lowerBound:
-    counts += 1
-print("repetition在信賴區間內的比例 : {}".format(counts/20))
 
 # S0 = 100
 # K = 90,92,94,96

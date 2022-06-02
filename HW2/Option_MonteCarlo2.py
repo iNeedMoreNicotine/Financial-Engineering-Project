@@ -49,12 +49,12 @@ def monte_carlo_European(S0, K, r, q, sigma, T, call_put, sims, rep):
     lowerBound = meanOfRep - 2*sdOfRep
     lowerBound = round(lowerBound, 6)
     bounds = [lowerBound, upperBound]
+    print("==================================================")
     print(f"European {call_put}")
-    print("--------------------")
+    print("--------------------------------------------------")
     print(f"平均 : {round(meanOfRep, 6)}")
     print(f"標準誤 : {round(sdOfRep, 6)}")
     print(f"九十五趴信賴區間 : {bounds}")
-    print("==================================================")
 
 S0 = 115
 K = 120
