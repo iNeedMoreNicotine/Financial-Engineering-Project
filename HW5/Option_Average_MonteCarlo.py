@@ -1,5 +1,8 @@
 from math import log, exp, sqrt
 import numpy as np
+import time
+import multiprocessing
+
 # arithmetic average call
 # payoff = max(Save,τ − K, 0)
 
@@ -71,7 +74,18 @@ rep = 20
 M = 100
 n = 100
 
-time_elapsed = 0
-average_MC(StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, n, sims, rep)
-time_elapsed = 0.25
-average_MC(StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, n, sims, rep)
+start = time.perf_counter()
+
+if __name__ == '__main__':
+    time_elapsed = 0
+    p1 = multiprocessing.Process(target = average_MC, args = [StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, n, sims, rep])
+    time_elapsed = 0.25
+    p2 = multiprocessing.Process(target = average_MC, args = [StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, n, sims, rep])
+
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
+
+    finish = time.perf_counter()
+    print(f'Process finished in {round(finish - start, 2)} second(s).')

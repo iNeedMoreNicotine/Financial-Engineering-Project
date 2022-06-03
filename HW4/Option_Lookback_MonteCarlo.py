@@ -1,5 +1,7 @@
 from math import log, exp, sqrt
 import numpy as np
+import time
+import multiprocessing
 # payoff = max(Smax,τ − Sτ , 0)
 
 def lookback_MC(StMax, St, time_left_to_maturity, r, q, sigma, n, sims, rep):
@@ -59,13 +61,32 @@ T = 0.25
 r = 0.1
 q = 0
 sigma = 0.4
-n = 500
+n = 100
 sims = 10000
 reps = 20
 
-StMax = 50
-lookback_MC(StMax, St, T, r, q, sigma, n, sims, reps)
-StMax = 60
-lookback_MC(StMax, St, T, r, q, sigma, n, sims, reps)
-StMax = 70
-lookback_MC(StMax, St, T, r, q, sigma, n, sims, reps)
+# StMax = 50
+# lookback_MC(StMax, St, T, r, q, sigma, n, sims, reps)
+# StMax = 60
+# lookback_MC(StMax, St, T, r, q, sigma, n, sims, reps)
+# StMax = 70
+# lookback_MC(StMax, St, T, r, q, sigma, n, sims, reps)
+
+start = time.perf_counter()
+
+if __name__ == '__main__':
+    StMax = 50
+    p1 = multiprocessing.Process(target = lookback_MC, args = [StMax, St, T, r, q, sigma, n, sims, reps])
+    StMax = 60
+    p2 = multiprocessing.Process(target = lookback_MC, args = [StMax, St, T, r, q, sigma, n, sims, reps])
+    StMax = 70
+    p3 = multiprocessing.Process(target = lookback_MC, args = [StMax, St, T, r, q, sigma, n, sims, reps])
+
+    p1.start()
+    p2.start()
+    p3.start()
+    p1.join()
+    p2.join()
+    p3.join()
+    finish = time.perf_counter()
+    print(f'Process finished in {round(finish - start, 2)} second(s).')
