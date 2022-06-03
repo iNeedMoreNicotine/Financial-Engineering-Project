@@ -8,7 +8,7 @@ import multiprocessing
 
 # time_elapsed ------> t
 # time_left_to_Maturity ------> T - t
-def average_MC(StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, n, sims, rep):
+def average_MC(StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, n_prev, n, sims, rep):
     dt = time_left_to_maturity/n
     times = 0
     means = []
@@ -30,7 +30,7 @@ def average_MC(StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, M
                 callValue = max(np.mean(stockPrices) - K, 0) * exp(-r * time_left_to_maturity)
                 optionValues[sim] = callValue
             else:
-                payoff = (StAve*(M + 1) + sum(stockPrices[1:]))/(M + n + 1) - K
+                payoff = (StAve*(n_prev + 1) + sum(stockPrices[1:]))/(n_prev + n + 1) - K
                 callValue = max(payoff, 0)
                 optionValues[sim] = callValue
 
@@ -50,7 +50,7 @@ def average_MC(StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, M
     if time_elapsed == 0:
         print(f'[ Save,t = {StAve} | time left to maturity date = {time_left_to_maturity} ]')
     else:
-        print(f'[ Save,t = {StAve} | time left to maturity date = {time_left_to_maturity} | M = {M} ]')
+        print(f'[ Save,t = {StAve} | time left to maturity date = {time_left_to_maturity} | M = {n_prev} ]')
     print("------------------------------------------------------------")
     print(f"平均 : {round(meanOfRep, 6)}")
     print(f"標準誤 : {round(sdOfRep, 6)}")
@@ -71,16 +71,16 @@ sigma = 0.8
 time_left_to_maturity = 0.25
 sims = 10000
 rep = 20
-M = 100
+n_prev = 100
 n = 100
 
 start = time.perf_counter()
 
 if __name__ == '__main__':
     time_elapsed = 0
-    p1 = multiprocessing.Process(target = average_MC, args = [StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, n, sims, rep])
+    p1 = multiprocessing.Process(target = average_MC, args = [StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, n_prev, n, sims, rep])
     time_elapsed = 0.25
-    p2 = multiprocessing.Process(target = average_MC, args = [StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, n, sims, rep])
+    p2 = multiprocessing.Process(target = average_MC, args = [StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, n_prev, n, sims, rep])
 
     p1.start()
     p2.start()
@@ -88,4 +88,5 @@ if __name__ == '__main__':
     p2.join()
 
     finish = time.perf_counter()
+    print("============================================================")
     print(f'Process finished in {round(finish - start, 2)} second(s).')
