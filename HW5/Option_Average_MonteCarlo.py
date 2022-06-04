@@ -48,9 +48,9 @@ def average_MC(StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, n
     print("============================================================")
     print(f"Average Option : European Call")
     if time_elapsed == 0:
-        print(f'[ Save,t = {StAve} | time left to maturity date = {time_left_to_maturity} ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} ]')
     else:
-        print(f'[ Save,t = {StAve} | time left to maturity date = {time_left_to_maturity} | M = {n_prev} ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous n  = {n_prev} ]')
     print("------------------------------------------------------------")
     print(f"平均 : {round(meanOfRep, 6)}")
     print(f"標準誤 : {round(sdOfRep, 6)}")
@@ -75,7 +75,6 @@ n_prev = 100
 n = 100
 
 start = time.perf_counter()
-
 if __name__ == '__main__':
     time_elapsed = 0
     p1 = multiprocessing.Process(target = average_MC, args = [StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, n_prev, n, sims, rep])

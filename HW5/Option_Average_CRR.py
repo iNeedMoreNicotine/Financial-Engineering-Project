@@ -67,7 +67,7 @@ class Tree_Node:
         for k in range(self.M+1):
             self.callValue.append(max(self.avgLst[k] - self.K, 0))
 
-def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed = False, search_method = 'sequential'):
+def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method):
     dt = time_left_to_maturity/layers
     u = exp(sigma * sqrt(dt))
     d = exp(-sigma * sqrt(dt))
@@ -103,14 +103,14 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
     while times < layers-1:
         for j in range(counter):
             for avg in TreeNodes[counter-2][j].avgLst:
-                # sequential search
                 if time_elapsed == 0:
                     Au = ((counter-1)*avg + StInit * u**(counter-1-j) * d**(j))/counter
                     Ad = ((counter-1)*avg + StInit * u**((counter-1)-(j+1)) * d**(j+1))/counter
                 else:
                     Au = ((layers_prev+counter-1)*avg + StInit * u**(counter-1-j) * d**(j))/(layers_prev+counter)
                     Ad = ((layers_prev+counter-1)*avg + StInit * u**((counter-1)-(j+1)) * d**(j+1))/(layers_prev+counter)
-
+                
+                # sequential search
                 if search_method == 'sequential':
                     # search for Au
                     for m in range(len(TreeNodes[counter-1][j].avgLst)):
@@ -146,3 +146,122 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
 
         counter -= 1
         time += 1
+    
+    # Node(0, 0)
+    TreeNode_0 = Tree_Node(time_elapsed, layers_prev, M, u, d, StInit, StAve, StInit, -1, 0, K)
+    TreeNode_0.avgLst.append(StAve)
+    if time_elapsed == 0:
+        Au = (StAve + StInit * u)/2
+        Ad = (StAve + StInit * d)/2
+    else:
+        Au = ((layers_prev+1)*StAve + StInit * u)/(layers_prev+2)
+        Ad = ((layers_prev+1)*StAve + StInit * d)/(layers_prev+2)
+    
+    # sequential search
+    if search_method == 'sequential':
+        for m in range(len(TreeNodes[0][0].avgLst)):
+            if TreeNodes[0][0].avgLst[m] < StAve:
+                avg0 = TreeNodes[0][0].avgLst[m]
+                call0 = TreeNodes[0][0].callValue[m]
+                avg1 = TreeNodes[0][0].avgLst[m-1]
+                call1 = TreeNodes[0][0].callValue[m-1]
+                Cu = linear_interpolation(StAve, (avg0, call0), (avg1, call1))
+        
+        for m in range(len(TreeNodes[0][1].avgLst)):
+            if TreeNodes[0][1].avgLst[m] < StAve:
+                avg0 = TreeNodes[0][1].avgLst[m]
+                call0 = TreeNodes[0][1].callValue[m]
+                avg1 = TreeNodes[0][1].avgLst[m-1]
+                call1 = TreeNodes[0][1].callValue[m-1]
+                Cd = linear_interpolation(StAve, (avg0, call0), (avg1, call1))
+
+        discounted = (p*Cu + (1-p)*Cd) * exp(-r*dt)
+        if type == 'American':
+            xValue = StAve - K
+            discounted = max(xValue, discounted)
+        TreeNode_0.callValue.append(discounted)
+
+    # binary search
+    # elif search_method == 'binary':
+
+
+    # interpolation
+    # elif search_method == 'interpolation':
+
+    print('============================================================')
+    if time_elapsed == 0:
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} ]')
+    else:
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} ]')
+    print(f'log arrayed = {log_arrayed}')
+    print(f'search method = {search_method}')
+    print('------------------------------------------------------------')
+    print(f'(CRR Binomial Tree) Price of {type} Average Call : {round(TreeNode_0.callValue[0], 4)}')
+    print()
+
+    return TreeNode_0.callValue[0]
+
+
+
+
+# main
+StInit = 50
+StAve = 50
+K = 50
+r = 0.1
+q = 0.05
+sigma = 0.8
+time_left_to_maturity = 0.25
+sims = 10000
+rep = 20
+M = 100
+layers_prev = 100
+layers = 100
+
+start = time.perf_counter()
+if __name__ == '__main__':
+    search_method = 'sequential'
+    log_arrayed = False
+
+    type = 'European'
+    time_elapsed = 0
+    p1 = multiprocessing.Process(target = average_CRR, 
+                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+    time_elapsed = 0.25
+    p2 = multiprocessing.Process(target = average_CRR, 
+                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+    
+    log_arrayed = True
+    time_elapsed = 0
+    p3 = multiprocessing.Process(target = average_CRR, 
+                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+    time_elapsed = 0.25
+    p4 = multiprocessing.Process(target = average_CRR, 
+                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+
+
+    type = 'American'
+    time_elapsed = 0
+    p5 = multiprocessing.Process(target = average_CRR, 
+                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+    time_elapsed = 0.25
+    p6 = multiprocessing.Process(target = average_CRR, 
+                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+    
+    log_arrayed = True
+    time_elapsed = 0
+    p7 = multiprocessing.Process(target = average_CRR, 
+                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+    time_elapsed = 0.25
+    p8 = multiprocessing.Process(target = average_CRR, 
+                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+
+    processes = [p1, p2, p3, p4, p5, p6, p7, p8]
+    for process in processes:
+        process.start()
+    for process in processes:
+        process.join()
+
+    finish = time.perf_counter()
+    print("============================================================")
+    print(f'Process finished in {round(finish - start, 2)} second(s).')
