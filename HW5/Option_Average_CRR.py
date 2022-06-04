@@ -8,13 +8,6 @@ import multiprocessing
 
 # time_elapsed ------> t
 # time_left_to_Maturity ------> T - t
-def linear_interpolation(x, tup0, tup1):
-    # tup0 = (avg0, call0)
-    # tup1 = (avg1, call1)
-    w = (tup1[0]-x)/(tup1[0]-tup0[0])
-    result = w*tup0[1] + (1-w)*tup1[1]
-    return result
-
 class Tree_Node:
     def __init__(self, time_elapsed, layers_prev, M, u, d, StInit, StAve, St, i, j, K):
         self.time_elapsed = time_elapsed
@@ -114,21 +107,19 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
                 if search_method == 'sequential':
                     # search for Au
                     for m in range(len(TreeNodes[counter-1][j].avgLst)):
-                        if TreeNodes[counter-1][j].avgLst[m] < avg:
-                            avg0 = TreeNodes[counter-1][j].avgLst[m]
-                            call0 = TreeNodes[counter-1][j].callValue[m]
-                            avg1 = TreeNodes[counter-1][j].avgLst[m-1]
-                            call1 = TreeNodes[counter-1][j].callValue[m-1]
-                            Cu = linear_interpolation(avg, (avg0, call0), (avg1, call1))
+                        if TreeNodes[counter-1][j].avgLst[m] < Au:
+                            break
+
+                    w = (TreeNodes[counter-1][j].avgLst[m-1] - Au)/(TreeNodes[counter-1][j].avgLst[m-1] - TreeNodes[counter-1][j].avgLst[m])
+                    Cu = w*TreeNodes[counter-1][j].callValue[m] + (1-w)*TreeNodes[counter-1][j].callValue[m-1]
 
                     # search for Ad
                     for m in range(len(TreeNodes[counter-1][j+1].avgLst)):
-                        if TreeNodes[counter-1][j+1].avgLst[m] < avg:
-                            avg0 = TreeNodes[counter-1][j+1].avgLst[m]
-                            call0 = TreeNodes[counter-1][j+1].callValue[m]
-                            avg1 = TreeNodes[counter-1][j+1].avgLst[m-1]
-                            call1 = TreeNodes[counter-1][j+1].callValue[m-1]
-                            Cd = linear_interpolation(avg, (avg0, call0), (avg1, call1))
+                        if TreeNodes[counter-1][j+1].avgLst[m] < Ad:
+                            break
+
+                    w = (TreeNodes[counter-1][j+1].avgLst[m-1] - Ad)/(TreeNodes[counter-1][j+1].avgLst[m-1] - TreeNodes[counter-1][j+1].avgLst[m])
+                    Cd = w*TreeNodes[counter-1][j+1].callValue[m] + (1-w)*TreeNodes[counter-1][j+1].callValue[m-1]
                 
                 # elif search_method == 'binary':
 
@@ -160,20 +151,18 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
     # sequential search
     if search_method == 'sequential':
         for m in range(len(TreeNodes[0][0].avgLst)):
-            if TreeNodes[0][0].avgLst[m] < StAve:
-                avg0 = TreeNodes[0][0].avgLst[m]
-                call0 = TreeNodes[0][0].callValue[m]
-                avg1 = TreeNodes[0][0].avgLst[m-1]
-                call1 = TreeNodes[0][0].callValue[m-1]
-                Cu = linear_interpolation(StAve, (avg0, call0), (avg1, call1))
+            if TreeNodes[0][0].avgLst[m] < Au:
+                break
+
+        w = (TreeNodes[0][0].avgLst[m-1] - Au)/(TreeNodes[0][0].avgLst[m-1] - TreeNodes[0][0].avgLst[m])
+        Cu = w*TreeNodes[0][0].callValue[m] + (1-w)*TreeNodes[0][0].callValue[m-1]
         
         for m in range(len(TreeNodes[0][1].avgLst)):
-            if TreeNodes[0][1].avgLst[m] < StAve:
-                avg0 = TreeNodes[0][1].avgLst[m]
-                call0 = TreeNodes[0][1].callValue[m]
-                avg1 = TreeNodes[0][1].avgLst[m-1]
-                call1 = TreeNodes[0][1].callValue[m-1]
-                Cd = linear_interpolation(StAve, (avg0, call0), (avg1, call1))
+            if TreeNodes[0][1].avgLst[m] < Ad:
+                break
+        
+        w = (TreeNodes[0][1].avgLst[m-1] - Ad)/(TreeNodes[0][1].avgLst[m-1] - TreeNodes[0][1].avgLst[m])
+        Cd = w*TreeNodes[0][1].callValue[m] + (1-w)*TreeNodes[0][1].callValue[m-1]
 
         discounted = (p*Cu + (1-p)*Cd) * exp(-r*dt)
         if type == 'American':
@@ -218,50 +207,56 @@ M = 100
 layers_prev = 100
 layers = 100
 
-start = time.perf_counter()
-if __name__ == '__main__':
-    search_method = 'sequential'
-    log_arrayed = False
+time_elapsed = 0
+type = 'European'
+log_arrayed = False
+search_method = 'sequential'
+average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method)
 
-    type = 'European'
-    time_elapsed = 0
-    p1 = multiprocessing.Process(target = average_CRR, 
-                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
-    time_elapsed = 0.25
-    p2 = multiprocessing.Process(target = average_CRR, 
-                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+# start = time.perf_counter()
+# if __name__ == '__main__':
+#     search_method = 'sequential'
+#     log_arrayed = False
+
+#     type = 'European'
+#     time_elapsed = 0
+#     p1 = multiprocessing.Process(target = average_CRR, 
+#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+#     time_elapsed = 0.25
+#     p2 = multiprocessing.Process(target = average_CRR, 
+#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
     
-    log_arrayed = True
-    time_elapsed = 0
-    p3 = multiprocessing.Process(target = average_CRR, 
-                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
-    time_elapsed = 0.25
-    p4 = multiprocessing.Process(target = average_CRR, 
-                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+#     log_arrayed = True
+#     time_elapsed = 0
+#     p3 = multiprocessing.Process(target = average_CRR, 
+#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+#     time_elapsed = 0.25
+#     p4 = multiprocessing.Process(target = average_CRR, 
+#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
 
 
-    type = 'American'
-    time_elapsed = 0
-    p5 = multiprocessing.Process(target = average_CRR, 
-                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
-    time_elapsed = 0.25
-    p6 = multiprocessing.Process(target = average_CRR, 
-                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+#     type = 'American'
+#     time_elapsed = 0
+#     p5 = multiprocessing.Process(target = average_CRR, 
+#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+#     time_elapsed = 0.25
+#     p6 = multiprocessing.Process(target = average_CRR, 
+#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
     
-    log_arrayed = True
-    time_elapsed = 0
-    p7 = multiprocessing.Process(target = average_CRR, 
-                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
-    time_elapsed = 0.25
-    p8 = multiprocessing.Process(target = average_CRR, 
-                                 args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+#     log_arrayed = True
+#     time_elapsed = 0
+#     p7 = multiprocessing.Process(target = average_CRR, 
+#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
+#     time_elapsed = 0.25
+#     p8 = multiprocessing.Process(target = average_CRR, 
+#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed, search_method])
 
-    processes = [p1, p2, p3, p4, p5, p6, p7, p8]
-    for process in processes:
-        process.start()
-    for process in processes:
-        process.join()
+#     processes = [p1, p2, p3, p4, p5, p6, p7, p8]
+#     for process in processes:
+#         process.start()
+#     for process in processes:
+#         process.join()
 
-    finish = time.perf_counter()
-    print("============================================================")
-    print(f'Process finished in {round(finish - start, 2)} second(s).')
+#     finish = time.perf_counter()
+#     print("============================================================")
+#     print(f'Process finished in {round(finish - start, 2)} second(s).')
