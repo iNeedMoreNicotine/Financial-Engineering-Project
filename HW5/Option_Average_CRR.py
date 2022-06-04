@@ -114,11 +114,13 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
                 
                 # sequential search
                 # search for Au
+                Cu, Cd = 0, 0
                 for m in range(len(TreeNodes[counter-1][j].avgLst)):
                     if abs(TreeNodes[counter-1][j].avgLst[m] - Au) < 10**-8:
                         Cu = TreeNodes[counter-1][j].callValue[m]
                         break
-                    elif TreeNodes[counter-1][j].avgLst[m] < Au:
+
+                    if TreeNodes[counter-1][j].avgLst[m] < Au:
                         w = (TreeNodes[counter-1][j].avgLst[m-1] - Au)/(TreeNodes[counter-1][j].avgLst[m-1] - TreeNodes[counter-1][j].avgLst[m])
                         Cu = w*TreeNodes[counter-1][j].callValue[m] + (1-w)*TreeNodes[counter-1][j].callValue[m-1]
                         break
@@ -128,6 +130,7 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
                     if abs(TreeNodes[counter-1][j+1].avgLst[m] - Ad) < 10**-8:
                         Cd = TreeNodes[counter-1][j+1].callValue[m]
                         break
+
                     elif TreeNodes[counter-1][j+1].avgLst[m] < Ad:
                         w = (TreeNodes[counter-1][j+1].avgLst[m-1] - Ad)/(TreeNodes[counter-1][j+1].avgLst[m-1] - TreeNodes[counter-1][j+1].avgLst[m])
                         Cd = w*TreeNodes[counter-1][j+1].callValue[m] + (1-w)*TreeNodes[counter-1][j+1].callValue[m-1]
@@ -140,7 +143,7 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
                 TreeNodes[counter-2][j].callValue.append(discounted)
 
         counter -= 1
-        time += 1
+        times += 1
     
     # Node(0, 0)
     TreeNode_0 = Tree_Node(time_elapsed, layers_prev, M, u, d, StInit, StAve, StInit, -1, 0, K)
