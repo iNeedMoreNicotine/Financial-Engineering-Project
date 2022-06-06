@@ -102,6 +102,7 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
     # calculate terminal payoff
     for j in range(layers+1):
         TreeNodes[layers][j].calc_payoff()
+    
 
     # backward induction
     times = 0
@@ -123,74 +124,47 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
         else:
             # for each node
             for j in range(i_temp+1):
-                # for each avg in avgLst of the node
-                if j == 0:
-                    # only need to find Cd
-                    Cu = TreeNodes[i_temp+1][j].callValue[0]
-                    avg = TreeNodes[i_temp+1][j].avgLst[0]
-                    Ad = (avg*(i_temp+1) + StInit*(u**(i_temp-j))*d**(j+1))/(i_temp+2)
-
-                    Cd = 0
-                    for kd in range(len(TreeNodes[i_temp+1][j+1].avgLst)):
-                        if abs(TreeNodes[i_temp+1][j+1].avgLst[kd] - Ad) > 10**-8 and TreeNodes[i_temp+1][j+1].avgLst[kd] < Ad:
-                            wd = (TreeNodes[i_temp+1][j+1].avgLst[kd-1] - Ad)/(TreeNodes[i_temp+1][j+1].avgLst[kd-1] - TreeNodes[i_temp+1][j+1].avgLst[kd])
-                            Cd = wd*TreeNodes[i_temp+1][j+1].callValue[kd] + (1-wd)*TreeNodes[i_temp+1][j+1].callValue[kd-1]
+                # for each avg in the avgLst of the node
+                for avg in TreeNodes[i_temp][j].avgLst:
+                    if time_elapsed == 0:
+                        Au = ((i_temp+1)*avg + (StInit*u**(i_temp+1-j))*d**j)/(i_temp+2)
+                        Ad = ((i_temp+1)*avg + (StInit*u**(i_temp-j))*d**(j+1))/(i_temp+2)
+                    else:
+                        Au = ((layers_prev+i_temp+1)*avg + (StInit*u**(i_temp+1-j))*d**j)/(layers_prev+i_temp+2)
+                        Ad = ((layers_prev+i_temp+1)*avg + (StInit*u**(i_temp-j))*d**(j+1))/(layers_prev+i_temp+2)
+                    
+                    Cu, Cd = 0, 0
+                    # search for Au
+                    for avg_u in TreeNodes[i_temp+1][j].avgLst:
+                        if abs(avg_u - Au) < 10**-8:
+                            ku = TreeNodes[i_temp+1][j].avgLst.index(avg_u)
+                            Cu = TreeNodes[i_temp+1][j].callValue[ku]
                             break
-
-                    discounted = (p*Cu + (1-p)*Cd) * exp(-r*dt)
-                    if type == 'American':
-                        xValue = StAve - K
-                        discounted = max(xValue, discounted)
-                    TreeNodes[i_temp][j].callValue.append(discounted)
-
-                elif j ==  i_temp:
-                    # only need to find Cu
-                    Cd = TreeNodes[i_temp+1][j+1].callValue[0]
-                    avg = TreeNodes[i_temp+1][j].avgLst[0]
-                    Au = (avg*(i_temp+1) + StInit*(u**(i_temp+1-j))*d**j)/(i_temp+2)
-
-                    Cu = 0
-                    for ku in range(len(TreeNodes[i_temp+1][j].avgLst)):
-                        if abs(TreeNodes[i_temp+1][j].avgLst[ku] - Au) > 10**-8 and TreeNodes[i_temp+1][j].avgLst[ku] < Au:
-                            wu = (TreeNodes[i_temp+1][j].avgLst[ku-1] - Au)/(TreeNodes[i_temp+1][j].avgLst[ku-1] - TreeNodes[i_temp+1][j].avgLst[ku])
-                            Cu = wu*TreeNodes[i_temp+1][j].callValue[ku] + (1-wu)*TreeNodes[i_temp+1][j].callValue[ku-1]
-                            break
-
-                    discounted = (p*Cu + (1-p)*Cd) * exp(-r*dt)
-                    if type == 'American':
-                        xValue = StAve - K
-                        discounted = max(xValue, discounted)
-                    TreeNodes[i_temp][j].callValue.append(discounted)
-
-                else:
-                    for avg in TreeNodes[i_temp][j].avgLst:
-                        if time_elapsed == 0:
-                            Au = (avg*(i_temp+1) + StInit*(u**(i_temp+1-j))*d**j)/(i_temp+2)
-                            Ad = (avg*(i_temp+1) + StInit*(u**(i_temp-j))*d**(j+1))/(i_temp+2)
                         else:
-                            Au = (avg*(layers_prev+i_temp+1) + StInit*(u**(i_temp+1-j))*d**j)/(layers_prev+i_temp+2)
-                            Ad = (avg*(layers_prev+i_temp+1) + StInit*(u**(i_temp-j))*d**(j+1))/(layers_prev+i_temp+2)
-                        
-                        Cu, Cd = 0, 0
-                        # search for Au, get Cu by interpolation
-                        for ku in range(len(TreeNodes[i_temp+1][j].avgLst)):
-                            if abs(TreeNodes[i_temp+1][j].avgLst[ku] - Au) > 10**-8 and TreeNodes[i_temp+1][j].avgLst[ku] < Au:
+                            if avg_u < Au:
+                                ku = TreeNodes[i_temp+1][j].avgLst.index(avg_u)
                                 wu = (TreeNodes[i_temp+1][j].avgLst[ku-1] - Au)/(TreeNodes[i_temp+1][j].avgLst[ku-1] - TreeNodes[i_temp+1][j].avgLst[ku])
                                 Cu = wu*TreeNodes[i_temp+1][j].callValue[ku] + (1-wu)*TreeNodes[i_temp+1][j].callValue[ku-1]
                                 break
 
-                        # search for Ad, get Cd by interpolation
-                        for kd in range(len(TreeNodes[i_temp+1][j+1].avgLst)):
-                            if abs(TreeNodes[i_temp+1][j+1].avgLst[kd] - Ad) > 10**-8 and TreeNodes[i_temp+1][j+1].avgLst[kd] < Ad:
+                    # search for Ad
+                    for avg_d in TreeNodes[i_temp+1][j+1].avgLst:
+                        if abs(avg_d - Ad) < 10**-8:
+                            kd = TreeNodes[i_temp+1][j+1].avgLst.index(avg_d)
+                            Cd = TreeNodes[i_temp+1][j+1].callValue[kd]
+                            break
+                        else:
+                            if avg_d < Ad:
+                                kd = TreeNodes[i_temp+1][j+1].avgLst.index(avg_d)
                                 wd = (TreeNodes[i_temp+1][j+1].avgLst[kd-1] - Ad)/(TreeNodes[i_temp+1][j+1].avgLst[kd-1] - TreeNodes[i_temp+1][j+1].avgLst[kd])
                                 Cd = wd*TreeNodes[i_temp+1][j+1].callValue[kd] + (1-wd)*TreeNodes[i_temp+1][j+1].callValue[kd-1]
                                 break
-                        
-                        discounted = (p*Cu + (1-p)*Cd) * exp(-r*dt)
-                        if type == 'American':
-                            xValue = StAve - K
-                            discounted = max(xValue, discounted)
-                        TreeNodes[i_temp][j].callValue.append(discounted)
+                    
+                    discounted = (p*Cu + (1-p)*Cd) * exp(-r*dt)
+                    if type == 'American':
+                        xValue = avg - K
+                        discounted = max(xValue, discounted)
+                    TreeNodes[i_temp][j].callValue.append(discounted)
 
             i_temp -= 1
     
@@ -205,6 +179,7 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
     print()
     return TreeNodes[0][0].callValue[0]
 
+
 # main
 StInit = 50
 StAve = 50
@@ -213,11 +188,18 @@ r = 0.1
 q = 0.05
 sigma = 0.8
 time_left_to_maturity = 0.25
-M = 2
+M = 100
 layers_prev = 100
 layers = 100
 
 type = 'European'
+time_elapsed = 0
+log_arrayed = False
+average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
+log_arrayed = True
+average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
+
+type = 'American'
 time_elapsed = 0
 log_arrayed = False
 average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
