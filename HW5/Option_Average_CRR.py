@@ -192,19 +192,33 @@ M = 100
 layers_prev = 100
 layers = 100
 
-type = 'European'
 time_elapsed = 0
+type = 'European'
 log_arrayed = False
 average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
 log_arrayed = True
 average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
 
 type = 'American'
-time_elapsed = 0
 log_arrayed = False
 average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
 log_arrayed = True
 average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
+
+time_elapsed = 0.25
+type = 'European'
+log_arrayed = False
+average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
+log_arrayed = True
+average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
+
+type = 'American'
+log_arrayed = False
+average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
+log_arrayed = True
+average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
+
+
 
 
 # start = time.perf_counter()
