@@ -33,12 +33,36 @@ def binary_search(array, x, low, high):
             return mid
 
         # lower part
-        elif array[mid] < x and array[mid-1] < x:
+        elif array[mid] < x:
             return binary_search(array, x, low, mid-1)
         
         # upper part
         elif array[mid] > x:
             return binary_search(array, x, mid+1, high)
+
+def interpolation_search(array, x, low, high):
+    if high >= low:
+        if high == low:
+            return 0
+        
+        pos = ((array[low]-x)*high + (x-array[high])*low)/(array[low] - array[high])
+        pos = int(pos)
+
+        counts = 0
+        while True:
+            if abs(array[pos] - x) < 10**-8:
+                return pos
+            
+            elif array[pos] < x and array[pos-1] > x:
+                return pos
+
+            else:
+                if counts < 0:
+                    counts -= 1
+                else:
+                    counts += 1
+                counts = -counts
+                pos = pos + counts
 
 class Tree_Node:
     def __init__(self, StAve, StInit, St, K, u, d, i, j, time_elapsed, layers_prev, M):
@@ -185,9 +209,9 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
     
     print('============================================================')
     if time_elapsed == 0:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | Sequential Search ]')
     else:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} | Sequential Search ]')
     print('------------------------------------------------------------')
     print(f'(CRR Binomial Tree) Price of {type} Average Call : {round(TreeNodes[0][0].callValue[0], 4)}')
     print()
@@ -282,6 +306,100 @@ def average_CRR_binary(StAve, StInit, K, time_elapsed, time_left_to_maturity, r,
     print()
     return TreeNodes[0][0].callValue[0]
 
+def average_CRR_interpolation(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type):
+    dt = time_left_to_maturity/layers
+    u = exp(sigma * sqrt(dt))
+    d = exp(-sigma * sqrt(dt))
+    p = (exp((r-q)*dt) - d)/(u - d)
+    stockPrice = simulate_stock_price(StInit, u, d, layers)
+    # print(stockPrice)
+
+    TreeNodes = []
+    for i in range(layers+1):
+        TreeNodes.append([0]*(i+1))
+    # print(TreeNodes)
+
+    for i in range(layers+1):
+        for j in range(i+1):
+            TreeNodes[i][j] = Tree_Node(StAve, StInit, stockPrice[i][j], K, u, d, i, j, time_elapsed, layers_prev, M)
+            TreeNodes[i][j].calc_avgMax()
+            TreeNodes[i][j].calc_avgMin()
+            TreeNodes[i][j].calc_avg_equal()
+    
+    # calculate terminal payoff
+    for j in range(layers+1):
+        TreeNodes[layers][j].calc_payoff()
+    
+
+    # backward induction
+    times = 0
+    i_temp = layers-1
+    # for each layer
+    while True:
+        # node(0, 0)
+        if i_temp == 0:
+            # only one possible Cu and Cd at node(0, 0)
+            Cu = TreeNodes[i_temp+1][0].callValue[0]
+            Cd = TreeNodes[i_temp+1][1].callValue[0]
+            discounted = (p*Cu + (1-p)*Cd) * exp(-r*dt)
+            if type == 'American':
+                xValue = StAve - K
+                discounted = max(xValue, discounted)
+            TreeNodes[i_temp][0].callValue.append(discounted)
+            break
+        
+        else:
+            # for each node
+            for j in range(i_temp+1):
+                # for each avg in the avgLst of the node
+                for avg in TreeNodes[i_temp][j].avgLst:
+                    if time_elapsed == 0:
+                        Au = ((i_temp+1)*avg + (StInit*u**(i_temp+1-j))*d**j)/(i_temp+2)
+                        Ad = ((i_temp+1)*avg + (StInit*u**(i_temp-j))*d**(j+1))/(i_temp+2)
+                    else:
+                        Au = ((layers_prev+i_temp+1)*avg + (StInit*u**(i_temp+1-j))*d**j)/(layers_prev+i_temp+2)
+                        Ad = ((layers_prev+i_temp+1)*avg + (StInit*u**(i_temp-j))*d**(j+1))/(layers_prev+i_temp+2)
+                    
+                    Cu, Cd = 0, 0
+                    # search for Au
+                    ku = interpolation_search(TreeNodes[i_temp+1][j].avgLst, Au, 0, len(TreeNodes[i_temp+1][j].avgLst)-1)
+                    # ku = binary_search(TreeNodes[i_temp+1][j].avgLst, Au, 0, len(TreeNodes[i_temp+1][j].avgLst)-1)
+                    if abs(Au - TreeNodes[i_temp+1][j].avgLst[ku]) < 10**-8:
+                        Cu = TreeNodes[i_temp+1][j].callValue[ku]
+                    else:
+                        wu = (TreeNodes[i_temp+1][j].avgLst[ku-1] - Au)/(TreeNodes[i_temp+1][j].avgLst[ku-1] - TreeNodes[i_temp+1][j].avgLst[ku])
+                        Cu = wu*TreeNodes[i_temp+1][j].callValue[ku] + (1-wu)*TreeNodes[i_temp+1][j].callValue[ku-1]
+
+                    # search for Ad
+                    kd = interpolation_search(TreeNodes[i_temp+1][j+1].avgLst, Ad, 0, len(TreeNodes[i_temp+1][j+1].avgLst)-1)
+                    # kd = binary_search(TreeNodes[i_temp+1][j+1].avgLst, Ad, 0, len(TreeNodes[i_temp+1][j+1].avgLst)-1)
+                    if abs(Ad - TreeNodes[i_temp+1][j+1].avgLst[kd]) < 10**-8:
+                        Cd = TreeNodes[i_temp+1][j+1].callValue[kd]
+                    else:
+                        wd = (TreeNodes[i_temp+1][j+1].avgLst[kd-1] - Ad)/(TreeNodes[i_temp+1][j+1].avgLst[kd-1] - TreeNodes[i_temp+1][j+1].avgLst[kd])
+                        Cd = wd*TreeNodes[i_temp+1][j+1].callValue[kd] + (1-wd)*TreeNodes[i_temp+1][j+1].callValue[kd-1]
+                    
+                    discounted = (p*Cu + (1-p)*Cd) * exp(-r*dt)
+                    if type == 'American':
+                        xValue = avg - K
+                        discounted = max(xValue, discounted)
+                    TreeNodes[i_temp][j].callValue.append(discounted)
+
+            i_temp -= 1
+    
+    print('============================================================')
+    if time_elapsed == 0:
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | Interpolation Search ]')
+    else:
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} | Binary Search ]')
+    print('------------------------------------------------------------')
+    print(f'(CRR Binomial Tree) Price of {type} Average Call : {round(TreeNodes[0][0].callValue[0], 4)}')
+    print()
+    return TreeNodes[0][0].callValue[0]
+
+
+
+
 # main
 StInit = 50
 StAve = 50
@@ -290,7 +408,7 @@ r = 0.1
 q = 0.05
 sigma = 0.8
 time_left_to_maturity = 0.25
-M = 100
+M = 500
 layers_prev = 100
 layers = 100
 
@@ -307,7 +425,6 @@ type = 'American'
 average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type)
 
 finish = time.perf_counter()
-print("============================================================")
 print(f'Process finished in {round(finish - start, 2)} second(s).')
 print('\n')
 
@@ -324,5 +441,21 @@ type = 'American'
 average_CRR_binary(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type)
 
 finish = time.perf_counter()
-print("============================================================")
 print(f'Process finished in {round(finish - start, 2)} second(s).')
+print('\n')
+
+
+# interpolation search
+start = time.perf_counter()
+
+print('============================================================')
+print('{ Interpolation Search }')
+time_elapsed = 0
+type = 'European'
+average_CRR_interpolation(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type)
+type = 'American'
+average_CRR_interpolation(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type)
+
+finish = time.perf_counter()
+print(f'Process finished in {round(finish - start, 2)} second(s).')
+print('\n')
