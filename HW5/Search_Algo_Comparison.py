@@ -209,9 +209,9 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
     
     print('============================================================')
     if time_elapsed == 0:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | Sequential Search ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} ]')
     else:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} | Sequential Search ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} ]')
     print('------------------------------------------------------------')
     print(f'(CRR Binomial Tree) Price of {type} Average Call : {round(TreeNodes[0][0].callValue[0], 4)}')
     print()
@@ -298,9 +298,9 @@ def average_CRR_binary(StAve, StInit, K, time_elapsed, time_left_to_maturity, r,
     
     print('============================================================')
     if time_elapsed == 0:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | Binary Search ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} ]')
     else:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} | Binary Search ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} ]')
     print('------------------------------------------------------------')
     print(f'(CRR Binomial Tree) Price of {type} Average Call : {round(TreeNodes[0][0].callValue[0], 4)}')
     print()
@@ -389,9 +389,9 @@ def average_CRR_interpolation(StAve, StInit, K, time_elapsed, time_left_to_matur
     
     print('============================================================')
     if time_elapsed == 0:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | Interpolation Search ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} ]')
     else:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} | Binary Search ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} ]')
     print('------------------------------------------------------------')
     print(f'(CRR Binomial Tree) Price of {type} Average Call : {round(TreeNodes[0][0].callValue[0], 4)}')
     print()
@@ -408,7 +408,7 @@ r = 0.1
 q = 0.05
 sigma = 0.8
 time_left_to_maturity = 0.25
-M = 750
+M = 100
 layers_prev = 100
 layers = 100
 
