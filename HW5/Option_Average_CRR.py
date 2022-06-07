@@ -103,7 +103,6 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
     for j in range(layers+1):
         TreeNodes[layers][j].calc_payoff()
     
-
     # backward induction
     times = 0
     i_temp = layers-1
@@ -173,7 +172,10 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
         print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} ]')
     else:
         print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} ]')
-    print(f'log arrayed = {log_arrayed}')
+    if time_elapsed == 0:
+        print(f'[ log arrayed = {log_arrayed} ]')
+    else:
+        print(f'[ log arrayed = {log_arrayed} ]')
     print('------------------------------------------------------------')
     print(f'(CRR Binomial Tree) Price of {type} Average Call : {round(TreeNodes[0][0].callValue[0], 4)}')
     print()
@@ -218,45 +220,33 @@ average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, 
 log_arrayed = True
 average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
 
-
-
-
 # start = time.perf_counter()
 # if __name__ == '__main__':
-#     log_arrayed = False
-
+#     time_elapsed = 0
 #     type = 'European'
-#     time_elapsed = 0
-#     p1 = multiprocessing.Process(target = average_CRR, 
-#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-#     time_elapsed = 0.25
-#     p2 = multiprocessing.Process(target = average_CRR, 
-#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-    
+#     log_arrayed = False
+#     p1 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
 #     log_arrayed = True
-#     time_elapsed = 0
-#     p3 = multiprocessing.Process(target = average_CRR, 
-#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-#     time_elapsed = 0.25
-#     p4 = multiprocessing.Process(target = average_CRR, 
-#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-
+#     p2 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
 
 #     type = 'American'
-#     time_elapsed = 0
-#     p5 = multiprocessing.Process(target = average_CRR, 
-#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-#     time_elapsed = 0.25
-#     p6 = multiprocessing.Process(target = average_CRR, 
-#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-    
+#     log_arrayed = False
+#     p3 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
 #     log_arrayed = True
-#     time_elapsed = 0
-#     p7 = multiprocessing.Process(target = average_CRR, 
-#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
+#     p4 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
+
 #     time_elapsed = 0.25
-#     p8 = multiprocessing.Process(target = average_CRR, 
-#                                  args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
+#     type = 'European'
+#     log_arrayed = False
+#     p5 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
+#     log_arrayed = True
+#     p6 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
+
+#     type = 'American'
+#     log_arrayed = False
+#     p7 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
+#     log_arrayed = True
+#     p8 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
 
 #     processes = [p1, p2, p3, p4, p5, p6, p7, p8]
 #     for process in processes:
