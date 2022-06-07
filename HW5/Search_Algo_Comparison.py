@@ -95,7 +95,7 @@ class Tree_Node:
         for k in range(len(self.avgLst)):
             self.callValue.append(max(self.avgLst[k]-self.K, 0))
 
-def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed):
+def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type):
     dt = time_left_to_maturity/layers
     u = exp(sigma * sqrt(dt))
     d = exp(-sigma * sqrt(dt))
@@ -113,10 +113,7 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
             TreeNodes[i][j] = Tree_Node(StAve, StInit, stockPrice[i][j], K, u, d, i, j, time_elapsed, layers_prev, M)
             TreeNodes[i][j].calc_avgMax()
             TreeNodes[i][j].calc_avgMin()
-            if log_arrayed == False:
-                TreeNodes[i][j].calc_avg_equal()
-            else:
-                TreeNodes[i][j].calc_avg_log()
+            TreeNodes[i][j].calc_avg_equal()
     
     # calculate terminal payoff
     for j in range(layers+1):
@@ -191,7 +188,6 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
         print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} ]')
     else:
         print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} ]')
-    print(f'[ log arrayed = {log_arrayed} ]')
     print('------------------------------------------------------------')
     print(f'(CRR Binomial Tree) Price of {type} Average Call : {round(TreeNodes[0][0].callValue[0], 4)}')
     print()
@@ -298,66 +294,35 @@ M = 100
 layers_prev = 100
 layers = 100
 
+
+# sequential search
+start = time.perf_counter()
+
+print('============================================================')
+print('{ Sequential Search }')
 time_elapsed = 0
 type = 'European'
-log_arrayed = False
-average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
-log_arrayed = True
-average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
-
+average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type)
 type = 'American'
-log_arrayed = False
-average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
-log_arrayed = True
-average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
+average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type)
 
-time_elapsed = 0.25
+finish = time.perf_counter()
+print("============================================================")
+print(f'Process finished in {round(finish - start, 2)} second(s).')
+print('\n')
+
+
+# binary search
+start = time.perf_counter()
+
+print('============================================================')
+print('{ Binary Search }')
+time_elapsed = 0
 type = 'European'
-log_arrayed = False
-average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
-log_arrayed = True
-average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
-
+average_CRR_binary(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type)
 type = 'American'
-log_arrayed = False
-average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
-log_arrayed = True
-average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
+average_CRR_binary(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type)
 
-# start = time.perf_counter()
-# if __name__ == '__main__':
-#     time_elapsed = 0
-#     type = 'European'
-#     log_arrayed = False
-#     p1 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-#     log_arrayed = True
-#     p2 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-
-#     type = 'American'
-#     log_arrayed = False
-#     p3 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-#     log_arrayed = True
-#     p4 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-
-#     time_elapsed = 0.25
-#     type = 'European'
-#     log_arrayed = False
-#     p5 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-#     log_arrayed = True
-#     p6 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-
-#     type = 'American'
-#     log_arrayed = False
-#     p7 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-#     log_arrayed = True
-#     p8 = multiprocessing.Process(target = average_CRR, args = [StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed])
-
-#     processes = [p1, p2, p3, p4, p5, p6, p7, p8]
-#     for process in processes:
-#         process.start()
-#     for process in processes:
-#         process.join()
-
-#     finish = time.perf_counter()
-#     print("============================================================")
-#     print(f'Process finished in {round(finish - start, 2)} second(s).')
+finish = time.perf_counter()
+print("============================================================")
+print(f'Process finished in {round(finish - start, 2)} second(s).')
