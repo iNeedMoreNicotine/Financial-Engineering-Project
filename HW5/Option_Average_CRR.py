@@ -212,9 +212,9 @@ def average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sig
     
     print('============================================================')
     if time_elapsed == 0:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | Sequential Search ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} ]')
     else:
-        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} | Sequential Search ]')
+        print(f'[ Save,t = {StAve} | time elapsed = {time_elapsed} | previous layers = {layers_prev} ]')
     print(f'[ log arrayed = {log_arrayed} ]')
     print('------------------------------------------------------------')
     print(f'(CRR Binomial Tree) Price of {type} Average Call : {round(TreeNodes[0][0].callValue[0], 4)}')
@@ -416,6 +416,9 @@ M = 100
 layers_prev = 100
 layers = 100
 
+
+start = time.perf_counter()
+
 time_elapsed = 0
 type = 'European'
 log_arrayed = False
@@ -442,6 +445,12 @@ average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, 
 log_arrayed = True
 average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, M, layers_prev, layers, type, log_arrayed)
 
+finish = time.perf_counter()
+print("============================================================")
+print(f'Process finished in {round(finish - start, 2)} second(s).')
+
+
+'''Codes below are executed using multiprocessing package. However, the orders unsorted due to the difference of process speed of each task.'''
 
 # start = time.perf_counter()
 # if __name__ == '__main__':
@@ -480,3 +489,6 @@ average_CRR(StAve, StInit, K, time_elapsed, time_left_to_maturity, r, q, sigma, 
 #     finish = time.perf_counter()
 #     print("============================================================")
 #     print(f'Process finished in {round(finish - start, 2)} second(s).')
+
+
+
