@@ -167,7 +167,7 @@ def iv_bisection(marketPrice, S0, K, T, r, q, call_put, type, model, layers, con
     # 損失函數 > 0：市價 < BS ======> sigma應盡量取大（但不要太大ㄛ）
     # 初始化區間[a, b]
     a = 0.1
-    b = 2
+    b = 1
     # 崩潰可調崩潰可調崩潰可調崩潰可調崩潰可調
 
     if model == "BS":
@@ -178,7 +178,6 @@ def iv_bisection(marketPrice, S0, K, T, r, q, call_put, type, model, layers, con
             else:
                 a = x
         iv = (a + b)/2
-        iv = round(iv, 6)
         return iv
 
     elif model == "CRR":
@@ -189,7 +188,6 @@ def iv_bisection(marketPrice, S0, K, T, r, q, call_put, type, model, layers, con
             else:
                 a = x
         iv = (a + b)/2
-        iv = round(iv, 6)
         return iv
     else:
         print("invalid model!!!")
@@ -224,7 +222,6 @@ def iv_newton(marketPrice, S0, K, T, r, q, call_put, type, model, layers, conver
             x = x - loss_function_bs(marketPrice, S0, K, T, r, q, x, call_put)/diff
 
         iv = x
-        iv = round(iv, 6)
         return iv
     else:
         while abs(loss_function_binomial(marketPrice, S0, K, T, r, q, x, call_put, layers, type)) > converCrit:
@@ -232,7 +229,6 @@ def iv_newton(marketPrice, S0, K, T, r, q, call_put, type, model, layers, conver
             x = x - loss_function_binomial(marketPrice, S0, K, T, r, q, x, call_put, layers, type)/diff
 
         iv = x
-        iv = round(iv, 6)
         return iv
 
 
@@ -241,53 +237,44 @@ def iv_newton(marketPrice, S0, K, T, r, q, call_put, type, model, layers, conver
 
 
 # main
-marketPrice = 15
-S0 = 115
-K = 120
-r = 0.01
-q = 0.02
-T = 1
+S0 = 50
+K = 55
+r = 0.1
+q = 0.03
+T = 0.5
 
 # bisection method (checked)
 print("==========BISECTION METHOD==========")
-print("EUROPEAN")
+print("European Call")
 print("--------------------")
-testBisec = iv_bisection(marketPrice, S0, K, T, r, q, call_put = "call", type = "European", model = "BS", layers = 0, converCrit = 10**(-4))
-print(f"買權隱含波動度 : {testBisec} (BS)")
-testBisec = iv_bisection(marketPrice, S0, K, T, r, q, call_put = "put", type = "European", model = "BS", layers = 0, converCrit = 10**(-4))
-print(f"賣權隱含波動度 : {testBisec} (BS)")
-testBisec = iv_bisection(marketPrice, S0, K, T, r, q, call_put = "call", type = "European", model = "CRR", layers = 699, converCrit = 10**(-4))
-print(f"買權隱含波動度 : {testBisec} (CRR)")
-testBisec = iv_bisection(marketPrice, S0, K, T, r, q, call_put = "put", type = "European", model = "CRR", layers = 699, converCrit = 10**(-4))
-print(f"賣權隱含波動度 : {testBisec} (CRR)")
+marketPrice = 2.5
+testBisec = iv_bisection(marketPrice, S0, K, T, r, q, call_put = "call", type = "European", model = "BS", layers = None, converCrit = 10**(-6))
+print(f"IV of European Call : {round(testBisec*100, 4)} % (BS)")
+testBisec = iv_bisection(marketPrice, S0, K, T, r, q, call_put = "call", type = "European", model = "CRR", layers = 100, converCrit = 10**(-6))
+print(f"IV of European Call : {round(testBisec*100, 4)} % (CRR)")
 print()
 
-print("AMERICAN")
+print("American Put")
 print("--------------------")
-testBisec = iv_bisection(marketPrice, S0, K, T, r, q, call_put = "call", type = "American", model = "CRR", layers = 699, converCrit = 10**(-4))
-print(f"買權隱含波動度 : {testBisec}")
-testBisec = iv_bisection(marketPrice, S0, K, T, r, q, call_put = "put", type = "American", model = "CRR", layers = 699, converCrit = 10**(-4))
-print(f"賣權隱含波動度 : {testBisec}")
+marketPrice = 6.5
+testBisec = iv_bisection(marketPrice, S0, K, T, r, q, call_put = "put", type = "American", model = "CRR", layers = 100, converCrit = 10**(-6))
+print(f"IV of American Put : {round(testBisec*100, 4)} % (CRR)")
 print("\n")
 
 # Newton method (checked)
 print("==========NEWTON METHOD==========")
-print("EUROPEAN")
+print("European Call")
 print("--------------------")
-testNewton = iv_newton(marketPrice, S0, K, T, r, q, "call", type = "European", model = "BS", layers = 0, converCrit = 10**(-4))
-print(f"買權隱含波動度 : {testNewton} (BS)")
-testNewton = iv_newton(marketPrice, S0, K, T, r, q, "put", type = "European", model = "BS", layers = 0, converCrit = 10**(-4))
-print(f"賣權隱含波動度 : {testNewton} (BS)")
-testNewton = iv_newton(marketPrice, S0, K, T, r, q, "call", type = "European", model = "CRR", layers = 699, converCrit = 10**(-4))
-print(f"買權隱含波動度 : {testNewton} (CRR)")
-testNewton = iv_newton(marketPrice, S0, K, T, r, q, "put", type = "European", model = "CRR", layers = 699, converCrit = 10**(-4))
-print(f"賣權隱含波動度 : {testNewton} (CRR)")
+marketPrice = 2.5
+testNewton = iv_newton(marketPrice, S0, K, T, r, q, "call", type = "European", model = "BS", layers = None, converCrit = 10**(-6))
+print(f"IV of European Call : {round(testNewton*100, 4)} % (BS)")
+testNewton = iv_newton(marketPrice, S0, K, T, r, q, "call", type = "European", model = "CRR", layers = 100, converCrit = 10**(-6))
+print(f"IV of European Call : {round(testNewton*100, 4)} % (CRR)")
 print()
 
-print("AMERICAN")
+print("American Put")
 print("--------------------")
-testNewton = iv_newton(marketPrice, S0, K, T, r, q, "call", type = "American", model = "CRR", layers = 699, converCrit = 10**(-4))
-print(f"買權隱含波動度 : {testNewton}")
-testNewton = iv_newton(marketPrice, S0, K, T, r, q, "put", type = "American", model = "CRR", layers = 699, converCrit = 10**(-4))
-print(f"賣權隱含波動度 : {testNewton}")
+marketPrice = 6.5
+testNewton = iv_newton(marketPrice, S0, K, T, r, q, "put", type = "American", model = "CRR", layers = 100, converCrit = 10**(-6))
+print(f"IV of American Put : {round(testNewton*100, 4)} % (CRR)")
 print("\n")
