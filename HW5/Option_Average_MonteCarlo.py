@@ -55,6 +55,7 @@ def average_MC(StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, n
     print(f"平均 : {round(meanOfRep, 6)}")
     print(f"標準誤 : {round(sdOfRep, 6)}")
     print(f"九十五趴信賴區間 : {bounds}")
+    print()
 
     return meanOfRep
 
