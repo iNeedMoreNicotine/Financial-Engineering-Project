@@ -19,10 +19,7 @@ def monte_carlo_European(S0, K, r, q, sigma, T, call_put, sims, rep):
         optionValue = []
         if call_put == "call":
             for price in stockSamples:
-                if K <= price:
-                    optionValue.append(price-K)
-                else:
-                    optionValue.append(0)
+                optionValue.append(max(price-K, 0))
 
             meanValue = np.mean(optionValue)
             discounted = meanValue * exp(-r * T)
@@ -31,10 +28,7 @@ def monte_carlo_European(S0, K, r, q, sigma, T, call_put, sims, rep):
 
         else:
             for price in stockSamples:
-                if K >= price:
-                    optionValue.append(K-price)
-                else:
-                    optionValue.append(0)
+                optionValue.append(max(K-price, 0))
 
             meanValue = np.mean(optionValue)
             discounted = meanValue * exp(-r * T)
