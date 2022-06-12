@@ -1,8 +1,15 @@
-import pandas as pd
-from math import log, exp, sqrt
+from math import log, sqrt, exp
 import bisect
+import time
 
-def calibratedPrice(stockPrice, St, layers):
+def simulate_calibrated_stock_price(St, u, d, layers):
+    stockPrice = []
+    for i in range(2, layers+2):
+        stockPrice.append([0]*i)
+    for i in range(layers):
+        for j in range(i+2):
+            stockPrice[i][j] = St * u**(i+1-j) * d**(j)
+
     last1 = stockPrice[-1]
     last2 = stockPrice[-2]
     calibration = sorted(last1 + last2, reverse = True)
@@ -10,14 +17,16 @@ def calibratedPrice(stockPrice, St, layers):
     caliIndex = []
     for i in range(layers,-layers-1,-1):
         caliIndex.append(i)
-    calibration = dict(zip(caliIndex,calibration))
+    calibration = dict(zip(caliIndex, calibration))
 
     for i in range(layers):
         for j in range(i+2):
             indexDiff = (i+1-j) - j
             stockPrice[i][j] = calibration[indexDiff]
-            
+    stockPrice.insert(0, [St])
+
     return stockPrice
+
 
 class Tree_Node:
     def __init__(self, St):
@@ -25,7 +34,7 @@ class Tree_Node:
         self.SmaxLst = []
         self.payoff = []
         self.putValue = []
-        self.zipped = None 
+
 
 def lookback_CRR(StMax, St, T, r, q, sigma, layers, type):
     dt = T/layers
@@ -33,143 +42,116 @@ def lookback_CRR(StMax, St, T, r, q, sigma, layers, type):
     d = exp(-sigma * sqrt(dt))
     p = (exp((r-q)*dt) - d)/(u - d)
 
-    stockPrice = []
-    for i in range(2, layers+2):
-        stockPrice.append([0]*i)
-    for i in range(layers):
-        for j in range(i+2):
-            stockPrice[i][j] = St * u**(i+1-j) * d**(j)
-    # 校準股價
-    stockPrice = calibratedPrice(stockPrice, St, layers)
+    stockPrice = simulate_calibrated_stock_price(St, u, d, layers)
 
     # 建立節點
     TreeNodes = []
-    for i in range(2, layers+2):
-        TreeNodes.append([0]*i)
-    for i in range(layers):
-        for j in range(i+2):
+    for i in range(layers+1):
+        TreeNodes.append([0]* (i+1))
+    for i in range(layers+1):
+        for j in range(i+1):
             TreeNodes[i][j] = Tree_Node(stockPrice[i][j])
 
     # 第0個節點 (即今日)
-    TreeNode_0 = Tree_Node(St)
     if StMax >= St:
-        TreeNode_0.SmaxLst = [StMax]
+        TreeNodes[0][0].SmaxLst = [StMax]
     else:
-        TreeNode_0.SmaxLst = [St]
+        TreeNodes[0][0].SmaxLst = [St]
 
     # Build Smax by forward tracking method
-    # first layer
-    for j in range(2):
-        if TreeNode_0.SmaxLst[0] >= TreeNodes[0][j].St:
-            TreeNodes[0][j].SmaxLst.append(TreeNode_0.SmaxLst[0])
-        else:
-            TreeNodes[0][j].SmaxLst.append(TreeNodes[0][j].St)
-    # other layers
-    for i in range(1,layers):
-        for j in range(i+2):
+    for i in range(1, layers+1):
+        for j in range(i+1):
             if j == 0:
-                for Smaxi in TreeNodes[i-1][j].SmaxLst:
-                    if Smaxi >= TreeNodes[i][j].St:
-                        if Smaxi not in TreeNodes[i][j].SmaxLst:
-                            # TreeNodes[i][j].SmaxLst.append(Smaxi)
-                            bisect.insort(TreeNodes[i][j].SmaxLst, Smaxi)
-                    else:
-                        if TreeNodes[i][j].St not in TreeNodes[i][j].SmaxLst:
-                            # TreeNodes[i][j].SmaxLst.append(TreeNodes[i][j].St)
-                            bisect.insort(TreeNodes[i][j].SmaxLst, TreeNodes[i][j].St)
-            elif j == i+1:
-                for Smaxi in TreeNodes[i-1][j-1].SmaxLst:
-                    if Smaxi >= TreeNodes[i][j].St:
-                        if Smaxi not in TreeNodes[i][j].SmaxLst:
-                            bisect.insort(TreeNodes[i][j].SmaxLst, Smaxi)
+                for Smax in TreeNodes[i-1][j].SmaxLst:
+                    if Smax >= TreeNodes[i][j].St:
+                        if Smax not in TreeNodes[i][j].SmaxLst:
+                            bisect.insort(TreeNodes[i][j].SmaxLst, Smax)
                     else:
                         if TreeNodes[i][j].St not in TreeNodes[i][j].SmaxLst:
                             bisect.insort(TreeNodes[i][j].SmaxLst, TreeNodes[i][j].St)
+            
+            elif j == i:
+                for Smax in TreeNodes[i-1][j-1].SmaxLst:
+                    if Smax >= TreeNodes[i][j].St:
+                        if Smax not in TreeNodes[i][j].SmaxLst:
+                            bisect.insort(TreeNodes[i][j].SmaxLst, Smax)
+                    else:
+                        if TreeNodes[i][j].St not in TreeNodes[i][j].SmaxLst:
+                            bisect.insort(TreeNodes[i][j].SmaxLst, TreeNodes[i][j].St)
+            
             else:
-                for Smaxi in TreeNodes[i-1][j-1].SmaxLst:
-                    if Smaxi >= TreeNodes[i][j].St:
-                        if Smaxi not in TreeNodes[i][j].SmaxLst:
-                            bisect.insort(TreeNodes[i][j].SmaxLst, Smaxi)
+                for Smax in TreeNodes[i-1][j-1].SmaxLst:
+                    if Smax >= TreeNodes[i][j].St:
+                        if Smax not in TreeNodes[i][j].SmaxLst:
+                            bisect.insort(TreeNodes[i][j].SmaxLst, Smax)
                     else:
                         if TreeNodes[i][j].St not in TreeNodes[i][j].SmaxLst:
                             bisect.insort(TreeNodes[i][j].SmaxLst, TreeNodes[i][j].St)
-                for Smaxi in TreeNodes[i-1][j].SmaxLst:
-                    if Smaxi >= TreeNodes[i][j].St:
-                        if Smaxi not in TreeNodes[i][j].SmaxLst:
-                            bisect.insort(TreeNodes[i][j].SmaxLst, Smaxi)
+
+                for Smax in TreeNodes[i-1][j].SmaxLst:
+                    if Smax >= TreeNodes[i][j].St:
+                        if Smax not in TreeNodes[i][j].SmaxLst:
+                            bisect.insort(TreeNodes[i][j].SmaxLst, Smax)
                     else:
                         if TreeNodes[i][j].St not in TreeNodes[i][j].SmaxLst:
                             bisect.insort(TreeNodes[i][j].SmaxLst, TreeNodes[i][j].St)
+            
             # 最後一層要有payoff list
-            if i == layers-1:
+            if i == layers:
                 # 現在，我有Smax list
-                for Smaxi in TreeNodes[i][j].SmaxLst:
-                        TreeNodes[i][j].payoff.append(max(Smaxi-TreeNodes[i][j].St, 0))
-                # 然後把它zippppppp起來
-                TreeNodes[i][j].zipped = list(zip(TreeNodes[i][j].SmaxLst, TreeNodes[i][j].payoff))
+                for Smax in TreeNodes[i][j].SmaxLst:
+                        TreeNodes[i][j].putValue.append(max(Smax-TreeNodes[i][j].St, 0))
 
     # Backward induction
-    # 從倒數第二層開始
-    counter = layers
     times = 0
-    while times < layers - 1:
-        for j in range(counter):
-            ku, kd = 0, 0  # indicies
-            usedIndicies = []
-            for Smaxi in TreeNodes[counter-2][j].SmaxLst:
-                if Smaxi in TreeNodes[counter-1][j].SmaxLst:
-                    ku = TreeNodes[counter-1][j].SmaxLst.index(Smaxi)
-                    usedIndicies.append(ku)
-                else:
-                    for k in range(len(TreeNodes[counter-1][j].SmaxLst)):
-                        if k in usedIndicies:
-                            pass
-                        else:
-                            if abs(Smaxi*u - TreeNodes[counter-1][j].SmaxLst[k]) < 10**-8:
-                                ku = k
-                                usedIndicies.append(ku)
-                                break
-                kd = TreeNodes[counter-1][j+1].SmaxLst.index(Smaxi)
-                usedIndicies.append(kd)
+    i_temp = layers - 1
+    while times < layers:
+        for j in range(i_temp+1):
+            ku, kd = 0, 0
+            for Smax in TreeNodes[i_temp][j].SmaxLst:
+                u_is_found = False
+                # search for ku in the SmaxLst of the upper node in next layer
+                # search for self
+                for k in range(ku, len(TreeNodes[i_temp+1][j].SmaxLst)):
+                    if TreeNodes[i_temp+1][j].SmaxLst[k] == Smax:
+                        ku = k
+                        u_is_found = True
+                        break
+                # search for self*u
+                if u_is_found == False:
+                    for k in range(ku, len(TreeNodes[i_temp+1][j].SmaxLst)):
+                        if abs(TreeNodes[i_temp+1][j].SmaxLst[k] - Smax*u) < 10**-8:
+                            ku = k
+                            break
 
-                discountedPutValue = (p * TreeNodes[counter-1][j].zipped[ku][1] + (1-p) * TreeNodes[counter-1][j+1].zipped[kd][1]) * exp(-r*dt)
-                if type == 'European':
-                    nodeValue = discountedPutValue
-                elif type == 'American':
-                    nodeValue =  max(Smaxi - TreeNodes[counter-2][j].St, discountedPutValue)
-                TreeNodes[counter-2][j].putValue.append(nodeValue)
-                TreeNodes[counter-2][j].zipped = list(zip(TreeNodes[counter-2][j].SmaxLst, TreeNodes[counter-2][j].putValue))
-        counter -= 1
+                # search for kd in the SmaxLst of the lower node in next layer
+                for k in range(kd, len(TreeNodes[i_temp+1][j+1].SmaxLst)):
+                    if TreeNodes[i_temp+1][j+1].SmaxLst[k] == Smax:
+                        kd = k
+                        break
+
+                # using index() method
+                # if Smax in TreeNodes[i_temp+1][j].SmaxLst:
+                #     ku = TreeNodes[i_temp+1][j].SmaxLst.index(Smax)
+                # else:
+                #     for k in range(len(TreeNodes[i_temp+1][j].SmaxLst)):
+                #         if abs(TreeNodes[i_temp+1][j].SmaxLst[k] - Smax) < 10**-8:
+                #             ku = TreeNodes[i_temp+1][j].SmaxLst.index(Smax)
+                #             break
+                
+                # kd = TreeNodes[i_temp+1][j+1].SmaxLst.index(Smax)
+
+                discounted = (TreeNodes[i_temp+1][j].putValue[ku]*p + TreeNodes[i_temp+1][j+1].putValue[kd]*(1-p)) * exp(-r*dt)
+                if type == 'American':
+                    discounted = max(Smax - TreeNodes[i_temp][j].St, discounted)
+                TreeNodes[i_temp][j].putValue.append(discounted)
+
+        i_temp -= 1
         times += 1
 
-    # 第0個節點 (即今日)
-    usedIndicies = []
-    ku, kd = 0, 0
-    if TreeNode_0.SmaxLst[0] in TreeNodes[0][0].SmaxLst:
-        ku = TreeNodes[0][0].SmaxLst.index(TreeNode_0.SmaxLst[0])
-        usedIndicies.append(ku)
-    else:
-        for k in range(len(TreeNodes[0][j].SmaxLst)):
-            if k in usedIndicies:
-                pass
-            else:
-                if abs(Smaxi*u - TreeNodes[0][j].SmaxLst[k]) < 10**-8:
-                    ku = k
-                    usedIndicies.append(ku)
-                    break
-
-    kd = TreeNodes[0][1].SmaxLst.index(TreeNode_0.SmaxLst[0])
-    discountedPutValue = (p * TreeNodes[0][0].zipped[ku][1] + (1-p) * TreeNodes[0][1].zipped[kd][1]) * exp(-r*dt)
-    if type == 'European':
-        nodeValue = discountedPutValue
-    elif type == 'American':
-        nodeValue =  max(TreeNode_0.SmaxLst[0] - TreeNode_0.St, discountedPutValue)
-    TreeNode_0.putValue.append(nodeValue)
-    TreeNode_0.zipped = list(zip(TreeNode_0.SmaxLst, TreeNode_0.putValue))
-
-    print(f'(CRR Binomial Tree) Price of {type} Lookback Put : {round(TreeNode_0.putValue[0], 4)}')
-    return TreeNode_0.putValue[0]
-
+    putValue = round(TreeNodes[0][0].putValue[0], 4)
+    print(f'(CRR Binomial Tree) Price of {type} Lookback Put : {putValue}')
+    return putValue
 
 
 
@@ -179,6 +161,8 @@ T = 0.25
 r = 0.1
 q = 0
 sigma = 0.4
+
+start = time.perf_counter()
 
 print('============================================================')
 StMax = 50
@@ -194,6 +178,7 @@ layers = 300
 print(f'n = {layers}')
 lookback_CRR(StMax, St, T, r, q, sigma, layers, 'European')
 lookback_CRR(StMax, St, T, r, q, sigma, layers, 'American')
+print()
 
 print('============================================================')
 StMax = 60
@@ -209,6 +194,7 @@ layers = 300
 print(f'n = {layers}')
 lookback_CRR(StMax, St, T, r, q, sigma, layers, 'European')
 lookback_CRR(StMax, St, T, r, q, sigma, layers, 'American')
+print()
 
 print('============================================================')
 StMax = 70
@@ -224,3 +210,8 @@ layers = 300
 print(f'n = {layers}')
 lookback_CRR(StMax, St, T, r, q, sigma, layers, 'European')
 lookback_CRR(StMax, St, T, r, q, sigma, layers, 'American')
+print()
+
+finish = time.perf_counter()
+print(f'Process finished in {round(finish - start, 2)} second(s).')
+print('\n')

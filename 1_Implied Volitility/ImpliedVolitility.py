@@ -85,69 +85,50 @@ def binomial_American(S0, K, T, r, q, sigma, layers, call_put):
     for i in range(layers):
         for j in range(i+2):
             stockPrice[i][j] = S0 * u**(i+1-j) * d**(j)
+    stockPrice.insert(0, [S0])
 
     if call_put == "call":
-        counter = layers
-        times = 0
         callPrice = [0] * (layers+1)
-        while times < layers - 1:
-            # 從最後一期開始算call price
-            if times == 0:
-                for j in range(len(stockPrice[counter-1])):
-                    callPrice[j] = max(stockPrice[counter-1][j]-K, 0)
+        for j in range(layers+1):
+            callPrice[j] = max(stockPrice[layers][j]-K, 0)
+        
+        times = 0
+        i_temp = layers - 1
+        while times < layers:
+            xValue = []
+            for j in range(i_temp+1):
+                callPrice[j] = (callPrice[j]*p + callPrice[j+1]*(1-p))* exp(-r*dt)
+                xValue.append(max(stockPrice[i_temp][j]-K, 0))
+                callPrice[j] = max(callPrice[j], xValue[j])
             
-            # 計算該期前一期的call price
-            for j in range(len(callPrice)-1):
-                callPrice[j] = (callPrice[j] * p + callPrice[j+1] * (1-p)) * exp(-r*dt)
             # 把最後一項打掉
             callPrice.pop()
-
-            # 搞一個履約價值的list
-            xValue = []
-            for j in range(len(stockPrice[counter-2])):
-                xValue.append(max(stockPrice[counter-2][j]-K, 0))
-
-            for j in range(len(callPrice)):
-                callPrice[j] = max(callPrice[j], xValue[j])
-
-            counter -= 1
+            i_temp -= 1
             times += 1
-
-        # 迴圈跑完後，得第一期的callPrice[x, y]
-        callPrice = (callPrice[0] * p + callPrice[1] * (1-p)) * exp(-r*dt)
-        americanCall = max(callPrice, S0-K)
+        
+        americanCall = callPrice[0]
         return americanCall
 
     else:
-        counter = layers
-        times = 0
         putPrice = [0] * (layers+1)
-        while times < layers - 1:
-            # 從最後一期開始算put price
-            if times == 0:
-                for j in range(len(stockPrice[counter-1])):
-                    putPrice[j] = max(K-stockPrice[counter-1][j], 0)
+        for j in range(layers+1):
+            putPrice[j] = max(K-stockPrice[layers][j], 0)
 
-            # 計算該期前一期的put price
-            for j in range(len(putPrice)-1):
-                putPrice[j] = (putPrice[j] * p + putPrice[j+1] * (1-p)) * exp(-r*dt)
+        times = 0
+        i_temp = layers - 1
+        while times < layers:
+            xValue = []
+            for j in range(i_temp+1):
+                putPrice[j] = (putPrice[j]*p + putPrice[j+1]*(1-p))* exp(-r*dt)
+                xValue.append(max(K-stockPrice[i_temp][j], 0))
+                putPrice[j] = max(putPrice[j], xValue[j])
+            
             # 把最後一項打掉
             putPrice.pop()
-
-            # 搞一個履約價值的list
-            xValue = []
-            for j in range(len(stockPrice[counter-2])):
-                xValue.append(max(K-stockPrice[counter-2][j], 0))
-
-            for j in range(len(putPrice)):
-                putPrice[j] = max(putPrice[j], xValue[j])
-
-            counter -= 1
+            i_temp -= 1
             times += 1
 
-        # 迴圈跑完後，得第一期的putPrice[x, y]
-        putPrice = (putPrice[0] * p + putPrice[1] * (1-p)) * exp(-r*dt)
-        americanPut = max(putPrice, K-S0)
+        americanPut = putPrice[0]
         return americanPut
 
 # 定義損失函數 

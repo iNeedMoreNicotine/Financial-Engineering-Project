@@ -20,29 +20,32 @@ def lookback_CRR_CheukAndVorst(St, T, r, q, sigma, layers, type):
                 uNodes[i][j] = 1
             else:
                 uNodes[i][j] = u**(i+1-j)
-    
+    uNodes.insert(0, [1])
+
+
     # backward induction
     putValues = []
     for j in range(layers+1):
-        putValues.append(max(uNodes[layers-1][j] - 1, 0))
+        putValues.append(max(uNodes[layers][j] - 1, 0))
     
     times = 0
     counter = layers
+
+    i_temp = layers-1
     while times < layers:
-        for j in range(counter):
-            if j == counter - 1:
+        for j in range(i_temp+1):
+            if j == i_temp:
                 putValues[j] = ((1-pWave) * putValues[j] + pWave * putValues[j+1]) * mu * exp(-r*dt)
-                break
             else:
                 putValues[j] = ((1-pWave) * putValues[j] + pWave * putValues[j+2]) * mu * exp(-r*dt)
         putValues.pop()
 
         if type == 'American':
-            for j in range(counter-1):
-                putValues[j] = max(putValues[j], uNodes[counter-2][j] - 1)
+            for j in range(i_temp+1):
+                putValues[j] = max(putValues[j], uNodes[i_temp][j] - 1)
 
         times += 1
-        counter -= 1
+        i_temp -= 1
     
     print(f'(CRR Binomial Tree) Price of {type} Lookback Put : {round(putValues[0]*St, 4)} (Cheuk & Vorst)')
     return putValues[0]*St
@@ -57,12 +60,13 @@ r = 0.1
 q = 0
 sigma = 0.4
 
+
+layers = 100
 print('======================================================================')
 type = 'European'
 print(f'{type} Lookback Option')
 print(f'[ Smax,t = {St} ]')
 print('----------------------------------------------------------------------')
-layers = 10000
 print(f'n = {layers}')
 lookback_CRR_CheukAndVorst(St, T, r, q, sigma, layers, type)
 print()
@@ -72,7 +76,44 @@ type = 'American'
 print(f'{type} Lookback Option')
 print(f'[ Smax,t = {St} ]')
 print('----------------------------------------------------------------------')
-layers = 10000
+print(f'n = {layers}')
+lookback_CRR_CheukAndVorst(St, T, r, q, sigma, layers, type)
+print()
+
+layers = 300
+print('======================================================================')
+type = 'European'
+print(f'{type} Lookback Option')
+print(f'[ Smax,t = {St} ]')
+print('----------------------------------------------------------------------')
+print(f'n = {layers}')
+lookback_CRR_CheukAndVorst(St, T, r, q, sigma, layers, type)
+print()
+
+print('======================================================================')
+type = 'American'
+print(f'{type} Lookback Option')
+print(f'[ Smax,t = {St} ]')
+print('----------------------------------------------------------------------')
+print(f'n = {layers}')
+lookback_CRR_CheukAndVorst(St, T, r, q, sigma, layers, type)
+print()
+
+layers = 1000
+print('======================================================================')
+type = 'European'
+print(f'{type} Lookback Option')
+print(f'[ Smax,t = {St} ]')
+print('----------------------------------------------------------------------')
+print(f'n = {layers}')
+lookback_CRR_CheukAndVorst(St, T, r, q, sigma, layers, type)
+print()
+
+print('======================================================================')
+type = 'American'
+print(f'{type} Lookback Option')
+print(f'[ Smax,t = {St} ]')
+print('----------------------------------------------------------------------')
 print(f'n = {layers}')
 lookback_CRR_CheukAndVorst(St, T, r, q, sigma, layers, type)
 print()
