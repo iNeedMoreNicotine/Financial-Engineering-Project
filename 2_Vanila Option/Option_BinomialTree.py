@@ -46,10 +46,11 @@ def binomial_European(S0, K, T, r, q, sigma, layers, call_put):
                 callPrice[i] = (callPrice[i]*p + callPrice[i+1]*(1-p)) * exp(-r*dt)
             callPrice.pop()
             times += 1
+        
         callPrice[0] = round(callPrice[0], 6)
+        print(f"(CRR Binomial Tree) Price of European {call_put} : {callPrice[0]}")
+        return callPrice[0]
 
-        return(f"(CRR Binomial Tree) Price of European {call_put} : {callPrice[0]}")
-    
     else:
         # 計算put價格
         putPrice = []
@@ -61,9 +62,10 @@ def binomial_European(S0, K, T, r, q, sigma, layers, call_put):
                 putPrice[i] = (putPrice[i]*p + putPrice[i+1]*(1-p)) * exp(-r*dt)
             putPrice.pop()
             times += 1
+        
         putPrice[0] = round(putPrice[0], 6)
-
-        return(f"(CRR Binomial Tree) Price of European {call_put} : {putPrice[0]}")
+        print(f"(CRR Binomial Tree) Price of European {call_put} : {putPrice[0]}")
+        return putPrice[0]
 
 def binomial_American(S0, K, T, r, q, sigma, layers, call_put):
     dt = T/layers
@@ -79,74 +81,53 @@ def binomial_American(S0, K, T, r, q, sigma, layers, call_put):
     for i in range(layers):
         for j in range(i+2):
             stockPrice[i][j] = S0 * u**(i+1-j) * d**(j)
+    stockPrice.insert(0, [S0])
 
     if call_put == "call":
-        counter = layers
-        times = 0
         callPrice = [0] * (layers+1)
-        while times < layers - 1:
-            # 從最後一期開始算call price
-            if times == 0:
-                for j in range(len(stockPrice[counter-1])):
-                    callPrice[j] = max(stockPrice[counter-1][j]-K, 0)
+        for j in range(layers+1):
+            callPrice[j] = max(stockPrice[layers][j]-K, 0)
+        
+        times = 0
+        i_temp = layers - 1
+        while times < layers:
+            xValue = []
+            for j in range(i_temp+1):
+                callPrice[j] = (callPrice[j]*p + callPrice[j+1]*(1-p))* exp(-r*dt)
+                xValue.append(max(stockPrice[i_temp][j]-K, 0))
+                callPrice[j] = max(callPrice[j], xValue[j])
             
-            # 計算該期前一期的call price
-            for j in range(len(callPrice)-1):
-                callPrice[j] = (callPrice[j] * p + callPrice[j+1] * (1-p)) * exp(-r*dt)
             # 把最後一項打掉
             callPrice.pop()
-
-            # 搞一個履約價值的list
-            xValue = []
-            for j in range(len(stockPrice[counter-2])):
-                xValue.append(max(stockPrice[counter-2][j]-K, 0))
-
-            for j in range(len(callPrice)):
-                callPrice[j] = max(callPrice[j], xValue[j])
-
-            counter -= 1
+            i_temp -= 1
             times += 1
-
-        # 迴圈跑完後，得第一期的callPrice[x, y]
-        callPrice = (callPrice[0] * p + callPrice[1] * (1-p)) * exp(-r*dt)
-        americanCall = max(callPrice, S0-K)
-        americanCall = round(americanCall, 6)
-
-        return(f"(CRR Binomial Tree) Price of American {call_put} : {americanCall}")
+        
+        americanCall = round(callPrice[0], 6)
+        print(f"(CRR Binomial Tree) Price of American {call_put} : {americanCall}")
+        return americanCall
 
     else:
-        counter = layers
-        times = 0
         putPrice = [0] * (layers+1)
-        while times < layers - 1:
-            # 從最後一期開始算put price
-            if times == 0:
-                for j in range(len(stockPrice[counter-1])):
-                    putPrice[j] = max(K-stockPrice[counter-1][j], 0)
+        for j in range(layers+1):
+            putPrice[j] = max(K-stockPrice[layers][j], 0)
 
-            # 計算該期前一期的put price
-            for j in range(len(putPrice)-1):
-                putPrice[j] = (putPrice[j] * p + putPrice[j+1] * (1-p)) * exp(-r*dt)
+        times = 0
+        i_temp = layers - 1
+        while times < layers:
+            xValue = []
+            for j in range(i_temp+1):
+                putPrice[j] = (putPrice[j]*p + putPrice[j+1]*(1-p))* exp(-r*dt)
+                xValue.append(max(K-stockPrice[i_temp][j], 0))
+                putPrice[j] = max(putPrice[j], xValue[j])
+            
             # 把最後一項打掉
             putPrice.pop()
-
-            # 搞一個履約價值的list
-            xValue = []
-            for j in range(len(stockPrice[counter-2])):
-                xValue.append(max(K-stockPrice[counter-2][j], 0))
-
-            for j in range(len(putPrice)):
-                putPrice[j] = max(putPrice[j], xValue[j])
-
-            counter -= 1
+            i_temp -= 1
             times += 1
 
-        # 迴圈跑完後，得第一期的putPrice[x, y]
-        putPrice = (putPrice[0] * p + putPrice[1] * (1-p)) * exp(-r*dt)
-        americanPut = max(putPrice, K-S0)
-        americanPut = round(americanPut, 6)
-
-        return(f"(CRR Binomial Tree) Price of American {call_put} : {americanPut}")
+        americanPut = round(putPrice[0], 6)
+        print(f"(CRR Binomial Tree) Price of American {call_put} : {americanPut}")
+        return americanPut
 
 def combinatorial_European(S0, K, T, r, q, sigma, layers, call_put):
     dt = T/layers
@@ -162,7 +143,8 @@ def combinatorial_European(S0, K, T, r, q, sigma, layers, call_put):
             callPrices.append(binomial_prob(layers, i, p)*max(stockPrices[i]-K, 0))
         callValue = exp(-r * T) * sum(callPrices)
         callValue = round(callValue, 6)
-        return(f"(CRR Binomial Tree) Price of European {call_put} : {callValue} (Combinatorial method)")
+        print(f"(CRR Binomial Tree) Price of European {call_put} : {callValue} (Combinatorial method)")
+        return callValue
 
     elif call_put == 'put':
         putPrices = []
@@ -170,7 +152,8 @@ def combinatorial_European(S0, K, T, r, q, sigma, layers, call_put):
             putPrices.append(binomial_prob(layers, i, p)*max(K-stockPrices[i], 0))
         putValue = exp(-r * T) * sum(putPrices)
         putValue = round(putValue, 6)
-        return(f"(CRR Binomial Tree) Price of European {call_put} : {putValue} (Combinatorial method)")
+        print(f"(CRR Binomial Tree) Price of European {call_put} : {putValue} (Combinatorial method)")
+        return putValue
 
 
 # main
@@ -186,92 +169,94 @@ layers = 100
 # European Call
 print("============================================================")
 print(f'n = {layers}')
-testECall = binomial_European(S0, K, T, r, q, sigma, layers, "call")
-print(testECall)
+print("-------------------------CALL-------------------------")
+binomial_European(S0, K, T, r, q, sigma, layers, "call")
 # American Call
-testACall = binomial_American(S0, K, T, r, q, sigma, layers, "call")
-print(testACall)
+binomial_American(S0, K, T, r, q, sigma, layers, "call")
+print()
+print("-------------------------PUT-------------------------")
 # European Put
-testEPut = binomial_European(S0, K, T, r, q, sigma, layers, "put")
-print(testEPut)
+binomial_European(S0, K, T, r, q, sigma, layers, "put")
 # American Put
-testAPut = binomial_American(S0, K, T, r, q, sigma, layers, "put")
-print(testAPut)
+binomial_American(S0, K, T, r, q, sigma, layers, "put")
+print('\n')
 
 # n = 500 (layers = 500)
 layers = 500
 # European Call
 print("============================================================")
 print(f'n = {layers}')
-testECall = binomial_European(S0, K, T, r, q, sigma, layers, "call")
-print(testECall)
+print("-------------------------CALL-------------------------")
+binomial_European(S0, K, T, r, q, sigma, layers, "call")
 # American Call
-testACall = binomial_American(S0, K, T, r, q, sigma, layers, "call")
-print(testACall)
+binomial_American(S0, K, T, r, q, sigma, layers, "call")
+print()
+print("-------------------------PUT-------------------------")
 # European Put
-testEPut = binomial_European(S0, K, T, r, q, sigma, layers, "put")
-print(testEPut)
+binomial_European(S0, K, T, r, q, sigma, layers, "put")
 # American Put
-testAPut = binomial_American(S0, K, T, r, q, sigma, layers, "put")
-print(testAPut)
+binomial_American(S0, K, T, r, q, sigma, layers, "put")
+print('\n')
 
 # n = 1000
 layers = 1000
 # European Call
 print("============================================================")
 print(f'n = {layers}')
-testECall = binomial_European(S0, K, T, r, q, sigma, layers, "call")
-print(testECall)
+print("-------------------------CALL-------------------------")
+binomial_European(S0, K, T, r, q, sigma, layers, "call")
 # American Call
-testACall = binomial_American(S0, K, T, r, q, sigma, layers, "call")
-print(testACall)
+binomial_American(S0, K, T, r, q, sigma, layers, "call")
+print()
+print("-------------------------PUT-------------------------")
 # European Put
-testEPut = binomial_European(S0, K, T, r, q, sigma, layers, "put")
-print(testEPut)
+binomial_European(S0, K, T, r, q, sigma, layers, "put")
 # American Put
-testAPut = binomial_American(S0, K, T, r, q, sigma, layers, "put")
-print(testAPut)
+binomial_American(S0, K, T, r, q, sigma, layers, "put")
+print('\n')
 
 # n = 2000
 layers = 2000
 # European Call
 print("============================================================")
 print(f'n = {layers}')
-testECall = binomial_European(S0, K, T, r, q, sigma, layers, "call")
-print(testECall)
+print("-------------------------CALL-------------------------")
+binomial_European(S0, K, T, r, q, sigma, layers, "call")
 # American Call
-testACall = binomial_American(S0, K, T, r, q, sigma, layers, "call")
-print(testACall)
+binomial_American(S0, K, T, r, q, sigma, layers, "call")
+print()
+print("-------------------------PUT-------------------------")
 # European Put
-testEPut = binomial_European(S0, K, T, r, q, sigma, layers, "put")
-print(testEPut)
+binomial_European(S0, K, T, r, q, sigma, layers, "put")
 # American Put
-testAPut = binomial_American(S0, K, T, r, q, sigma, layers, "put")
-print(testAPut)
+binomial_American(S0, K, T, r, q, sigma, layers, "put")
+print('\n')
 
 # n = 3000
 layers = 3000
 # European Call
 print("============================================================")
 print(f'n = {layers}')
-testECall = binomial_European(S0, K, T, r, q, sigma, layers, "call")
-print(testECall)
+print("-------------------------CALL-------------------------")
+binomial_European(S0, K, T, r, q, sigma, layers, "call")
 # American Call
-testACall = binomial_American(S0, K, T, r, q, sigma, layers, "call")
-print(testACall)
+binomial_American(S0, K, T, r, q, sigma, layers, "call")
+print()
+print("-------------------------PUT-------------------------")
 # European Put
-testEPut = binomial_European(S0, K, T, r, q, sigma, layers, "put")
-print(testEPut)
+binomial_European(S0, K, T, r, q, sigma, layers, "put")
 # American Put
-testAPut = binomial_American(S0, K, T, r, q, sigma, layers, "put")
-print(testAPut)
+binomial_American(S0, K, T, r, q, sigma, layers, "put")
+print('\n')
 
 # Combinatorial Method
 layers = 10000
 # European Call
 print("============================================================")
 print(f'n = {layers}')
-testECall = combinatorial_European(S0, K, T, r, q, sigma, layers, 'call')
-print(testECall)
-testEPut = combinatorial_European(S0, K, T, r, q, sigma, layers, 'put')
-print(testEPut)
+print("--------------------CALL--------------------")
+combinatorial_European(S0, K, T, r, q, sigma, layers, 'call')
+print()
+print("--------------------PUT--------------------")
+combinatorial_European(S0, K, T, r, q, sigma, layers, 'put')
+print('\n')

@@ -103,7 +103,6 @@ while times < reps:
     times += 1
 
 
-# print(meanValuesLst)
 sdOfRep = np.std(meanValuesLst)
 meanOfRep = np.mean(meanValuesLst)
 upperBound = meanOfRep + 2*sdOfRep
