@@ -75,13 +75,11 @@ def binomial_American(S0, K, T, r, q, sigma, layers, call_put):
 
     # 美式選擇權每個節點之價值：max(選擇權價格, 提前履約所得之價值)
     stockPrice = []
-    for i in range(2, layers+2):
-        stockPrice.append([0]*i)
-
-    for i in range(layers):
-        for j in range(i+2):
-            stockPrice[i][j] = S0 * u**(i+1-j) * d**(j)
-    stockPrice.insert(0, [S0])
+    for i in range(layers+1):
+        stockPrice.append([0]*(i+1))
+    for i in range(layers+1):
+        for j in range(i+1):
+            stockPrice[i][j] = S0 * u**(i-j) * d**j
 
     if call_put == "call":
         callPrice = [0] * (layers+1)
@@ -164,56 +162,40 @@ q = 0.05
 sigma = 0.4
 T = 0.5
 
-# n = 100 (layers = 100)
-layers = 100
-# European Call
-print("============================================================")
-print(f'n = {layers}')
-print("-------------------------CALL-------------------------")
-binomial_European(S0, K, T, r, q, sigma, layers, "call")
-# American Call
-binomial_American(S0, K, T, r, q, sigma, layers, "call")
-print()
-print("-------------------------PUT-------------------------")
-# European Put
-binomial_European(S0, K, T, r, q, sigma, layers, "put")
-# American Put
-binomial_American(S0, K, T, r, q, sigma, layers, "put")
-print('\n')
 
-# n = 500 (layers = 500)
-layers = 500
-# European Call
-print("============================================================")
-print(f'n = {layers}')
-print("-------------------------CALL-------------------------")
-binomial_European(S0, K, T, r, q, sigma, layers, "call")
-# American Call
-binomial_American(S0, K, T, r, q, sigma, layers, "call")
-print()
-print("-------------------------PUT-------------------------")
-# European Put
-binomial_European(S0, K, T, r, q, sigma, layers, "put")
-# American Put
-binomial_American(S0, K, T, r, q, sigma, layers, "put")
-print('\n')
+# # n = 100 (layers = 100)
+# layers = 100
+# # European Call
+# print("============================================================")
+# print(f'n = {layers}')
+# print("-------------------------CALL-------------------------")
+# binomial_European(S0, K, T, r, q, sigma, layers, "call")
+# # American Call
+# binomial_American(S0, K, T, r, q, sigma, layers, "call")
+# print()
+# print("-------------------------PUT-------------------------")
+# # European Put
+# binomial_European(S0, K, T, r, q, sigma, layers, "put")
+# # American Put
+# binomial_American(S0, K, T, r, q, sigma, layers, "put")
+# print('\n')
 
-# n = 1000
-layers = 1000
-# European Call
-print("============================================================")
-print(f'n = {layers}')
-print("-------------------------CALL-------------------------")
-binomial_European(S0, K, T, r, q, sigma, layers, "call")
-# American Call
-binomial_American(S0, K, T, r, q, sigma, layers, "call")
-print()
-print("-------------------------PUT-------------------------")
-# European Put
-binomial_European(S0, K, T, r, q, sigma, layers, "put")
-# American Put
-binomial_American(S0, K, T, r, q, sigma, layers, "put")
-print('\n')
+# # n = 500 (layers = 500)
+# layers = 500
+# # European Call
+# print("============================================================")
+# print(f'n = {layers}')
+# print("-------------------------CALL-------------------------")
+# binomial_European(S0, K, T, r, q, sigma, layers, "call")
+# # American Call
+# binomial_American(S0, K, T, r, q, sigma, layers, "call")
+# print()
+# print("-------------------------PUT-------------------------")
+# # European Put
+# binomial_European(S0, K, T, r, q, sigma, layers, "put")
+# # American Put
+# binomial_American(S0, K, T, r, q, sigma, layers, "put")
+# print('\n')
 
 # n = 2000
 layers = 2000
@@ -232,31 +214,14 @@ binomial_European(S0, K, T, r, q, sigma, layers, "put")
 binomial_American(S0, K, T, r, q, sigma, layers, "put")
 print('\n')
 
-# n = 3000
-layers = 3000
-# European Call
-print("============================================================")
-print(f'n = {layers}')
-print("-------------------------CALL-------------------------")
-binomial_European(S0, K, T, r, q, sigma, layers, "call")
-# American Call
-binomial_American(S0, K, T, r, q, sigma, layers, "call")
-print()
-print("-------------------------PUT-------------------------")
-# European Put
-binomial_European(S0, K, T, r, q, sigma, layers, "put")
-# American Put
-binomial_American(S0, K, T, r, q, sigma, layers, "put")
-print('\n')
-
-# Combinatorial Method
-layers = 10000
-# European Call
-print("============================================================")
-print(f'n = {layers}')
-print("--------------------CALL--------------------")
-combinatorial_European(S0, K, T, r, q, sigma, layers, 'call')
-print()
-print("--------------------PUT--------------------")
-combinatorial_European(S0, K, T, r, q, sigma, layers, 'put')
-print('\n')
+# # Combinatorial Method
+# layers = 10000
+# # European Call
+# print("============================================================")
+# print(f'n = {layers}')
+# print("--------------------CALL--------------------")
+# combinatorial_European(S0, K, T, r, q, sigma, layers, 'call')
+# print()
+# print("--------------------PUT--------------------")
+# combinatorial_European(S0, K, T, r, q, sigma, layers, 'put')
+# print('\n')
