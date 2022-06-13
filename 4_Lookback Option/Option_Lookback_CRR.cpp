@@ -91,7 +91,30 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
         TreeNodes[0][0].SmaxLst.push_back(St);
     }
 
-    // Build SmaxLst in each node by forward tracking method...
+    // build SmaxLst in each node by forward tracking method...
+    for(int i = 1; i < layers+1; i++){
+        for(int j = 0; j < i+1; i++){
+            if(j == 0){
+
+            }
+            else if(j == i){
+
+            }
+            else{
+
+            }
+            if(i == layers){
+                for(int k = 0; k < TreeNodes[i][j].SmaxLst.size(); k++){
+                    double payoff = max(TreeNodes[i][j].SmaxLst[k] - TreeNodes[i][j].St, 0.0);
+                    TreeNodes[i][j].optionValue.push_back(payoff);
+                }
+            }
+        }   
+    }
+
+
+
+    // backward induction
 
 
     return;
