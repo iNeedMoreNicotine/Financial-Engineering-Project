@@ -4,26 +4,27 @@ import time
 
 def simulate_calibrated_stock_price(St, u, d, layers):
     stockPrice = []
-    for i in range(2, layers+2):
-        stockPrice.append([0]*i)
-    for i in range(layers):
-        for j in range(i+2):
-            stockPrice[i][j] = St * u**(i+1-j) * d**(j)
+    for i in range(layers+1):
+        stockPrice.append([0]*(i+1))
+    for i in range(layers+1):
+        for j in range(i+1):
+            stockPrice[i][j] = St * u**(i-j) * d**j
 
     last1 = stockPrice[-1]
     last2 = stockPrice[-2]
     calibration = sorted(last1 + last2, reverse = True)
     calibration[layers] = St
+
     caliIndex = []
     for i in range(layers,-layers-1,-1):
         caliIndex.append(i)
     calibration = dict(zip(caliIndex, calibration))
 
-    for i in range(layers):
-        for j in range(i+2):
-            indexDiff = (i+1-j) - j
+    # indexDiff : u的次方 - d的次方
+    for i in range(layers+1):
+        for j in range(i+1):
+            indexDiff = (i-j) - j
             stockPrice[i][j] = calibration[indexDiff]
-    stockPrice.insert(0, [St])
 
     return stockPrice
 

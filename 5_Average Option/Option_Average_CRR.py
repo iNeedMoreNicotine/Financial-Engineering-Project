@@ -11,12 +11,11 @@ import multiprocessing
 
 def simulate_stock_price(StInit, u, d,layers):
     stockPrice = []
-    for i in range(2, layers+2):
-        stockPrice.append([0]*i)
-    for i in range(layers):
-        for j in range(i+2):
-            stockPrice[i][j] = StInit * u**(i+1-j) * d**(j)
-    stockPrice.insert(0, [StInit])
+    for i in range(layers+1):
+        stockPrice.append([0]*(i+1))
+    for i in range(layers+1):
+        for j in range(i+1):
+            stockPrice[i][j] = StInit * u**(i-j) * d**j
 
     return stockPrice
 
