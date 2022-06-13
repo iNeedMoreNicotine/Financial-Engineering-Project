@@ -8,20 +8,15 @@ def lookback_CRR_CheukAndVorst(St, T, r, q, sigma, layers, type):
     pWave = (mu*u - 1)/(mu * (u-d))
 
     uNodes = []
-    for i in range(layers):
-        temp = []
-        for j in range(i+2):
-            temp.append(0)
-        uNodes.append(temp)
+    for i in range(layers+1):
+        uNodes.append([0]*(i+1))
 
-    for i in range(layers):
-        for j in range(i+2):
-            if j == i+1:
+    for i in range(layers+1):
+        for j in range(i+1):
+            if j == i:
                 uNodes[i][j] = 1
             else:
-                uNodes[i][j] = u**(i+1-j)
-    uNodes.insert(0, [1])
-
+                uNodes[i][j] = u**(i-j)
 
     # backward induction
     putValues = []
@@ -29,8 +24,6 @@ def lookback_CRR_CheukAndVorst(St, T, r, q, sigma, layers, type):
         putValues.append(max(uNodes[layers][j] - 1, 0))
     
     times = 0
-    counter = layers
-
     i_temp = layers-1
     while times < layers:
         for j in range(i_temp+1):
