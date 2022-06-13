@@ -2,7 +2,7 @@
 # include <vector>
 # include <map>
 # include <cmath>
-#include <algorithm>
+# include <algorithm>
 
 using namespace std;
 
@@ -60,8 +60,8 @@ class Tree_Node{
     vector<double> optionValue;
     
     // constructor
-    Tree_Node(double St, vector<double> SmaxLst, vector<double> optionValue){
-
+    Tree_Node(double St_ij){
+        St = St_ij;
     }
 };
 
@@ -85,16 +85,12 @@ int main(){
     double q = 0.05;
     double sigma = 0.4;
     double T = 0.5;
-
     int layers = 4;
-
-
 
     double dt = T/layers;
     double u = exp(sigma*sqrt(dt));
     double d = exp(-sigma*sqrt(dt));
     double p = (exp((r-q)*dt) - d)/(u - d);
-
 
     vector<vector<double>> stockPrice = simulate_calibrated_stock_price(St, u, d, layers);
     for(int i = 0; i < layers+1; i++){
@@ -103,7 +99,6 @@ int main(){
         }
         cout << endl;
     }
-
 
     return 0;
 }
