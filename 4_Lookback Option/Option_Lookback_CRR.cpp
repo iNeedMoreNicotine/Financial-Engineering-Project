@@ -65,17 +65,39 @@ class Tree_Node{
     }
 };
 
-// double lookback_CRR_put(double StMax, double St, double T, double r, double q, double sigma, int layers, string type){
-//     double dt = T/layers;
-//     double u = exp(sigma*sqrt(dt));
-//     double d = exp(-sigma*sqrt(dt));
-//     double p = (exp((r-q)*dt) - d)/(u - d);
+double lookback_CRR_put(double StMax, double St, double T, double r, double q, double sigma, int layers, string type){
+    double dt = T/layers;
+    double u = exp(sigma*sqrt(dt));
+    double d = exp(-sigma*sqrt(dt));
+    double p = (exp((r-q)*dt) - d)/(u - d);
 
-//     vector<vector<double>> stockPrice = simulate_calibrated_stock_price(St, u, d, layers);
+    vector<vector<double>> stockPrice = simulate_calibrated_stock_price(St, u, d, layers);
 
-//     // build Nodes
-//     return;
-// }
+    // build Nodes
+    vector<vector<Tree_Node>> TreeNodes;
+    for(int i = 0; i < layers+1; i++){
+        vector<Tree_Node> temp;
+        for(int j = 0; j < i+1; j++){
+            temp.push_back(Tree_Node(stockPrice[i][j]));
+        }
+        TreeNodes.push_back(temp);
+    }
+
+    // node(0, 0)
+    if(StMax >= St){
+        TreeNodes[0][0].SmaxLst.push_back(StMax);
+    }
+    else{
+        TreeNodes[0][0].SmaxLst.push_back(St);
+    }
+
+    // Build SmaxLst in each node by forward tracking method...
+
+
+    return;
+}
+
+
 
 
 int main(){
