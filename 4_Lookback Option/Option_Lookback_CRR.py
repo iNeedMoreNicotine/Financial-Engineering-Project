@@ -33,7 +33,6 @@ class Tree_Node:
     def __init__(self, St):
         self.St = St
         self.SmaxLst = []
-        self.payoff = []
         self.putValue = []
 
 
