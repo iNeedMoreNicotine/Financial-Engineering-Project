@@ -4,7 +4,7 @@ import time
 import multiprocessing
 
 # arithmetic average call
-# payoff = max(Save,τ − K, 0)
+# payoff = max(Save,τ - K, 0)
 
 # time_elapsed ------> t
 # time_left_to_Maturity ------> T - t
@@ -31,7 +31,7 @@ def average_MC(StAve, St, K, time_elapsed, time_left_to_maturity, r, q, sigma, n
                 optionValues[sim] = callValue
             else:
                 payoff = (StAve*(n_prev + 1) + sum(stockPrices[1:]))/(n_prev + n + 1) - K
-                callValue = max(payoff, 0)
+                callValue = max(payoff, 0) * exp(-r * time_left_to_maturity)
                 optionValues[sim] = callValue
 
         mean = np.mean(optionValues)
