@@ -70,7 +70,6 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
     double u = exp(sigma*sqrt(dt));
     double d = exp(-sigma*sqrt(dt));
     double p = (exp((r-q)*dt) - d)/(u - d);
-
     vector<vector<double>> stockPrice = simulate_calibrated_stock_price(St, u, d, layers);
 
     // build Nodes
@@ -95,13 +94,126 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
     for(int i = 1; i < layers+1; i++){
         for(int j = 0; j < i+1; i++){
             if(j == 0){
-
+                for(int k = 0; k < TreeNodes[i-1][j].SmaxLst.size(); k++){
+                    if(TreeNodes[i-1][j].SmaxLst[k] >= TreeNodes[i][j].St){
+                        // if not in the SmaxLst of TreeNodes[i][j]...
+                        if(binary_search(TreeNodes[i][j].SmaxLst.begin(), TreeNodes[i][j].SmaxLst.end(), TreeNodes[i-1][j].SmaxLst[k]) == false){
+                            // find the insert location !
+                            int insert_index = 0;
+                            for(int l = 0; l < TreeNodes[i][j].SmaxLst.size(); l++){
+                                if(TreeNodes[i][j].SmaxLst[l] < TreeNodes[i-1][j].SmaxLst[k]){
+                                    insert_index = l;
+                                    break;
+                                }
+                            }
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i-1][j].SmaxLst[k]);
+                        }
+                    }
+                    else{
+                        if(binary_search(TreeNodes[i][j].SmaxLst.begin(), TreeNodes[i][j].SmaxLst.end(), TreeNodes[i][j].St) == false){
+                            // find the insert location !
+                            int insert_index = 0;
+                            for(int l = 0; l < TreeNodes[i][j].SmaxLst.size(); l++){
+                                if(TreeNodes[i][j].SmaxLst[l] < TreeNodes[i][j].St){
+                                    insert_index = l;
+                                    break;
+                                }
+                            }
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i][j].St);
+                        }
+                    }
+                }
             }
             else if(j == i){
-
+                for(int k = 0; k < TreeNodes[i-1][j-1].SmaxLst.size(); k++){
+                    if(TreeNodes[i-1][j-1].SmaxLst[k] >= TreeNodes[i][j].St){
+                        // if not in the SmaxLst of TreeNodes[i][j]...
+                        if(binary_search(TreeNodes[i][j].SmaxLst.begin(), TreeNodes[i][j].SmaxLst.end(), TreeNodes[i-1][j-1].SmaxLst[k]) == false){
+                            // find the insert location !
+                            int insert_index = 0;
+                            for(int l = 0; l < TreeNodes[i][j].SmaxLst.size(); l++){
+                                if(TreeNodes[i][j].SmaxLst[l] < TreeNodes[i-1][j-1].SmaxLst[k]){
+                                    insert_index = l;
+                                    break;
+                                }
+                            }
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i-1][j-1].SmaxLst[k]);
+                        }
+                    }
+                    else{
+                        if(binary_search(TreeNodes[i][j].SmaxLst.begin(), TreeNodes[i][j].SmaxLst.end(), TreeNodes[i][j].St) == false){
+                            // find the insert location !
+                            int insert_index = 0;
+                            for(int l = 0; l < TreeNodes[i][j].SmaxLst.size(); l++){
+                                if(TreeNodes[i][j].SmaxLst[l] < TreeNodes[i][j].St){
+                                    insert_index = l;
+                                    break;
+                                }
+                            }
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i][j].St);
+                        }
+                    }
+                }
             }
             else{
-
+                for(int k = 0; k < TreeNodes[i-1][j-1].SmaxLst.size(); k++){
+                    if(TreeNodes[i-1][j-1].SmaxLst[k] >= TreeNodes[i][j].St){
+                        // if not in the SmaxLst of TreeNodes[i][j]...
+                        if(binary_search(TreeNodes[i][j].SmaxLst.begin(), TreeNodes[i][j].SmaxLst.end(), TreeNodes[i-1][j-1].SmaxLst[k]) == false){
+                            // find the insert location !
+                            int insert_index = 0;
+                            for(int l = 0; l < TreeNodes[i][j].SmaxLst.size(); l++){
+                                if(TreeNodes[i][j].SmaxLst[l] < TreeNodes[i-1][j-1].SmaxLst[k]){
+                                    insert_index = l;
+                                    break;
+                                }
+                            }
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i-1][j-1].SmaxLst[k]);
+                        }
+                    }
+                    else{
+                        if(binary_search(TreeNodes[i][j].SmaxLst.begin(), TreeNodes[i][j].SmaxLst.end(), TreeNodes[i][j].St) == false){
+                            // find the insert location !
+                            int insert_index = 0;
+                            for(int l = 0; l < TreeNodes[i][j].SmaxLst.size(); l++){
+                                if(TreeNodes[i][j].SmaxLst[l] < TreeNodes[i][j].St){
+                                    insert_index = l;
+                                    break;
+                                }
+                            }
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i][j].St);
+                        }
+                    }
+                }
+                for(int k = 0; k < TreeNodes[i-1][j].SmaxLst.size(); k++){
+                    if(TreeNodes[i-1][j].SmaxLst[k] >= TreeNodes[i][j].St){
+                        // if not in the SmaxLst of TreeNodes[i][j]...
+                        if(binary_search(TreeNodes[i][j].SmaxLst.begin(), TreeNodes[i][j].SmaxLst.end(), TreeNodes[i-1][j].SmaxLst[k]) == false){
+                            // find the insert location !
+                            int insert_index = 0;
+                            for(int l = 0; l < TreeNodes[i][j].SmaxLst.size(); l++){
+                                if(TreeNodes[i][j].SmaxLst[l] < TreeNodes[i-1][j].SmaxLst[k]){
+                                    insert_index = l;
+                                    break;
+                                }
+                            }
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i-1][j].SmaxLst[k]);
+                        }
+                    }
+                    else{
+                        if(binary_search(TreeNodes[i][j].SmaxLst.begin(), TreeNodes[i][j].SmaxLst.end(), TreeNodes[i][j].St) == false){
+                            // find the insert location !
+                            int insert_index = 0;
+                            for(int l = 0; l < TreeNodes[i][j].SmaxLst.size(); l++){
+                                if(TreeNodes[i][j].SmaxLst[l] < TreeNodes[i][j].St){
+                                    insert_index = l;
+                                    break;
+                                }
+                            }
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i][j].St);
+                        }
+                    }
+                }
             }
             if(i == layers){
                 for(int k = 0; k < TreeNodes[i][j].SmaxLst.size(); k++){
@@ -111,8 +223,6 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
             }
         }   
     }
-
-
 
     // backward induction
 
