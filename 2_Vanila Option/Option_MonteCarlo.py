@@ -6,9 +6,8 @@ import numpy as np
 def monte_carlo_European(S0, K, r, q, sigma, T, call_put, sims, rep):
     meanValueLst = []
     times = 0
-
-    stockSamples = []
     while times < rep:
+        stockSamples = []
         for i in range(sims):
             # stockSamples.append(S0 * exp((r - q - 0.5 * sigma**2) * T + sigma * sqrt(T) * np.random.standard_normal()))
             # lnSample = log(S0) + (r - q - 0.5*sigma**2) * T + sigma * sqrt(T) * np.random.standard_normal()
