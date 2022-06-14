@@ -171,6 +171,10 @@ vector<double> average_MC_put(double StAve, double St, double K, double time_ela
     return results;
 }
 
+
+
+
+
 int main(){
     double St = 50;
     double StAve = 50;
