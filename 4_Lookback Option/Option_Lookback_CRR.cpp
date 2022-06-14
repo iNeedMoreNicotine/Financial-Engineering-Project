@@ -38,9 +38,6 @@ vector<vector<double>> simulate_calibrated_stock_price(double St, double u, doub
     for(int i = 0; i < layers*2+1; i++){
         calibration[caliIndex[i]] = last1[i];
     }
-    for(int i = layers; i > -layers-1; i -= 1){
-        cout << calibration[i] << ",";
-    }
 
     // indexDiff : power of u - power of d
     for(int i = 0; i < layers+1; i++){
@@ -65,7 +62,7 @@ class Tree_Node{
     }
 };
 
-double lookback_CRR_put(double StMax, double St, double T, double r, double q, double sigma, int layers, string type){
+double lookback_CRR_put(double StMax, double St, double T, double r, double q, double sigma, int layers, string option_type){
     double dt = T/layers;
     double u = exp(sigma*sqrt(dt));
     double d = exp(-sigma*sqrt(dt));
@@ -90,6 +87,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
         TreeNodes[0][0].SmaxLst.push_back(St);
     }
 
+    cout << "start forward tracking..." << endl; 
     // build SmaxLst in each node by forward tracking method...
     for(int i = 1; i < layers+1; i++){
         for(int j = 0; j < i+1; i++){
@@ -223,11 +221,59 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
             }
         }   
     }
+    cout << "forward tracking done." << endl; 
 
+    cout << "start backward induction..." << endl;
     // backward induction
+    int times = 0;
+    int i_temp = layers - 1;
+    while(times < layers){
+        for(int j = 0; j < i_temp+1; j++){
+            int ku = 0;
+            int kd = 0;
+            for(int k = 0; TreeNodes[i_temp][j].SmaxLst.size(); k++){
+                bool u_is_found = false;
+                // search for ku in the SmaxLst of the upper node in next layer
+                // search for self
+                for(int l = ku; l < TreeNodes[i_temp+1][j].SmaxLst.size(); l++){
+                    if(TreeNodes[i_temp+1][j].SmaxLst[l] == TreeNodes[i_temp][j].SmaxLst[k]){
+                        ku = l;
+                        u_is_found = true;
+                        break;
+                    }
+                }
+                // searh for self*u
+                if(u_is_found == false){
+                    for(int l = ku; l < TreeNodes[i_temp+1][j].SmaxLst.size(); l++){
+                        if(abs(TreeNodes[i_temp+1][j].SmaxLst[l] - TreeNodes[i_temp][j].SmaxLst[k]) < pow(10, -8)){
+                            ku = l;
+                            break;
+                        }
+                    }
+                }
+                // search for kd in the SmaxLst of the lower node in next layer
+                for(int l = kd; l < TreeNodes[i_temp+1][j+1].SmaxLst.size(); l++){
+                    if(TreeNodes[i_temp+1][j+1].SmaxLst[l] == TreeNodes[i_temp][j].SmaxLst[k]){
+                        kd = l;
+                        break;
+                    }
+                }
+                double discounted = (TreeNodes[i_temp+1][j].optionValue[ku]*p + TreeNodes[i_temp+1][j+1].optionValue[kd]*(1-p)) * exp(-r*dt);
+                if(option_type == "American"){
+                    discounted = max(TreeNodes[i_temp][j].SmaxLst[k] - TreeNodes[i_temp][j].St, discounted);
+                }
+                TreeNodes[i_temp][j].optionValue.push_back(discounted);
+            }
+        }
+        i_temp -= 1;
+        times += 1;
+    }
+    cout << "backward induction done" << endl;
 
-
-    return;
+    double putValue = TreeNodes[0][0].optionValue[0];
+    // cout << "n = " << layers << endl;
+    cout << "(CRR Binomial Tree) Price of " << option_type << " Lookback Put : "  << putValue << endl;
+    return putValue;
 }
 
 
@@ -235,25 +281,24 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
 
 int main(){
     double St = 50;
-    double K = 50;
+    double T = 0.25;
     double r = 0.1;
-    double q = 0.05;
+    double q = 0;
     double sigma = 0.4;
-    double T = 0.5;
-    int layers = 4;
 
-    double dt = T/layers;
-    double u = exp(sigma*sqrt(dt));
-    double d = exp(-sigma*sqrt(dt));
-    double p = (exp((r-q)*dt) - d)/(u - d);
+    double StMax = 50;
+    cout << "============================================================" << endl;
+    cout << "Lookback Option" << endl;
+    cout << "[ Smax,t = " << StMax << " ]" << endl;
+    cout << "------------------------------------------------------------" << endl;
 
-    vector<vector<double>> stockPrice = simulate_calibrated_stock_price(St, u, d, layers);
-    for(int i = 0; i < layers+1; i++){
-        for(int j = 0; j < i+1; j++){
-            cout << stockPrice[i][j] << "," ;
-        }
-        cout << endl;
-    }
+    lookback_CRR_put(StMax, St, T, r, q, sigma, 100, "European");
+    lookback_CRR_put(StMax, St, T, r, q, sigma, 100, "American");
+
+    // lookback_CRR_put(StMax, St, T, r, q, sigma, 300, "European");
+    // lookback_CRR_put(StMax, St, T, r, q, sigma, 300, "American");
+
+    cout << endl;
 
     return 0;
 }
