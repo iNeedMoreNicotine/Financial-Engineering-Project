@@ -87,14 +87,14 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
         TreeNodes[0][0].SmaxLst.push_back(St);
     }
 
-    cout << "start forward tracking..." << endl; 
+    cout << "starting forward tracking..." << endl; 
     // build SmaxLst in each node by forward tracking method...
     for(int i = 1; i < layers+1; i++){
-        for(int j = 0; j < i+1; i++){
+        for(int j = 0; j < i+1; j++){
             if(j == 0){
                 for(int k = 0; k < TreeNodes[i-1][j].SmaxLst.size(); k++){
                     if(TreeNodes[i-1][j].SmaxLst[k] >= TreeNodes[i][j].St){
-                        // if not in the SmaxLst of TreeNodes[i][j]...
+                        // insert if not in the SmaxLst of TreeNodes[i][j]...
                         if(binary_search(TreeNodes[i][j].SmaxLst.begin(), TreeNodes[i][j].SmaxLst.end(), TreeNodes[i-1][j].SmaxLst[k]) == false){
                             // find the insert location !
                             int insert_index = 0;
@@ -223,7 +223,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
     }
     cout << "forward tracking done." << endl; 
 
-    cout << "start backward induction..." << endl;
+    cout << "starting backward induction..." << endl;
     // backward induction
     int times = 0;
     int i_temp = layers - 1;
@@ -268,7 +268,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
         i_temp -= 1;
         times += 1;
     }
-    cout << "backward induction done" << endl;
+    cout << "backward induction done." << endl;
 
     double putValue = TreeNodes[0][0].optionValue[0];
     // cout << "n = " << layers << endl;
