@@ -104,7 +104,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
                                     break;
                                 }
                             }
-                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i-1][j].SmaxLst[k]);
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin() + insert_index, TreeNodes[i-1][j].SmaxLst[k]);
                         }
                     }
                     else{
@@ -117,7 +117,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
                                     break;
                                 }
                             }
-                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i][j].St);
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin() + insert_index, TreeNodes[i][j].St);
                         }
                     }
                 }
@@ -135,7 +135,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
                                     break;
                                 }
                             }
-                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i-1][j-1].SmaxLst[k]);
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin() + insert_index, TreeNodes[i-1][j-1].SmaxLst[k]);
                         }
                     }
                     else{
@@ -148,7 +148,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
                                     break;
                                 }
                             }
-                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i][j].St);
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin() + insert_index, TreeNodes[i][j].St);
                         }
                     }
                 }
@@ -195,7 +195,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
                                     break;
                                 }
                             }
-                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i-1][j].SmaxLst[k]);
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin() + insert_index, TreeNodes[i-1][j].SmaxLst[k]);
                         }
                     }
                     else{
@@ -208,7 +208,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
                                     break;
                                 }
                             }
-                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin(), insert_index, TreeNodes[i][j].St);
+                            TreeNodes[i][j].SmaxLst.insert(TreeNodes[i][j].SmaxLst.begin() + insert_index, TreeNodes[i][j].St);
                         }
                     }
                 }
@@ -245,7 +245,7 @@ double lookback_CRR_put(double StMax, double St, double T, double r, double q, d
                 // searh for self*u
                 if(u_is_found == false){
                     for(int l = ku; l < TreeNodes[i_temp+1][j].SmaxLst.size(); l++){
-                        if(abs(TreeNodes[i_temp+1][j].SmaxLst[l] - TreeNodes[i_temp][j].SmaxLst[k]) < pow(10, -8)){
+                        if(abs(TreeNodes[i_temp+1][j].SmaxLst[l] - TreeNodes[i_temp][j].SmaxLst[k]*u) < pow(10, -8)){
                             ku = l;
                             break;
                         }
