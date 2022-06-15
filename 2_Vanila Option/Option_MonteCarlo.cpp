@@ -2,12 +2,11 @@
 # include <cmath>
 # include <vector>
 # include <random>
-# include <time.h>
 # include <chrono> 
 
 using namespace std;
 
-vector<double> monte_carlo_European(double S0, double K, double r, double q, double sigma, double T, string call_put, int sims, int rep){
+vector<double> monte_carlo_European(double S0, double K, double T, double r, double q, double sigma, string call_put, int sims, int rep){
     vector<double> meanLst;
     int times = 0;
 
@@ -83,8 +82,8 @@ int main(){
     int sims = 50000;
     int rep = 30;
 
-    monte_carlo_European(S0, K, r, q, sigma, T, "call", sims, rep);
-    monte_carlo_European(S0, K, r, q, sigma, T, "put", sims, rep);
+    monte_carlo_European(S0, K, T, r, q, sigma, "call", sims, rep);
+    monte_carlo_European(S0, K, T, r, q, sigma, "put", sims, rep);
 
     return 0;
 }
