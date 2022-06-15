@@ -88,6 +88,8 @@ namespace FinAlgoProhect {
 	private: System::Windows::Forms::Label^ label14;
 	private: System::Windows::Forms::Button^ calc;
 	private: System::Windows::Forms::Label^ outputString;
+	private: System::Windows::Forms::Label^ author;
+	private: System::Windows::Forms::Label^ email;
 
 
 
@@ -152,6 +154,8 @@ namespace FinAlgoProhect {
 			this->models = (gcnew System::Windows::Forms::ListBox());
 			this->label0 = (gcnew System::Windows::Forms::Label());
 			this->calc = (gcnew System::Windows::Forms::Button());
+			this->author = (gcnew System::Windows::Forms::Label());
+			this->email = (gcnew System::Windows::Forms::Label());
 			this->outputBox->SuspendLayout();
 			this->inputBox->SuspendLayout();
 			this->average->SuspendLayout();
@@ -654,19 +658,43 @@ namespace FinAlgoProhect {
 			this->calc->Text = L"Calculate !";
 			this->calc->UseVisualStyleBackColor = true;
 			// 
+			// author
+			// 
+			this->author->AutoSize = true;
+			this->author->Font = (gcnew System::Drawing::Font(L"Calibri", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->author->Location = System::Drawing::Point(27, 752);
+			this->author->Name = L"author";
+			this->author->Size = System::Drawing::Size(520, 19);
+			this->author->TabIndex = 5;
+			this->author->Text = L"Coded by Alex Chen ( 陳柏言 ), Nationl Taiwan University, Finance Department";
+			// 
+			// email
+			// 
+			this->email->AutoSize = true;
+			this->email->Font = (gcnew System::Drawing::Font(L"Calibri", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->email->Location = System::Drawing::Point(27, 781);
+			this->email->Name = L"email";
+			this->email->Size = System::Drawing::Size(247, 19);
+			this->email->TabIndex = 6;
+			this->email->Text = L"Contact me : r10723046@ntu.edu.tw";
+			// 
 			// mainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Menu;
-			this->ClientSize = System::Drawing::Size(984, 761);
+			this->ClientSize = System::Drawing::Size(984, 811);
+			this->Controls->Add(this->email);
+			this->Controls->Add(this->author);
 			this->Controls->Add(this->calc);
 			this->Controls->Add(this->label0);
 			this->Controls->Add(this->models);
 			this->Controls->Add(this->inputBox);
 			this->Controls->Add(this->outputBox);
-			this->MaximumSize = System::Drawing::Size(1000, 800);
-			this->MinimumSize = System::Drawing::Size(1000, 800);
+			this->MaximumSize = System::Drawing::Size(1000, 850);
+			this->MinimumSize = System::Drawing::Size(1000, 850);
 			this->Name = L"mainForm";
 			this->Text = L"Option Price Calculator";
 			this->outputBox->ResumeLayout(false);
