@@ -3,7 +3,7 @@ from math import log, exp, sqrt
 from scipy.stats import norm
 import numpy as np
 
-def monte_carlo_European(S0, K, r, q, sigma, T, call_put, sims, rep):
+def monte_carlo_European(S0, K, T, r, q, sigma, call_put, sims, rep):
     meanValueLst = []
     times = 0
     while times < rep:
@@ -50,12 +50,12 @@ def monte_carlo_European(S0, K, r, q, sigma, T, call_put, sims, rep):
     return round(meanOfRep, 6)
 
 S0 = 115
-K = 120
+K = 115
 r = 0.01
 q = 0.02
 sigma = 0.5
 T = 1
 sims = 10000
 rep = 20
-monte_carlo_European(S0, K, r, q, sigma, T, "call", sims, rep)
-monte_carlo_European(S0, K, r, q, sigma, T, "put", sims, rep)
+monte_carlo_European(S0, K, T, r, q, sigma, "call", sims, rep)
+monte_carlo_European(S0, K, T, r, q, sigma, "put", sims, rep)
