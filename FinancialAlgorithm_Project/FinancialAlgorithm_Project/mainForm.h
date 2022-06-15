@@ -1,14 +1,26 @@
 ﻿#pragma once
-#include <string>
+# include <string>
+# include <iostream>
+# include <cmath>
+# include <vector>
+# include <random>
+# include <chrono>
+# include <format>
+
+//
+// Created by 陳柏言 (Alex Chen), National Taiwan University, Dpt. of Finance
+//
+
 
 namespace FinAlgoProhect {
-
+	using namespace std;
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+
 
 	/// <summary>
 	/// mainForm 的摘要
@@ -22,6 +34,7 @@ namespace FinAlgoProhect {
 			//
 			//TODO:  在此加入建構函式程式碼
 			//
+
 		}
 
 	protected:
@@ -37,7 +50,7 @@ namespace FinAlgoProhect {
 		}
 	private: System::Windows::Forms::GroupBox^ outputBox;
 	private: System::Windows::Forms::GroupBox^ inputBox;
-	private: System::Windows::Forms::ListBox^ models;
+
 	private: System::Windows::Forms::Label^ label0;
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label8;
@@ -112,6 +125,7 @@ namespace FinAlgoProhect {
 	private: System::Windows::Forms::GroupBox^ call_put;
 	private: System::Windows::Forms::RadioButton^ put;
 	private: System::Windows::Forms::RadioButton^ call;
+	private: System::Windows::Forms::ListBox^ models;
 
 
 
@@ -782,31 +796,35 @@ namespace FinAlgoProhect {
 		double q = System::Convert::ToDouble(q_string);
 		double sigma = System::Convert::ToDouble(sigma_string);
 
+
 		// General MC
 		String^ sims_string = sims_tb->Text;
 		String^ rep_string = rep_tb->Text;
 		int sims = System::Convert::ToInt64(sims_string);
 		int rep = System::Convert::ToInt64(rep_string);
 
+
 		// Lookback MC
 		String^ StMin_string = StMin_tb->Text;
 		String^ StMax_string = StMax_tb->Text;
-		String^ n_string = n_lookback_tb->Text;
+		String^ n_lb_string = n_lookback_tb->Text;
 
 		double StMin = System::Convert::ToDouble(StMin_string);
 		double StMax = System::Convert::ToDouble(StMax_string);
-		int n = System::Convert::ToInt64(n_string);
+		int n_lb = System::Convert::ToInt64(n_lb_string);
+
 
 		// Average MC
 		String^ StAve_string = StAve_tb->Text;
-		String^ n_string = n_avg_tb->Text;
-		String^ n_prev_string = n_avg_prev_tb->Text;
+		String^ n_avg_string = n_avg_tb->Text;
+		String^ n_avg_prev_string = n_avg_prev_tb->Text;
 		String^ time_elapsed_string = time_elapsed_tb->Text;
 
 		double StAve = System::Convert::ToDouble(StAve_string);
-		int n = System::Convert::ToInt64(n_string);
-		int n_prev = System::Convert::ToInt64(n_prev_string);
+		int n_avg = System::Convert::ToInt64(n_avg_string);
+		int n_avg_prev = System::Convert::ToInt64(n_avg_prev_string);
 		double time_elapsed = System::Convert::ToDouble(time_elapsed_string);
+
 
 		// Tree
 		String^ layers_string = layers_tb->Text;
