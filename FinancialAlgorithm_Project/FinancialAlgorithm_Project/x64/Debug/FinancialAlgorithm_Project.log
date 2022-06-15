@@ -1,0 +1,6 @@
+﻿  mainForm.cpp
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.cpp(6,1): warning C4829: 函式 main 的參數可能不正確。請考慮 'int main(Platform::Array<Platform::String^>^ argv)'
+  .NETFramework,Version=v4.8.AssemblyAttributes.cpp
+  正在產生程式碼...
+  mainForm.obj : 發現 MSIL 模組。MSIL 的累加連結已停用。正在執行完整連結
+  FinancialAlgorithm_Project.vcxproj -> C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\x64\Debug\FinancialAlgorithm_Project.exe

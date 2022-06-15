@@ -46,32 +46,44 @@ namespace FinAlgoProhect {
 	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::Label^ label3;
 	private: System::Windows::Forms::Label^ label2;
-	private: System::Windows::Forms::TextBox^ sims;
+	private: System::Windows::Forms::TextBox^ sims_tb;
 
-	private: System::Windows::Forms::TextBox^ sigma;
+	private: System::Windows::Forms::TextBox^ sigma_tb;
 
-	private: System::Windows::Forms::TextBox^ q;
 
-	private: System::Windows::Forms::TextBox^ r;
+	private: System::Windows::Forms::TextBox^ q_tb;
 
-	private: System::Windows::Forms::TextBox^ T;
 
-	private: System::Windows::Forms::TextBox^ K;
-	private: System::Windows::Forms::TextBox^ St;
-	private: System::Windows::Forms::TextBox^ rep;
+	private: System::Windows::Forms::TextBox^ r_tb;
+
+
+	private: System::Windows::Forms::TextBox^ T_tb;
+
+
+	private: System::Windows::Forms::TextBox^ K_tb;
+
+
+	private: System::Windows::Forms::TextBox^ St_tb;
+	private: System::Windows::Forms::TextBox^ rep_tb;
+
+
 	private: System::Windows::Forms::GroupBox^ lookback;
-	private: System::Windows::Forms::TextBox^ n_lookback;
+	private: System::Windows::Forms::TextBox^ n_lookback_tb;
+
 
 	private: System::Windows::Forms::Label^ label11;
-	private: System::Windows::Forms::TextBox^ StMax;
+	private: System::Windows::Forms::TextBox^ StMax_tb;
+
 
 	private: System::Windows::Forms::Label^ label10;
-	private: System::Windows::Forms::TextBox^ StMin;
+	private: System::Windows::Forms::TextBox^ StMin_tb;
+
 
 	private: System::Windows::Forms::Label^ label9;
 	private: System::Windows::Forms::GroupBox^ tree;
+	private: System::Windows::Forms::TextBox^ layers_tb;
 
-	private: System::Windows::Forms::TextBox^ layers;
+
 	private: System::Windows::Forms::Label^ label12;
 	private: System::Windows::Forms::CheckBox^ US;
 	private: System::Windows::Forms::CheckBox^ euro;
@@ -79,10 +91,14 @@ namespace FinAlgoProhect {
 	private: System::Windows::Forms::Label^ label13;
 	private: System::Windows::Forms::CheckBox^ put;
 	private: System::Windows::Forms::CheckBox^ call;
-	private: System::Windows::Forms::TextBox^ time_elapsed;
-	private: System::Windows::Forms::TextBox^ n_avg_prev;
-	private: System::Windows::Forms::TextBox^ n_avg;
-	private: System::Windows::Forms::TextBox^ StAve;
+	private: System::Windows::Forms::TextBox^ time_elapsed_tb;
+
+	private: System::Windows::Forms::TextBox^ n_avg_prev_tb;
+
+	private: System::Windows::Forms::TextBox^ n_avg_tb;
+
+	private: System::Windows::Forms::TextBox^ StAve_tb;
+
 	private: System::Windows::Forms::Label^ label16;
 	private: System::Windows::Forms::Label^ label15;
 	private: System::Windows::Forms::Label^ label14;
@@ -115,10 +131,10 @@ namespace FinAlgoProhect {
 			this->put = (gcnew System::Windows::Forms::CheckBox());
 			this->call = (gcnew System::Windows::Forms::CheckBox());
 			this->average = (gcnew System::Windows::Forms::GroupBox());
-			this->time_elapsed = (gcnew System::Windows::Forms::TextBox());
-			this->n_avg_prev = (gcnew System::Windows::Forms::TextBox());
-			this->n_avg = (gcnew System::Windows::Forms::TextBox());
-			this->StAve = (gcnew System::Windows::Forms::TextBox());
+			this->time_elapsed_tb = (gcnew System::Windows::Forms::TextBox());
+			this->n_avg_prev_tb = (gcnew System::Windows::Forms::TextBox());
+			this->n_avg_tb = (gcnew System::Windows::Forms::TextBox());
+			this->StAve_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label16 = (gcnew System::Windows::Forms::Label());
 			this->label15 = (gcnew System::Windows::Forms::Label());
 			this->label14 = (gcnew System::Windows::Forms::Label());
@@ -126,23 +142,23 @@ namespace FinAlgoProhect {
 			this->tree = (gcnew System::Windows::Forms::GroupBox());
 			this->US = (gcnew System::Windows::Forms::CheckBox());
 			this->euro = (gcnew System::Windows::Forms::CheckBox());
-			this->layers = (gcnew System::Windows::Forms::TextBox());
+			this->layers_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label12 = (gcnew System::Windows::Forms::Label());
 			this->lookback = (gcnew System::Windows::Forms::GroupBox());
-			this->n_lookback = (gcnew System::Windows::Forms::TextBox());
+			this->n_lookback_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label11 = (gcnew System::Windows::Forms::Label());
-			this->StMax = (gcnew System::Windows::Forms::TextBox());
+			this->StMax_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label10 = (gcnew System::Windows::Forms::Label());
-			this->StMin = (gcnew System::Windows::Forms::TextBox());
+			this->StMin_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label9 = (gcnew System::Windows::Forms::Label());
-			this->rep = (gcnew System::Windows::Forms::TextBox());
-			this->sims = (gcnew System::Windows::Forms::TextBox());
-			this->sigma = (gcnew System::Windows::Forms::TextBox());
-			this->q = (gcnew System::Windows::Forms::TextBox());
-			this->r = (gcnew System::Windows::Forms::TextBox());
-			this->T = (gcnew System::Windows::Forms::TextBox());
-			this->K = (gcnew System::Windows::Forms::TextBox());
-			this->St = (gcnew System::Windows::Forms::TextBox());
+			this->rep_tb = (gcnew System::Windows::Forms::TextBox());
+			this->sims_tb = (gcnew System::Windows::Forms::TextBox());
+			this->sigma_tb = (gcnew System::Windows::Forms::TextBox());
+			this->q_tb = (gcnew System::Windows::Forms::TextBox());
+			this->r_tb = (gcnew System::Windows::Forms::TextBox());
+			this->T_tb = (gcnew System::Windows::Forms::TextBox());
+			this->K_tb = (gcnew System::Windows::Forms::TextBox());
+			this->St_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label8 = (gcnew System::Windows::Forms::Label());
 			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
@@ -195,14 +211,14 @@ namespace FinAlgoProhect {
 			this->inputBox->Controls->Add(this->average);
 			this->inputBox->Controls->Add(this->tree);
 			this->inputBox->Controls->Add(this->lookback);
-			this->inputBox->Controls->Add(this->rep);
-			this->inputBox->Controls->Add(this->sims);
-			this->inputBox->Controls->Add(this->sigma);
-			this->inputBox->Controls->Add(this->q);
-			this->inputBox->Controls->Add(this->r);
-			this->inputBox->Controls->Add(this->T);
-			this->inputBox->Controls->Add(this->K);
-			this->inputBox->Controls->Add(this->St);
+			this->inputBox->Controls->Add(this->rep_tb);
+			this->inputBox->Controls->Add(this->sims_tb);
+			this->inputBox->Controls->Add(this->sigma_tb);
+			this->inputBox->Controls->Add(this->q_tb);
+			this->inputBox->Controls->Add(this->r_tb);
+			this->inputBox->Controls->Add(this->T_tb);
+			this->inputBox->Controls->Add(this->K_tb);
+			this->inputBox->Controls->Add(this->St_tb);
 			this->inputBox->Controls->Add(this->label8);
 			this->inputBox->Controls->Add(this->label7);
 			this->inputBox->Controls->Add(this->label6);
@@ -242,10 +258,10 @@ namespace FinAlgoProhect {
 			// 
 			// average
 			// 
-			this->average->Controls->Add(this->time_elapsed);
-			this->average->Controls->Add(this->n_avg_prev);
-			this->average->Controls->Add(this->n_avg);
-			this->average->Controls->Add(this->StAve);
+			this->average->Controls->Add(this->time_elapsed_tb);
+			this->average->Controls->Add(this->n_avg_prev_tb);
+			this->average->Controls->Add(this->n_avg_tb);
+			this->average->Controls->Add(this->StAve_tb);
 			this->average->Controls->Add(this->label16);
 			this->average->Controls->Add(this->label15);
 			this->average->Controls->Add(this->label14);
@@ -259,33 +275,33 @@ namespace FinAlgoProhect {
 			this->average->TabStop = false;
 			this->average->Text = L"Average Option";
 			// 
-			// time_elapsed
+			// time_elapsed_tb
 			// 
-			this->time_elapsed->Location = System::Drawing::Point(219, 130);
-			this->time_elapsed->Name = L"time_elapsed";
-			this->time_elapsed->Size = System::Drawing::Size(71, 29);
-			this->time_elapsed->TabIndex = 33;
+			this->time_elapsed_tb->Location = System::Drawing::Point(219, 130);
+			this->time_elapsed_tb->Name = L"time_elapsed_tb";
+			this->time_elapsed_tb->Size = System::Drawing::Size(71, 29);
+			this->time_elapsed_tb->TabIndex = 33;
 			// 
-			// n_avg_prev
+			// n_avg_prev_tb
 			// 
-			this->n_avg_prev->Location = System::Drawing::Point(219, 95);
-			this->n_avg_prev->Name = L"n_avg_prev";
-			this->n_avg_prev->Size = System::Drawing::Size(71, 29);
-			this->n_avg_prev->TabIndex = 32;
+			this->n_avg_prev_tb->Location = System::Drawing::Point(219, 95);
+			this->n_avg_prev_tb->Name = L"n_avg_prev_tb";
+			this->n_avg_prev_tb->Size = System::Drawing::Size(71, 29);
+			this->n_avg_prev_tb->TabIndex = 32;
 			// 
-			// n_avg
+			// n_avg_tb
 			// 
-			this->n_avg->Location = System::Drawing::Point(219, 60);
-			this->n_avg->Name = L"n_avg";
-			this->n_avg->Size = System::Drawing::Size(71, 29);
-			this->n_avg->TabIndex = 31;
+			this->n_avg_tb->Location = System::Drawing::Point(219, 60);
+			this->n_avg_tb->Name = L"n_avg_tb";
+			this->n_avg_tb->Size = System::Drawing::Size(71, 29);
+			this->n_avg_tb->TabIndex = 31;
 			// 
-			// StAve
+			// StAve_tb
 			// 
-			this->StAve->Location = System::Drawing::Point(219, 25);
-			this->StAve->Name = L"StAve";
-			this->StAve->Size = System::Drawing::Size(71, 29);
-			this->StAve->TabIndex = 30;
+			this->StAve_tb->Location = System::Drawing::Point(219, 25);
+			this->StAve_tb->Name = L"StAve_tb";
+			this->StAve_tb->Size = System::Drawing::Size(71, 29);
+			this->StAve_tb->TabIndex = 30;
 			// 
 			// label16
 			// 
@@ -335,7 +351,7 @@ namespace FinAlgoProhect {
 			// 
 			this->tree->Controls->Add(this->US);
 			this->tree->Controls->Add(this->euro);
-			this->tree->Controls->Add(this->layers);
+			this->tree->Controls->Add(this->layers_tb);
 			this->tree->Controls->Add(this->label12);
 			this->tree->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
@@ -366,12 +382,12 @@ namespace FinAlgoProhect {
 			this->euro->Text = L"European";
 			this->euro->UseVisualStyleBackColor = true;
 			// 
-			// layers
+			// layers_tb
 			// 
-			this->layers->Location = System::Drawing::Point(213, 27);
-			this->layers->Name = L"layers";
-			this->layers->Size = System::Drawing::Size(71, 29);
-			this->layers->TabIndex = 27;
+			this->layers_tb->Location = System::Drawing::Point(213, 27);
+			this->layers_tb->Name = L"layers_tb";
+			this->layers_tb->Size = System::Drawing::Size(71, 29);
+			this->layers_tb->TabIndex = 27;
 			// 
 			// label12
 			// 
@@ -386,11 +402,11 @@ namespace FinAlgoProhect {
 			// 
 			// lookback
 			// 
-			this->lookback->Controls->Add(this->n_lookback);
+			this->lookback->Controls->Add(this->n_lookback_tb);
 			this->lookback->Controls->Add(this->label11);
-			this->lookback->Controls->Add(this->StMax);
+			this->lookback->Controls->Add(this->StMax_tb);
 			this->lookback->Controls->Add(this->label10);
-			this->lookback->Controls->Add(this->StMin);
+			this->lookback->Controls->Add(this->StMin_tb);
 			this->lookback->Controls->Add(this->label9);
 			this->lookback->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
@@ -401,14 +417,14 @@ namespace FinAlgoProhect {
 			this->lookback->TabStop = false;
 			this->lookback->Text = L"Lookback Option";
 			// 
-			// n_lookback
+			// n_lookback_tb
 			// 
-			this->n_lookback->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->n_lookback_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->n_lookback->Location = System::Drawing::Point(213, 92);
-			this->n_lookback->Name = L"n_lookback";
-			this->n_lookback->Size = System::Drawing::Size(71, 26);
-			this->n_lookback->TabIndex = 26;
+			this->n_lookback_tb->Location = System::Drawing::Point(213, 92);
+			this->n_lookback_tb->Name = L"n_lookback_tb";
+			this->n_lookback_tb->Size = System::Drawing::Size(71, 26);
+			this->n_lookback_tb->TabIndex = 26;
 			// 
 			// label11
 			// 
@@ -421,14 +437,14 @@ namespace FinAlgoProhect {
 			this->label11->TabIndex = 21;
 			this->label11->Text = L"Trading days";
 			// 
-			// StMax
+			// StMax_tb
 			// 
-			this->StMax->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->StMax_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->StMax->Location = System::Drawing::Point(213, 60);
-			this->StMax->Name = L"StMax";
-			this->StMax->Size = System::Drawing::Size(71, 26);
-			this->StMax->TabIndex = 25;
+			this->StMax_tb->Location = System::Drawing::Point(213, 60);
+			this->StMax_tb->Name = L"StMax_tb";
+			this->StMax_tb->Size = System::Drawing::Size(71, 26);
+			this->StMax_tb->TabIndex = 25;
 			// 
 			// label10
 			// 
@@ -441,14 +457,14 @@ namespace FinAlgoProhect {
 			this->label10->TabIndex = 22;
 			this->label10->Text = L"Smax,t (for Put)";
 			// 
-			// StMin
+			// StMin_tb
 			// 
-			this->StMin->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->StMin_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->StMin->Location = System::Drawing::Point(213, 28);
-			this->StMin->Name = L"StMin";
-			this->StMin->Size = System::Drawing::Size(71, 26);
-			this->StMin->TabIndex = 24;
+			this->StMin_tb->Location = System::Drawing::Point(213, 28);
+			this->StMin_tb->Name = L"StMin_tb";
+			this->StMin_tb->Size = System::Drawing::Size(71, 26);
+			this->StMin_tb->TabIndex = 24;
 			// 
 			// label9
 			// 
@@ -461,77 +477,77 @@ namespace FinAlgoProhect {
 			this->label9->TabIndex = 23;
 			this->label9->Text = L"Smin,t (for Call)";
 			// 
-			// rep
+			// rep_tb
 			// 
-			this->rep->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->rep_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->rep->Location = System::Drawing::Point(148, 262);
-			this->rep->Name = L"rep";
-			this->rep->Size = System::Drawing::Size(71, 26);
-			this->rep->TabIndex = 19;
+			this->rep_tb->Location = System::Drawing::Point(148, 262);
+			this->rep_tb->Name = L"rep_tb";
+			this->rep_tb->Size = System::Drawing::Size(71, 26);
+			this->rep_tb->TabIndex = 19;
 			// 
-			// sims
+			// sims_tb
 			// 
-			this->sims->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->sims_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->sims->Location = System::Drawing::Point(148, 230);
-			this->sims->Name = L"sims";
-			this->sims->Size = System::Drawing::Size(71, 26);
-			this->sims->TabIndex = 18;
+			this->sims_tb->Location = System::Drawing::Point(148, 230);
+			this->sims_tb->Name = L"sims_tb";
+			this->sims_tb->Size = System::Drawing::Size(71, 26);
+			this->sims_tb->TabIndex = 18;
 			// 
-			// sigma
+			// sigma_tb
 			// 
-			this->sigma->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->sigma_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->sigma->Location = System::Drawing::Point(148, 198);
-			this->sigma->Name = L"sigma";
-			this->sigma->Size = System::Drawing::Size(71, 26);
-			this->sigma->TabIndex = 17;
+			this->sigma_tb->Location = System::Drawing::Point(148, 198);
+			this->sigma_tb->Name = L"sigma_tb";
+			this->sigma_tb->Size = System::Drawing::Size(71, 26);
+			this->sigma_tb->TabIndex = 17;
 			// 
-			// q
+			// q_tb
 			// 
-			this->q->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->q_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->q->Location = System::Drawing::Point(148, 166);
-			this->q->Name = L"q";
-			this->q->Size = System::Drawing::Size(71, 26);
-			this->q->TabIndex = 16;
+			this->q_tb->Location = System::Drawing::Point(148, 166);
+			this->q_tb->Name = L"q_tb";
+			this->q_tb->Size = System::Drawing::Size(71, 26);
+			this->q_tb->TabIndex = 16;
 			// 
-			// r
+			// r_tb
 			// 
-			this->r->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->r_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->r->Location = System::Drawing::Point(148, 134);
-			this->r->Name = L"r";
-			this->r->Size = System::Drawing::Size(71, 26);
-			this->r->TabIndex = 15;
+			this->r_tb->Location = System::Drawing::Point(148, 134);
+			this->r_tb->Name = L"r_tb";
+			this->r_tb->Size = System::Drawing::Size(71, 26);
+			this->r_tb->TabIndex = 15;
 			// 
-			// T
+			// T_tb
 			// 
-			this->T->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->T_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->T->Location = System::Drawing::Point(148, 103);
-			this->T->Name = L"T";
-			this->T->Size = System::Drawing::Size(71, 26);
-			this->T->TabIndex = 14;
+			this->T_tb->Location = System::Drawing::Point(148, 103);
+			this->T_tb->Name = L"T_tb";
+			this->T_tb->Size = System::Drawing::Size(71, 26);
+			this->T_tb->TabIndex = 14;
 			// 
-			// K
+			// K_tb
 			// 
-			this->K->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->K_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->K->Location = System::Drawing::Point(148, 71);
-			this->K->Name = L"K";
-			this->K->Size = System::Drawing::Size(71, 26);
-			this->K->TabIndex = 13;
+			this->K_tb->Location = System::Drawing::Point(148, 71);
+			this->K_tb->Name = L"K_tb";
+			this->K_tb->Size = System::Drawing::Size(71, 26);
+			this->K_tb->TabIndex = 13;
 			// 
-			// St
+			// St_tb
 			// 
-			this->St->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->St_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->St->Location = System::Drawing::Point(148, 39);
-			this->St->Name = L"St";
-			this->St->Size = System::Drawing::Size(71, 26);
-			this->St->TabIndex = 12;
+			this->St_tb->Location = System::Drawing::Point(148, 39);
+			this->St_tb->Name = L"St_tb";
+			this->St_tb->Size = System::Drawing::Size(71, 26);
+			this->St_tb->TabIndex = 12;
 			// 
 			// label8
 			// 
@@ -657,6 +673,7 @@ namespace FinAlgoProhect {
 			this->calc->TabIndex = 4;
 			this->calc->Text = L"Calculate !";
 			this->calc->UseVisualStyleBackColor = true;
+			this->calc->Click += gcnew System::EventHandler(this, &mainForm::calc_Click);
 			// 
 			// author
 			// 
@@ -712,5 +729,19 @@ namespace FinAlgoProhect {
 
 		}
 #pragma endregion
-	};
+	private: System::Void calc_Click(System::Object^ sender, System::EventArgs^ e) {
+		// American Option(CRR)
+		// European Option(CRR)
+		// European Option(MC)
+		// Lookback European Option(MC)
+		// Average European Option(MC)
+		
+		// double^ St = std::stod(this->St->Text);
+
+	
+
+
+
+	}
+};
 }
