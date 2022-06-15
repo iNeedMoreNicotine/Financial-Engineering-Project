@@ -1,6 +1,0 @@
-﻿  mainForm.cpp
-  .NETFramework,Version=v4.8.AssemblyAttributes.cpp
-  正在產生程式碼...
-  mainForm.obj : 發現 MSIL 模組。MSIL 的累加連結已停用。正在執行完整連結
-LINK : error LNK2001: 無法解析的外部符號 main
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinAlgo_Prohect\x64\Debug\FinAlgo_Prohect.exe : fatal error LNK1120: 1 個無法解析的外部符號
