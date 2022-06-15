@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <string>
 
 namespace FinAlgoProhect {
 
@@ -85,12 +86,12 @@ namespace FinAlgoProhect {
 
 
 	private: System::Windows::Forms::Label^ label12;
-	private: System::Windows::Forms::CheckBox^ US;
-	private: System::Windows::Forms::CheckBox^ euro;
+
+
 	private: System::Windows::Forms::GroupBox^ average;
 	private: System::Windows::Forms::Label^ label13;
-	private: System::Windows::Forms::CheckBox^ put;
-	private: System::Windows::Forms::CheckBox^ call;
+
+
 	private: System::Windows::Forms::TextBox^ time_elapsed_tb;
 
 	private: System::Windows::Forms::TextBox^ n_avg_prev_tb;
@@ -106,6 +107,15 @@ namespace FinAlgoProhect {
 	private: System::Windows::Forms::Label^ outputString;
 	private: System::Windows::Forms::Label^ author;
 	private: System::Windows::Forms::Label^ email;
+	private: System::Windows::Forms::RadioButton^ US;
+	private: System::Windows::Forms::RadioButton^ EU;
+	private: System::Windows::Forms::GroupBox^ call_put;
+	private: System::Windows::Forms::RadioButton^ put;
+	private: System::Windows::Forms::RadioButton^ call;
+
+
+
+
 
 
 
@@ -128,8 +138,9 @@ namespace FinAlgoProhect {
 			this->outputBox = (gcnew System::Windows::Forms::GroupBox());
 			this->outputString = (gcnew System::Windows::Forms::Label());
 			this->inputBox = (gcnew System::Windows::Forms::GroupBox());
-			this->put = (gcnew System::Windows::Forms::CheckBox());
-			this->call = (gcnew System::Windows::Forms::CheckBox());
+			this->call_put = (gcnew System::Windows::Forms::GroupBox());
+			this->put = (gcnew System::Windows::Forms::RadioButton());
+			this->call = (gcnew System::Windows::Forms::RadioButton());
 			this->average = (gcnew System::Windows::Forms::GroupBox());
 			this->time_elapsed_tb = (gcnew System::Windows::Forms::TextBox());
 			this->n_avg_prev_tb = (gcnew System::Windows::Forms::TextBox());
@@ -140,8 +151,8 @@ namespace FinAlgoProhect {
 			this->label14 = (gcnew System::Windows::Forms::Label());
 			this->label13 = (gcnew System::Windows::Forms::Label());
 			this->tree = (gcnew System::Windows::Forms::GroupBox());
-			this->US = (gcnew System::Windows::Forms::CheckBox());
-			this->euro = (gcnew System::Windows::Forms::CheckBox());
+			this->US = (gcnew System::Windows::Forms::RadioButton());
+			this->EU = (gcnew System::Windows::Forms::RadioButton());
 			this->layers_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label12 = (gcnew System::Windows::Forms::Label());
 			this->lookback = (gcnew System::Windows::Forms::GroupBox());
@@ -174,6 +185,7 @@ namespace FinAlgoProhect {
 			this->email = (gcnew System::Windows::Forms::Label());
 			this->outputBox->SuspendLayout();
 			this->inputBox->SuspendLayout();
+			this->call_put->SuspendLayout();
 			this->average->SuspendLayout();
 			this->tree->SuspendLayout();
 			this->lookback->SuspendLayout();
@@ -206,8 +218,7 @@ namespace FinAlgoProhect {
 			// 
 			// inputBox
 			// 
-			this->inputBox->Controls->Add(this->put);
-			this->inputBox->Controls->Add(this->call);
+			this->inputBox->Controls->Add(this->call_put);
 			this->inputBox->Controls->Add(this->average);
 			this->inputBox->Controls->Add(this->tree);
 			this->inputBox->Controls->Add(this->lookback);
@@ -236,24 +247,41 @@ namespace FinAlgoProhect {
 			this->inputBox->TabStop = false;
 			this->inputBox->Text = L"Inputs";
 			// 
+			// call_put
+			// 
+			this->call_put->Controls->Add(this->put);
+			this->call_put->Controls->Add(this->call);
+			this->call_put->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->call_put->Location = System::Drawing::Point(605, 207);
+			this->call_put->Name = L"call_put";
+			this->call_put->Size = System::Drawing::Size(303, 81);
+			this->call_put->TabIndex = 23;
+			this->call_put->TabStop = false;
+			this->call_put->Text = L"Call / Put";
+			// 
 			// put
 			// 
 			this->put->AutoSize = true;
-			this->put->Location = System::Drawing::Point(674, 251);
+			this->put->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->put->Location = System::Drawing::Point(181, 34);
 			this->put->Name = L"put";
-			this->put->Size = System::Drawing::Size(171, 31);
-			this->put->TabIndex = 24;
-			this->put->Text = L"Put Option";
+			this->put->Size = System::Drawing::Size(67, 27);
+			this->put->TabIndex = 1;
+			this->put->Text = L"Put";
 			this->put->UseVisualStyleBackColor = true;
 			// 
 			// call
 			// 
 			this->call->AutoSize = true;
-			this->call->Location = System::Drawing::Point(674, 219);
+			this->call->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->call->Location = System::Drawing::Point(51, 34);
 			this->call->Name = L"call";
-			this->call->Size = System::Drawing::Size(185, 31);
-			this->call->TabIndex = 23;
-			this->call->Text = L"Call Option";
+			this->call->Size = System::Drawing::Size(80, 27);
+			this->call->TabIndex = 0;
+			this->call->Text = L"Call";
 			this->call->UseVisualStyleBackColor = true;
 			// 
 			// average
@@ -350,7 +378,7 @@ namespace FinAlgoProhect {
 			// tree
 			// 
 			this->tree->Controls->Add(this->US);
-			this->tree->Controls->Add(this->euro);
+			this->tree->Controls->Add(this->EU);
 			this->tree->Controls->Add(this->layers_tb);
 			this->tree->Controls->Add(this->label12);
 			this->tree->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
@@ -365,22 +393,22 @@ namespace FinAlgoProhect {
 			// US
 			// 
 			this->US->AutoSize = true;
-			this->US->Location = System::Drawing::Point(167, 74);
+			this->US->Location = System::Drawing::Point(168, 75);
 			this->US->Name = L"US";
-			this->US->Size = System::Drawing::Size(117, 26);
+			this->US->Size = System::Drawing::Size(116, 26);
 			this->US->TabIndex = 29;
 			this->US->Text = L"American";
 			this->US->UseVisualStyleBackColor = true;
 			// 
-			// euro
+			// EU
 			// 
-			this->euro->AutoSize = true;
-			this->euro->Location = System::Drawing::Point(22, 74);
-			this->euro->Name = L"euro";
-			this->euro->Size = System::Drawing::Size(117, 26);
-			this->euro->TabIndex = 28;
-			this->euro->Text = L"European";
-			this->euro->UseVisualStyleBackColor = true;
+			this->EU->AutoSize = true;
+			this->EU->Location = System::Drawing::Point(13, 75);
+			this->EU->Name = L"EU";
+			this->EU->Size = System::Drawing::Size(116, 26);
+			this->EU->TabIndex = 28;
+			this->EU->Text = L"European";
+			this->EU->UseVisualStyleBackColor = true;
 			// 
 			// layers_tb
 			// 
@@ -718,6 +746,8 @@ namespace FinAlgoProhect {
 			this->outputBox->PerformLayout();
 			this->inputBox->ResumeLayout(false);
 			this->inputBox->PerformLayout();
+			this->call_put->ResumeLayout(false);
+			this->call_put->PerformLayout();
 			this->average->ResumeLayout(false);
 			this->average->PerformLayout();
 			this->tree->ResumeLayout(false);
@@ -736,9 +766,51 @@ namespace FinAlgoProhect {
 		// Lookback European Option(MC)
 		// Average European Option(MC)
 		
-		// double^ St = std::stod(this->St->Text);
 
-	
+		// General
+		String^ St_string = St_tb->Text;
+		String^ K_string = K_tb->Text;
+		String^ T_string = T_tb->Text;
+		String^ r_string = r_tb->Text;
+		String^ q_string = q_tb->Text;
+		String^ sigma_string = sigma_tb->Text;
+
+		double St = System::Convert::ToDouble(St_string);
+		double K = System::Convert::ToDouble(K_string);
+		double T = System::Convert::ToDouble(T_string);
+		double r = System::Convert::ToDouble(r_string);
+		double q = System::Convert::ToDouble(q_string);
+		double sigma = System::Convert::ToDouble(sigma_string);
+
+		// General MC
+		String^ sims_string = sims_tb->Text;
+		String^ rep_string = rep_tb->Text;
+		int sims = System::Convert::ToInt64(sims_string);
+		int rep = System::Convert::ToInt64(rep_string);
+
+		// Lookback MC
+		String^ StMin_string = StMin_tb->Text;
+		String^ StMax_string = StMax_tb->Text;
+		String^ n_string = n_lookback_tb->Text;
+
+		double StMin = System::Convert::ToDouble(StMin_string);
+		double StMax = System::Convert::ToDouble(StMax_string);
+		int n = System::Convert::ToInt64(n_string);
+
+		// Average MC
+		String^ StAve_string = StAve_tb->Text;
+		String^ n_string = n_avg_tb->Text;
+		String^ n_prev_string = n_avg_prev_tb->Text;
+		String^ time_elapsed_string = time_elapsed_tb->Text;
+
+		double StAve = System::Convert::ToDouble(StAve_string);
+		int n = System::Convert::ToInt64(n_string);
+		int n_prev = System::Convert::ToInt64(n_prev_string);
+		double time_elapsed = System::Convert::ToDouble(time_elapsed_string);
+
+		// Tree
+		String^ layers_string = layers_tb->Text;
+		int layers = System::Convert::ToInt64(layers_string);
 
 
 
