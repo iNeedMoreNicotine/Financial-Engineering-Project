@@ -29,7 +29,10 @@ vector<double> monte_carlo_European(double S0, double K, double T, double r, dou
             for(int j = 0; j < sims; j++){
                 optionValue.push_back(max(stockSamples[j] - K, 0.0));
             }
-            double sum = accumulate(begin(optionValue), end(optionValue), 0.0);
+            double sum = 0;
+            for(int k = 0; k < sims; k++){
+                sum += optionValue[k];
+            }
             double mean = sum/sims;
             double discounted = mean * exp(-r*T);
             meanLst.push_back(discounted);
@@ -39,7 +42,10 @@ vector<double> monte_carlo_European(double S0, double K, double T, double r, dou
             for(int l = 0; l < sims; l++){
                 optionValue.push_back(max(K - stockSamples[l], 0.0));
             }
-            double sum = accumulate(begin(optionValue), end(optionValue), 0.0);
+            double sum = 0;
+            for(int k = 0; k < sims; k++){
+                sum += optionValue[k];
+            }
             double mean = sum/sims;
             double discounted = mean * exp(-r*T);
             meanLst.push_back(discounted);
