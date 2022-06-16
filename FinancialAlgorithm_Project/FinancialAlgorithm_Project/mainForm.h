@@ -118,7 +118,7 @@ namespace FinAlgoProject {
 	private: System::Windows::Forms::Label^ label15;
 	private: System::Windows::Forms::Label^ label14;
 	private: System::Windows::Forms::Button^ calc;
-	private: System::Windows::Forms::Label^ outputString;
+
 	private: System::Windows::Forms::Label^ author;
 	private: System::Windows::Forms::Label^ email;
 
@@ -133,6 +133,7 @@ namespace FinAlgoProject {
 private: System::Windows::Forms::RadioButton^ EU_avg_MC;
 private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 private: System::Windows::Forms::Label^ label17;
+private: System::Windows::Forms::Label^ outputString;
 
 
 
@@ -176,6 +177,7 @@ private: System::Windows::Forms::Label^ label17;
 			this->layers_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label12 = (gcnew System::Windows::Forms::Label());
 			this->lookback = (gcnew System::Windows::Forms::GroupBox());
+			this->label17 = (gcnew System::Windows::Forms::Label());
 			this->n_lookback_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label11 = (gcnew System::Windows::Forms::Label());
 			this->StMax_tb = (gcnew System::Windows::Forms::TextBox());
@@ -207,7 +209,6 @@ private: System::Windows::Forms::Label^ label17;
 			this->US_CRR = (gcnew System::Windows::Forms::RadioButton());
 			this->EU_CRR = (gcnew System::Windows::Forms::RadioButton());
 			this->EU_MC = (gcnew System::Windows::Forms::RadioButton());
-			this->label17 = (gcnew System::Windows::Forms::Label());
 			this->outputBox->SuspendLayout();
 			this->inputBox->SuspendLayout();
 			this->call_put->SuspendLayout();
@@ -226,7 +227,7 @@ private: System::Windows::Forms::Label^ label17;
 			this->outputBox->ForeColor = System::Drawing::SystemColors::Control;
 			this->outputBox->Location = System::Drawing::Point(22, 485);
 			this->outputBox->Name = L"outputBox";
-			this->outputBox->Size = System::Drawing::Size(936, 321);
+			this->outputBox->Size = System::Drawing::Size(936, 267);
 			this->outputBox->TabIndex = 0;
 			this->outputBox->TabStop = false;
 			this->outputBox->Text = L"Output";
@@ -234,11 +235,11 @@ private: System::Windows::Forms::Label^ label17;
 			// outputString
 			// 
 			this->outputString->AutoSize = true;
-			this->outputString->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->outputString->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->outputString->Location = System::Drawing::Point(15, 31);
 			this->outputString->Name = L"outputString";
-			this->outputString->Size = System::Drawing::Size(248, 18);
+			this->outputString->Size = System::Drawing::Size(274, 22);
 			this->outputString->TabIndex = 0;
 			this->outputString->Text = L"Waiting for execution...";
 			// 
@@ -449,6 +450,17 @@ private: System::Windows::Forms::Label^ label17;
 			this->lookback->TabIndex = 20;
 			this->lookback->TabStop = false;
 			this->lookback->Text = L"Lookback Option";
+			// 
+			// label17
+			// 
+			this->label17->AutoSize = true;
+			this->label17->Font = (gcnew System::Drawing::Font(L"Courier New", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label17->Location = System::Drawing::Point(64, 130);
+			this->label17->Name = L"label17";
+			this->label17->Size = System::Drawing::Size(176, 34);
+			this->label17->TabIndex = 27;
+			this->label17->Text = L"(Lookback Option \r\nwith floating strike)";
 			// 
 			// n_lookback_tb
 			// 
@@ -687,7 +699,7 @@ private: System::Windows::Forms::Label^ label17;
 			this->author->AutoSize = true;
 			this->author->Font = (gcnew System::Drawing::Font(L"Calibri", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->author->Location = System::Drawing::Point(26, 824);
+			this->author->Location = System::Drawing::Point(21, 769);
 			this->author->Name = L"author";
 			this->author->Size = System::Drawing::Size(520, 19);
 			this->author->TabIndex = 5;
@@ -698,7 +710,7 @@ private: System::Windows::Forms::Label^ label17;
 			this->email->AutoSize = true;
 			this->email->Font = (gcnew System::Drawing::Font(L"Calibri", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->email->Location = System::Drawing::Point(26, 853);
+			this->email->Location = System::Drawing::Point(21, 798);
 			this->email->Name = L"email";
 			this->email->Size = System::Drawing::Size(247, 19);
 			this->email->TabIndex = 6;
@@ -785,31 +797,20 @@ private: System::Windows::Forms::Label^ label17;
 			this->EU_MC->Text = L"European MC";
 			this->EU_MC->UseVisualStyleBackColor = true;
 			// 
-			// label17
-			// 
-			this->label17->AutoSize = true;
-			this->label17->Font = (gcnew System::Drawing::Font(L"Courier New", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->label17->Location = System::Drawing::Point(64, 130);
-			this->label17->Name = L"label17";
-			this->label17->Size = System::Drawing::Size(176, 34);
-			this->label17->TabIndex = 27;
-			this->label17->Text = L"(Lookback Option \r\nwith floating strike)";
-			// 
 			// mainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Menu;
-			this->ClientSize = System::Drawing::Size(984, 886);
+			this->ClientSize = System::Drawing::Size(984, 836);
 			this->Controls->Add(this->models);
 			this->Controls->Add(this->email);
 			this->Controls->Add(this->author);
 			this->Controls->Add(this->calc);
 			this->Controls->Add(this->inputBox);
 			this->Controls->Add(this->outputBox);
-			this->MaximumSize = System::Drawing::Size(1000, 925);
-			this->MinimumSize = System::Drawing::Size(1000, 925);
+			this->MaximumSize = System::Drawing::Size(1000, 875);
+			this->MinimumSize = System::Drawing::Size(1000, 875);
 			this->Name = L"mainForm";
 			this->Text = L"Option Price Calculator";
 			this->outputBox->ResumeLayout(false);
@@ -839,6 +840,8 @@ private: System::Windows::Forms::Label^ label17;
 		// Average European Option(MC)
 		
 
+
+
 		// General
 		String^ St_string = St_tb->Text;
 		String^ K_string = K_tb->Text;
@@ -854,13 +857,98 @@ private: System::Windows::Forms::Label^ label17;
 		double q = System::Convert::ToDouble(q_string);
 		double sigma = System::Convert::ToDouble(sigma_string);
 
+
+
+
 		// General MC
 		if (EU_MC->Checked == true) {
 			String^ sims_string = sims_tb->Text;
 			String^ rep_string = rep_tb->Text;
 			int sims = System::Convert::ToInt64(sims_string);
 			int rep = System::Convert::ToInt64(rep_string);
+
+			if (call->Checked == true) { string call_put = "call"; }
+			else if (put->Checked == true) { string call_put = "put"; }
+
+			// start calulatiing...
+			vector<double> meanLst;
+			int times = 0;
+
+			default_random_engine generator;
+			generator.seed(chrono::system_clock::now().time_since_epoch().count());
+			normal_distribution<double> distribution(log(St) + (r - q - 0.5 * (pow(sigma, 2))) * T, sigma * sqrt(T));
+
+			while (times < rep) {
+				vector<double> stockSamples;
+				for (int i = 0; i < sims; i++) {
+					double lnSample = distribution(generator);
+					// cout << lnSample << endl;
+					double sample = exp(lnSample);
+					// cout << sample << endl;
+					stockSamples.push_back(sample);
+				}
+
+				vector<double> optionValue;
+				if (call->Checked == true) {
+					for (int j = 0; j < sims; j++) {
+						optionValue.push_back(max(stockSamples[j] - K, 0.0));
+					}
+					double sum = 0;
+					for (int k = 0; k < sims; k++) {
+						sum += optionValue[k];
+					}
+					double mean = sum / sims;
+					double discounted = mean * exp(-r * T);
+					meanLst.push_back(discounted);
+					times += 1;
+				}
+				else if (put->Checked == true) {
+					for (int l = 0; l < sims; l++) {
+						optionValue.push_back(max(K - stockSamples[l], 0.0));
+					}
+					double sum = 0;
+					for (int k = 0; k < sims; k++) {
+						sum += optionValue[k];
+					}
+					double mean = sum / sims;
+					double discounted = mean * exp(-r * T);
+					meanLst.push_back(discounted);
+					times += 1;
+				}
+			}
+
+			double sum_mean = 0;
+			for (int i = 0; i < rep; i++) {
+				sum_mean += meanLst[i];
+			}
+			double meanOfRep = sum_mean / rep;
+
+			double var = 0.0;
+			for (int n = 0; n < rep; n++) {
+				var += (meanLst[n] - meanOfRep) * (meanLst[n] - meanOfRep);
+			}
+			var = var / rep;
+			double sdOfRep = sqrt(var);
+			double upper = meanOfRep + 2 * sdOfRep;
+			double lower = meanOfRep - 2 * sdOfRep;
+
+			//round
+			meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
+			sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
+			upper = round(upper * 1000.0) / 1000.0;
+			lower = round(lower * 1000.0) / 1000.0;
+
+			if (call->Checked == true) {
+				this->outputString->Text = "==================================================\nEuropean Call\n--------------------------------------------------\nmean : " 
+					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
+			}
+			else if (put->Checked == true) {
+				this->outputString->Text = "==================================================\nEuropean Put\n--------------------------------------------------\nmean : "
+					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
+			}
 		}
+
+
 
 		// Lookback MC
 		else if (EU_lb_MC->Checked == true) {
@@ -880,7 +968,12 @@ private: System::Windows::Forms::Label^ label17;
 				String^ StMax_string = StMax_tb->Text;
 				double StMax = System::Convert::ToDouble(StMax_string);
 			}
+
+			if (call->Checked == true) { string call_put = "call"; }
+			else if (put->Checked == true) { string call_put = "put"; }
 		}
+
+
 
 		// Average MC
 		else if (EU_avg_MC->Checked == true) {
@@ -897,18 +990,34 @@ private: System::Windows::Forms::Label^ label17;
 			double time_elapsed = System::Convert::ToDouble(time_elapsed_string);
 			int sims = System::Convert::ToInt64(sims_string);
 			int rep = System::Convert::ToInt64(rep_string);
+
+			if (call->Checked == true) { string call_put = "call"; }
+			else if (put->Checked == true) { string call_put = "put"; }
 		}
 
-		// Tree
+
+
+		// EU Tree
 		else if (EU_CRR->Checked == true) {
 			String^ layers_string = layers_tb->Text;
 			int layers = System::Convert::ToInt64(layers_string);
+
+			if (call->Checked == true) { string call_put = "call"; }
+			else if (put->Checked == true) { string call_put = "put"; }
 		}
 
+
+
+		// US Tree
 		else if (US_CRR->Checked == true) {
 			String^ layers_string = layers_tb->Text;
 			int layers = System::Convert::ToInt64(layers_string);
+
+			if (call->Checked == true) { string call_put = "call"; }
+			else if (put->Checked == true) { string call_put = "put"; }
 		}
+
+
 	}
 };
 }

@@ -15,5 +15,4 @@ void main(array<String^>^ args)
 	Application::SetCompatibleTextRenderingDefault(false);
 	FinAlgoProject::mainForm form;
 	Application::Run(%form);
-
 }
