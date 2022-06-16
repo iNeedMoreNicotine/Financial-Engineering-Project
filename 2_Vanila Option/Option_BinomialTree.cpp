@@ -35,9 +35,9 @@ double binomial_European(double S0, double K, double T, double r, double q, doub
     double d = exp(-sigma*sqrt(dt));
     double p = (exp((r-q)*dt) - d)/(u - d);
 
-    double stockPrice[layers+1];
+    vector<double> stockPrice;
     for(int j = 0; j < layers+1; j++){
-        stockPrice[j] = (S0 * pow(u, layers-j) * pow(d, j));
+        stockPrice.push_back((S0 * pow(u, layers-j) * pow(d, j)));
     }
 
     if(call_put == "call"){
@@ -107,11 +107,14 @@ double binomial_American(double S0, double K, double T, double r, double q, doub
         int times = 0;
         int i_temp = layers-1;
         while(times < layers){
-            double xValue[i_temp+1];
+            vector<double> xValue;
             for(int j = 0; j < i_temp+1; j++){
                 callPrice[j] = (callPrice[j]*p + callPrice[j+1]*(1-p)) * exp(-r*dt);
-                xValue[j] = max(stockPrice[i_temp][j] - K, 0.0);
-                callPrice[j] = max(callPrice[j], xValue[j]);
+            // calculate excersise value and compare it to holding value...
+            }
+            for(int k = 0; k < i_temp-1; k++){
+                xValue.push_back(max(stockPrice[i_temp][k] - K, 0.0));
+                callPrice[k] = max(callPrice[k], xValue[k]);
             }
             i_temp -= 1;
             times += 1;
@@ -128,11 +131,14 @@ double binomial_American(double S0, double K, double T, double r, double q, doub
         int times = 0;
         int i_temp = layers-1;
         while(times < layers){
-            double xValue[i_temp+1];
+            vector<double> xValue;
             for(int j = 0; j < i_temp+1; j++){
                 putPrice[j] = (putPrice[j]*p + putPrice[j+1]*(1-p)) * exp(-r*dt);
-                xValue[j] = max(K - stockPrice[i_temp][j], 0.0);
-                putPrice[j] = max(putPrice[j], xValue[j]);
+            // calculate excersise value and compare it to holding value...
+            }
+            for(int k = 0; k < i_temp+1; k++){
+                xValue.push_back(max(K - stockPrice[i_temp][k], 0.0));
+                putPrice[k] = max(putPrice[k], xValue[k]);
             }
             i_temp -= 1;
             times += 1;
@@ -154,7 +160,7 @@ int main(){
     double sigma = 0.4;
     double T = 0.5;
 
-    int layers = 5000;
+    int layers = 2000;
     cout << "============================================================" << endl;
     cout << "n = " << layers << endl; 
     cout << "-------------------------CALL-------------------------" << endl;
