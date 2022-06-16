@@ -132,6 +132,7 @@ namespace FinAlgoProject {
 	private: System::Windows::Forms::RadioButton^ EU_MC;
 private: System::Windows::Forms::RadioButton^ EU_avg_MC;
 private: System::Windows::Forms::RadioButton^ EU_lb_MC;
+private: System::Windows::Forms::Label^ label17;
 
 
 
@@ -201,11 +202,12 @@ private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 			this->author = (gcnew System::Windows::Forms::Label());
 			this->email = (gcnew System::Windows::Forms::Label());
 			this->models = (gcnew System::Windows::Forms::GroupBox());
-			this->EU_MC = (gcnew System::Windows::Forms::RadioButton());
-			this->EU_CRR = (gcnew System::Windows::Forms::RadioButton());
-			this->US_CRR = (gcnew System::Windows::Forms::RadioButton());
-			this->EU_lb_MC = (gcnew System::Windows::Forms::RadioButton());
 			this->EU_avg_MC = (gcnew System::Windows::Forms::RadioButton());
+			this->EU_lb_MC = (gcnew System::Windows::Forms::RadioButton());
+			this->US_CRR = (gcnew System::Windows::Forms::RadioButton());
+			this->EU_CRR = (gcnew System::Windows::Forms::RadioButton());
+			this->EU_MC = (gcnew System::Windows::Forms::RadioButton());
+			this->label17 = (gcnew System::Windows::Forms::Label());
 			this->outputBox->SuspendLayout();
 			this->inputBox->SuspendLayout();
 			this->call_put->SuspendLayout();
@@ -405,9 +407,9 @@ private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 			this->tree->Controls->Add(this->label12);
 			this->tree->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->tree->Location = System::Drawing::Point(272, 166);
+			this->tree->Location = System::Drawing::Point(272, 219);
 			this->tree->Name = L"tree";
-			this->tree->Size = System::Drawing::Size(306, 122);
+			this->tree->Size = System::Drawing::Size(306, 69);
 			this->tree->TabIndex = 21;
 			this->tree->TabStop = false;
 			this->tree->Text = L"Tree";
@@ -432,6 +434,7 @@ private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 			// 
 			// lookback
 			// 
+			this->lookback->Controls->Add(this->label17);
 			this->lookback->Controls->Add(this->n_lookback_tb);
 			this->lookback->Controls->Add(this->label11);
 			this->lookback->Controls->Add(this->StMax_tb);
@@ -442,7 +445,7 @@ private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 				static_cast<System::Byte>(0)));
 			this->lookback->Location = System::Drawing::Point(272, 29);
 			this->lookback->Name = L"lookback";
-			this->lookback->Size = System::Drawing::Size(306, 131);
+			this->lookback->Size = System::Drawing::Size(306, 184);
 			this->lookback->TabIndex = 20;
 			this->lookback->TabStop = false;
 			this->lookback->Text = L"Lookback Option";
@@ -717,44 +720,18 @@ private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 			this->models->TabStop = false;
 			this->models->Text = L"Pricing Models";
 			// 
-			// EU_MC
+			// EU_avg_MC
 			// 
-			this->EU_MC->AutoSize = true;
-			this->EU_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->EU_avg_MC->AutoSize = true;
+			this->EU_avg_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->EU_MC->Location = System::Drawing::Point(99, 34);
-			this->EU_MC->Name = L"EU_MC";
-			this->EU_MC->Size = System::Drawing::Size(149, 26);
-			this->EU_MC->TabIndex = 0;
-			this->EU_MC->TabStop = true;
-			this->EU_MC->Text = L"European MC";
-			this->EU_MC->UseVisualStyleBackColor = true;
-			// 
-			// EU_CRR
-			// 
-			this->EU_CRR->AutoSize = true;
-			this->EU_CRR->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->EU_CRR->Location = System::Drawing::Point(653, 34);
-			this->EU_CRR->Name = L"EU_CRR";
-			this->EU_CRR->Size = System::Drawing::Size(160, 26);
-			this->EU_CRR->TabIndex = 1;
-			this->EU_CRR->TabStop = true;
-			this->EU_CRR->Text = L"European CRR";
-			this->EU_CRR->UseVisualStyleBackColor = true;
-			// 
-			// US_CRR
-			// 
-			this->US_CRR->AutoSize = true;
-			this->US_CRR->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->US_CRR->Location = System::Drawing::Point(653, 66);
-			this->US_CRR->Name = L"US_CRR";
-			this->US_CRR->Size = System::Drawing::Size(160, 26);
-			this->US_CRR->TabIndex = 2;
-			this->US_CRR->TabStop = true;
-			this->US_CRR->Text = L"American CRR";
-			this->US_CRR->UseVisualStyleBackColor = true;
+			this->EU_avg_MC->Location = System::Drawing::Point(327, 66);
+			this->EU_avg_MC->Name = L"EU_avg_MC";
+			this->EU_avg_MC->Size = System::Drawing::Size(237, 26);
+			this->EU_avg_MC->TabIndex = 4;
+			this->EU_avg_MC->TabStop = true;
+			this->EU_avg_MC->Text = L"European average MC";
+			this->EU_avg_MC->UseVisualStyleBackColor = true;
 			// 
 			// EU_lb_MC
 			// 
@@ -769,18 +746,55 @@ private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 			this->EU_lb_MC->Text = L"European lookback MC";
 			this->EU_lb_MC->UseVisualStyleBackColor = true;
 			// 
-			// EU_avg_MC
+			// US_CRR
 			// 
-			this->EU_avg_MC->AutoSize = true;
-			this->EU_avg_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->US_CRR->AutoSize = true;
+			this->US_CRR->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->EU_avg_MC->Location = System::Drawing::Point(327, 66);
-			this->EU_avg_MC->Name = L"EU_avg_MC";
-			this->EU_avg_MC->Size = System::Drawing::Size(237, 26);
-			this->EU_avg_MC->TabIndex = 4;
-			this->EU_avg_MC->TabStop = true;
-			this->EU_avg_MC->Text = L"European average MC";
-			this->EU_avg_MC->UseVisualStyleBackColor = true;
+			this->US_CRR->Location = System::Drawing::Point(653, 66);
+			this->US_CRR->Name = L"US_CRR";
+			this->US_CRR->Size = System::Drawing::Size(160, 26);
+			this->US_CRR->TabIndex = 2;
+			this->US_CRR->TabStop = true;
+			this->US_CRR->Text = L"American CRR";
+			this->US_CRR->UseVisualStyleBackColor = true;
+			// 
+			// EU_CRR
+			// 
+			this->EU_CRR->AutoSize = true;
+			this->EU_CRR->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->EU_CRR->Location = System::Drawing::Point(653, 34);
+			this->EU_CRR->Name = L"EU_CRR";
+			this->EU_CRR->Size = System::Drawing::Size(160, 26);
+			this->EU_CRR->TabIndex = 1;
+			this->EU_CRR->TabStop = true;
+			this->EU_CRR->Text = L"European CRR";
+			this->EU_CRR->UseVisualStyleBackColor = true;
+			// 
+			// EU_MC
+			// 
+			this->EU_MC->AutoSize = true;
+			this->EU_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->EU_MC->Location = System::Drawing::Point(99, 34);
+			this->EU_MC->Name = L"EU_MC";
+			this->EU_MC->Size = System::Drawing::Size(149, 26);
+			this->EU_MC->TabIndex = 0;
+			this->EU_MC->TabStop = true;
+			this->EU_MC->Text = L"European MC";
+			this->EU_MC->UseVisualStyleBackColor = true;
+			// 
+			// label17
+			// 
+			this->label17->AutoSize = true;
+			this->label17->Font = (gcnew System::Drawing::Font(L"Courier New", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label17->Location = System::Drawing::Point(64, 130);
+			this->label17->Name = L"label17";
+			this->label17->Size = System::Drawing::Size(176, 34);
+			this->label17->TabIndex = 27;
+			this->label17->Text = L"(Lookback Option \r\nwith floating strike)";
 			// 
 			// mainForm
 			// 
@@ -850,17 +864,22 @@ private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 
 		// Lookback MC
 		else if (EU_lb_MC->Checked == true) {
-			String^ StMin_string = StMin_tb->Text;
-			String^ StMax_string = StMax_tb->Text;
 			String^ n_lb_string = n_lookback_tb->Text;
 			String^ sims_string = sims_tb->Text;
 			String^ rep_string = rep_tb->Text;
 
-			double StMin = System::Convert::ToDouble(StMin_string);
-			double StMax = System::Convert::ToDouble(StMax_string);
 			int n_lb = System::Convert::ToInt64(n_lb_string);
 			int sims = System::Convert::ToInt64(sims_string);
 			int rep = System::Convert::ToInt64(rep_string);
+
+			if (call->Checked == true) {
+				String^ StMin_string = StMin_tb->Text;
+				double StMin = System::Convert::ToDouble(StMin_string);
+			}
+			else if (put->Checked == true) {
+				String^ StMax_string = StMax_tb->Text;
+				double StMax = System::Convert::ToDouble(StMax_string);
+			}
 		}
 
 		// Average MC
