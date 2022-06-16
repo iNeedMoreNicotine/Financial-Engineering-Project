@@ -838,9 +838,8 @@ private: System::Windows::Forms::Label^ outputString;
 		// European Option(MC)
 		// Lookback European Option(MC)
 		// Average European Option(MC)
-		
 
-
+		this->outputString->Text = "Calcuating......";
 
 		// General
 		String^ St_string = St_tb->Text;
@@ -858,8 +857,6 @@ private: System::Windows::Forms::Label^ outputString;
 		double sigma = System::Convert::ToDouble(sigma_string);
 
 
-
-
 		// General MC
 		if (EU_MC->Checked == true) {
 			String^ sims_string = sims_tb->Text;
@@ -870,7 +867,7 @@ private: System::Windows::Forms::Label^ outputString;
 			if (call->Checked == true) { string call_put = "call"; }
 			else if (put->Checked == true) { string call_put = "put"; }
 
-			// start calulatiing...
+			// start calulating...
 			vector<double> meanLst;
 			int times = 0;
 
@@ -963,14 +960,145 @@ private: System::Windows::Forms::Label^ outputString;
 			if (call->Checked == true) {
 				String^ StMin_string = StMin_tb->Text;
 				double StMin = System::Convert::ToDouble(StMin_string);
+
+				// start calulating...
+				double dt = T / n_lb;
+				int times = 0;
+
+				default_random_engine generator;
+				generator.seed(chrono::system_clock::now().time_since_epoch().count());
+				normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2)))* dt, sigma* sqrt(dt));
+
+				vector<double> means;
+				while (times < rep) {
+					vector<double> optionValue;
+
+					for (int i = 0; i < sims; i++) {
+						double minPrice = StMin;
+						vector<double> stockPrices;
+						stockPrices.push_back(log(St));
+
+						for (int j = 1; j < n_lb + 1; j++) {
+							double dlnS = distribution(generator);
+							double sample = stockPrices[j - 1] + dlnS;
+							stockPrices.push_back(sample);
+						}
+						for (int k = 0; k < n_lb + 1; k++) {
+							stockPrices[k] = exp(stockPrices[k]);
+							if (stockPrices[k] < minPrice) {
+								minPrice = stockPrices[k];
+							}
+						}
+						// for each loop, single price path is simulated...
+						double callValue = max(stockPrices[n_lb] - minPrice, 0.0) * exp(-r * T);
+						// cout << putValue << endl;
+						optionValue.push_back(callValue);
+					}
+
+					double sum = 0;
+					for (int i = 0; i < sims; i++) {
+						sum += optionValue[i];
+					}
+					double mean = sum / sims;
+					means.push_back(mean);
+					times += 1;
+				}
+
+				double sum_means = 0;
+				for (int l = 0; l < rep; l++) {
+					sum_means += means[l];
+				}
+				double meanOfRep = sum_means / rep;
+
+				double var = 0.0;
+				for (int n = 0; n < rep; n++) {
+					var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+				}
+				var = var / rep;
+				double sdOfRep = sqrt(var);
+				double upper = meanOfRep + 2 * sdOfRep;
+				double lower = meanOfRep - 2 * sdOfRep;
+
+				//round
+				meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
+				sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
+				upper = round(upper * 1000.0) / 1000.0;
+				lower = round(lower * 1000.0) / 1000.0;
+
+				this->outputString->Text = "==================================================\nEuropean Lookback Call\n--------------------------------------------------\nmean : "
+					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
 			}
+
 			else if (put->Checked == true) {
 				String^ StMax_string = StMax_tb->Text;
 				double StMax = System::Convert::ToDouble(StMax_string);
-			}
 
-			if (call->Checked == true) { string call_put = "call"; }
-			else if (put->Checked == true) { string call_put = "put"; }
+				double dt = T / n_lb;
+				int times = 0;
+
+				default_random_engine generator;
+				generator.seed(chrono::system_clock::now().time_since_epoch().count());
+				normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2)))* dt, sigma* sqrt(dt));
+
+				vector<double> means;
+				while (times < rep) {
+					vector<double> optionValue;
+
+					for (int i = 0; i < sims; i++) {
+						double maxPrice = StMax;
+						vector<double> stockPrices;
+						stockPrices.push_back(log(St));
+
+						for (int j = 1; j < n_lb + 1; j++) {
+							double dlnS = distribution(generator);
+							double sample = stockPrices[j - 1] + dlnS;
+							stockPrices.push_back(sample);
+						}
+						for (int k = 0; k < n_lb + 1; k++) {
+							stockPrices[k] = exp(stockPrices[k]);
+							if (stockPrices[k] > maxPrice) {
+								maxPrice = stockPrices[k];
+							}
+						}
+						// for each loop, single price path is simulated...
+						double putValue = max(maxPrice - stockPrices[n_lb], 0.0) * exp(-r * T);
+						// cout << putValue << endl;
+						optionValue.push_back(putValue);
+					}
+
+					double sum = 0;
+					for (int i = 0; i < sims; i++) {
+						sum += optionValue[i];
+					}
+					double mean = sum / sims;
+					means.push_back(mean);
+					times += 1;
+				}
+
+				double sum_means = 0;
+				for (int l = 0; l < rep; l++) {
+					sum_means += means[l];
+				}
+				double meanOfRep = sum_means / rep;
+
+				double var = 0.0;
+				for (int n = 0; n < rep; n++) {
+					var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+				}
+				var = var / rep;
+				double sdOfRep = sqrt(var);
+				double upper = meanOfRep + 2 * sdOfRep;
+				double lower = meanOfRep - 2 * sdOfRep;
+
+				//round
+				meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
+				sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
+				upper = round(upper * 1000.0) / 1000.0;
+				lower = round(lower * 1000.0) / 1000.0;
+
+				this->outputString->Text = "==================================================\nEuropean Lookback Put\n--------------------------------------------------\nmean : "
+					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
+			}
 		}
 
 
