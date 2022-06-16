@@ -1,41 +1,41 @@
 ﻿  mainForm.cpp
   The contents of <format> are available only with C++20 or later.
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(882,13): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(883,12): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(890,71): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(892,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(893,14): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(900,73): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
           with
           [
               _Rep=std::chrono::system_clock::rep
           ]
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(971,13): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(972,13): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(973,12): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(983,72): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(986,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(987,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(988,14): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(998,74): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
           with
           [
               _Rep=std::chrono::system_clock::rep
           ]
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1053,72): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1068,74): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
           with
           [
               _Rep=std::chrono::system_clock::rep
           ]
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1130,14): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1131,19): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1133,13): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1134,12): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1141,72): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1151,16): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1152,21): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1154,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1155,14): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1162,74): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
           with
           [
               _Rep=std::chrono::system_clock::rep
           ]
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1220,72): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1241,74): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
           with
           [
               _Rep=std::chrono::system_clock::rep
           ]
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1304,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1368,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1330,17): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1399,17): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
 C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.cpp(13,1): warning C4829: 函式 main 的參數可能不正確。請考慮 'int main(Platform::Array<Platform::String^>^ argv)'
   mainForm.obj : 發現 MSIL 模組。MSIL 的累加連結已停用。正在執行完整連結
   FinancialAlgorithm_Project.vcxproj -> C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\x64\Debug\FinancialAlgorithm_Project.exe

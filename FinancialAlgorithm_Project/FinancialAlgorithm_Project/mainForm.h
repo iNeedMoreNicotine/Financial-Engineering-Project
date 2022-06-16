@@ -11,7 +11,7 @@
 # include <random>
 # include <chrono>
 # include <format>
-
+# include <windows.h>
 
 namespace FinAlgoProject {
 	using namespace std;
@@ -856,8 +856,6 @@ private: System::Windows::Forms::GroupBox^ MC;
 		// Lookback European Option(MC)
 		// Average European Option(MC)
 
-		this->outputString->Text = "Wrong input. Please restart application......";
-
 		// General
 		String^ St_string = St_tb->Text;
 		String^ T_string = T_tb->Text;
@@ -865,582 +863,612 @@ private: System::Windows::Forms::GroupBox^ MC;
 		String^ q_string = q_tb->Text;
 		String^ sigma_string = sigma_tb->Text;
 
-		double St = System::Convert::ToDouble(St_string);
-		double T = System::Convert::ToDouble(T_string);
-		double r = System::Convert::ToDouble(r_string);
-		double q = System::Convert::ToDouble(q_string);
-		double sigma = System::Convert::ToDouble(sigma_string);
-
-
-		// Vanila MC
-		if (EU_MC->Checked == true) {
-			String^ K_string = K_tb->Text;
-			String^ sims_string = sims_tb->Text;
-			String^ rep_string = rep_tb->Text;
-
-			double K = System::Convert::ToDouble(K_string);
-			int sims = System::Convert::ToInt64(sims_string);
-			int rep = System::Convert::ToInt64(rep_string);
-
-			// start calulating...
-			vector<double> meanLst;
-			int times = 0;
-
-			default_random_engine generator;
-			generator.seed(chrono::system_clock::now().time_since_epoch().count());
-			normal_distribution<double> distribution(log(St) + (r - q - 0.5 * (pow(sigma, 2))) * T, sigma * sqrt(T));
-
-			while (times < rep) {
-				vector<double> stockSamples;
-				for (int i = 0; i < sims; i++) {
-					double lnSample = distribution(generator);
-					// cout << lnSample << endl;
-					double sample = exp(lnSample);
-					// cout << sample << endl;
-					stockSamples.push_back(sample);
-				}
-
-				vector<double> optionValue;
-				if (call->Checked == true) {
-					for (int j = 0; j < sims; j++) {
-						optionValue.push_back(max(stockSamples[j] - K, 0.0));
-					}
-					double sum = 0;
-					for (int k = 0; k < sims; k++) {
-						sum += optionValue[k];
-					}
-					double mean = sum / sims;
-					double discounted = mean * exp(-r * T);
-					meanLst.push_back(discounted);
-					times += 1;
-				}
-				else if (put->Checked == true) {
-					for (int l = 0; l < sims; l++) {
-						optionValue.push_back(max(K - stockSamples[l], 0.0));
-					}
-					double sum = 0;
-					for (int k = 0; k < sims; k++) {
-						sum += optionValue[k];
-					}
-					double mean = sum / sims;
-					double discounted = mean * exp(-r * T);
-					meanLst.push_back(discounted);
-					times += 1;
-				}
-			}
-
-			double sum_mean = 0;
-			for (int i = 0; i < rep; i++) {
-				sum_mean += meanLst[i];
-			}
-			double meanOfRep = sum_mean / rep;
-
-			double var = 0.0;
-			for (int n = 0; n < rep; n++) {
-				var += (meanLst[n] - meanOfRep) * (meanLst[n] - meanOfRep);
-			}
-			var = var / rep;
-			double sdOfRep = sqrt(var);
-			double upper = meanOfRep + 2 * sdOfRep;
-			double lower = meanOfRep - 2 * sdOfRep;
-
-			//round
-			meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
-			sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
-			upper = round(upper * 1000.0) / 1000.0;
-			lower = round(lower * 1000.0) / 1000.0;
-
-			if (call->Checked == true) {
-				this->outputString->Text = "================================================================================\nEuropean Call\n--------------------------------------------------------------------------------\nmean : " 
-					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
-			}
-			else if (put->Checked == true) {
-				this->outputString->Text = "================================================================================\nEuropean Put\n--------------------------------------------------------------------------------\nmean : "
-					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
-			}
+		if (St_string == "" || T_string == "" || r_string == "" || q_string == "" || sigma_string == "" || 
+			(EU_MC->Checked == false && EU_lb_MC->Checked == false && EU_avg_MC->Checked == false && EU_CRR->Checked == false && US_CRR->Checked == false)||
+			(call->Checked == false && put->Checked == false)) {
+			this->outputString->Text = "Invalid input, please check again.";
 		}
 
+		else {
+			double St = System::Convert::ToDouble(St_string);
+			double T = System::Convert::ToDouble(T_string);
+			double r = System::Convert::ToDouble(r_string);
+			double q = System::Convert::ToDouble(q_string);
+			double sigma = System::Convert::ToDouble(sigma_string);
 
+			// Vanila MC
+			if (EU_MC->Checked == true) {
+				String^ K_string = K_tb->Text;
+				String^ sims_string = sims_tb->Text;
+				String^ rep_string = rep_tb->Text;
 
-		// Lookback MC
-		else if (EU_lb_MC->Checked == true) {
-			String^ n_lb_string = n_lookback_tb->Text;
-			String^ sims_string = sims_tb->Text;
-			String^ rep_string = rep_tb->Text;
+				if (K_string == "" || sims_string == "" || rep_string == "") {
+					this->outputString->Text = "Invalid input, please check again.";
+				}
+				else {
+					double K = System::Convert::ToDouble(K_string);
+					int sims = System::Convert::ToInt64(sims_string);
+					int rep = System::Convert::ToInt64(rep_string);
 
-			int n_lb = System::Convert::ToInt64(n_lb_string);
-			int sims = System::Convert::ToInt64(sims_string);
-			int rep = System::Convert::ToInt64(rep_string);
+					// start calulating...
+					vector<double> meanLst;
+					int times = 0;
 
-			if (call->Checked == true) {
-				String^ StMin_string = StMin_tb->Text;
-				double StMin = System::Convert::ToDouble(StMin_string);
+					default_random_engine generator;
+					generator.seed(chrono::system_clock::now().time_since_epoch().count());
+					normal_distribution<double> distribution(log(St) + (r - q - 0.5 * (pow(sigma, 2))) * T, sigma * sqrt(T));
 
-				double dt = T / n_lb;
-				int times = 0;
-
-				default_random_engine generator;
-				generator.seed(chrono::system_clock::now().time_since_epoch().count());
-				normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2)))* dt, sigma* sqrt(dt));
-
-				vector<double> means;
-				while (times < rep) {
-					vector<double> optionValue;
-
-					for (int i = 0; i < sims; i++) {
-						double minPrice = StMin;
-						vector<double> stockPrices;
-						stockPrices.push_back(log(St));
-
-						for (int j = 1; j < n_lb + 1; j++) {
-							double dlnS = distribution(generator);
-							double sample = stockPrices[j - 1] + dlnS;
-							stockPrices.push_back(sample);
+					while (times < rep) {
+						vector<double> stockSamples;
+						for (int i = 0; i < sims; i++) {
+							double lnSample = distribution(generator);
+							// cout << lnSample << endl;
+							double sample = exp(lnSample);
+							// cout << sample << endl;
+							stockSamples.push_back(sample);
 						}
-						for (int k = 0; k < n_lb + 1; k++) {
-							stockPrices[k] = exp(stockPrices[k]);
-							if (stockPrices[k] < minPrice) {
-								minPrice = stockPrices[k];
+
+						vector<double> optionValue;
+						if (call->Checked == true) {
+							for (int j = 0; j < sims; j++) {
+								optionValue.push_back(max(stockSamples[j] - K, 0.0));
 							}
-						}
-						// for each loop, single price path is simulated...
-						double callValue = max(stockPrices[n_lb] - minPrice, 0.0) * exp(-r * T);
-						optionValue.push_back(callValue);
-					}
-
-					double sum = 0;
-					for (int i = 0; i < sims; i++) {
-						sum += optionValue[i];
-					}
-					double mean = sum / sims;
-					means.push_back(mean);
-					times += 1;
-				}
-
-				double sum_means = 0;
-				for (int l = 0; l < rep; l++) {
-					sum_means += means[l];
-				}
-				double meanOfRep = sum_means / rep;
-
-				double var = 0.0;
-				for (int n = 0; n < rep; n++) {
-					var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
-				}
-				var = var / rep;
-				double sdOfRep = sqrt(var);
-				double upper = meanOfRep + 2 * sdOfRep;
-				double lower = meanOfRep - 2 * sdOfRep;
-
-				//round
-				meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
-				sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
-				upper = round(upper * 1000.0) / 1000.0;
-				lower = round(lower * 1000.0) / 1000.0;
-
-				this->outputString->Text = "================================================================================\nEuropean Lookback Call\n--------------------------------------------------------------------------------\nmean : "
-					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
-			}
-
-			else if (put->Checked == true) {
-				String^ StMax_string = StMax_tb->Text;
-				double StMax = System::Convert::ToDouble(StMax_string);
-
-				double dt = T / n_lb;
-				int times = 0;
-
-				default_random_engine generator;
-				generator.seed(chrono::system_clock::now().time_since_epoch().count());
-				normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2)))* dt, sigma* sqrt(dt));
-
-				vector<double> means;
-				while (times < rep) {
-					vector<double> optionValue;
-
-					for (int i = 0; i < sims; i++) {
-						double maxPrice = StMax;
-						vector<double> stockPrices;
-						stockPrices.push_back(log(St));
-
-						for (int j = 1; j < n_lb + 1; j++) {
-							double dlnS = distribution(generator);
-							double sample = stockPrices[j - 1] + dlnS;
-							stockPrices.push_back(sample);
-						}
-						for (int k = 0; k < n_lb + 1; k++) {
-							stockPrices[k] = exp(stockPrices[k]);
-							if (stockPrices[k] > maxPrice) {
-								maxPrice = stockPrices[k];
+							double sum = 0;
+							for (int k = 0; k < sims; k++) {
+								sum += optionValue[k];
 							}
+							double mean = sum / sims;
+							double discounted = mean * exp(-r * T);
+							meanLst.push_back(discounted);
+							times += 1;
 						}
-						// for each loop, single price path is simulated...
-						double putValue = max(maxPrice - stockPrices[n_lb], 0.0) * exp(-r * T);
-						optionValue.push_back(putValue);
-					}
-
-					double sum = 0;
-					for (int i = 0; i < sims; i++) {
-						sum += optionValue[i];
-					}
-					double mean = sum / sims;
-					means.push_back(mean);
-					times += 1;
-				}
-
-				double sum_means = 0;
-				for (int l = 0; l < rep; l++) {
-					sum_means += means[l];
-				}
-				double meanOfRep = sum_means / rep;
-
-				double var = 0.0;
-				for (int n = 0; n < rep; n++) {
-					var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
-				}
-				var = var / rep;
-				double sdOfRep = sqrt(var);
-				double upper = meanOfRep + 2 * sdOfRep;
-				double lower = meanOfRep - 2 * sdOfRep;
-
-				//round
-				meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
-				sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
-				upper = round(upper * 1000.0) / 1000.0;
-				lower = round(lower * 1000.0) / 1000.0;
-
-				this->outputString->Text = "================================================================================\nEuropean Lookback Put\n--------------------------------------------------------------------------------\nmean : "
-					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
-			}
-		}
-
-
-
-		// Average MC
-		else if (EU_avg_MC->Checked == true) {
-			String^ K_string = K_tb->Text;
-			String^ StAve_string = StAve_tb->Text;
-			String^ n_avg_string = n_avg_tb->Text;
-			String^ n_avg_prev_string = n_avg_prev_tb->Text;
-			String^ time_elapsed_string = time_elapsed_tb->Text;
-			String^ sims_string = sims_tb->Text;
-			String^ rep_string = rep_tb->Text;
-
-			double K = System::Convert::ToDouble(K_string);
-			double StAve = System::Convert::ToDouble(StAve_string);
-			int n_avg = System::Convert::ToInt64(n_avg_string);
-			int n_avg_prev = System::Convert::ToInt64(n_avg_prev_string);
-			double time_elapsed = System::Convert::ToDouble(time_elapsed_string);
-			int sims = System::Convert::ToInt64(sims_string);
-			int rep = System::Convert::ToInt64(rep_string);
-
-			if (call->Checked == true) {
-				double dt = T / n_avg;
-				int times = 0;
-
-				default_random_engine generator;
-				generator.seed(chrono::system_clock::now().time_since_epoch().count());
-				normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2)))* dt, sigma* sqrt(dt));
-
-				vector<double> means;
-				while (times < rep) {
-					vector<double> optionValue;
-
-					for (int i = 0; i < sims; i++) {
-						vector<double> stockPrices;
-						stockPrices.push_back(log(St));
-
-						for (int j = 1; j < n_avg + 1; j++) {
-							double dlnS = distribution(generator);
-							double sample = stockPrices[j - 1] + dlnS;
-							stockPrices.push_back(sample);
-						}
-						for (int k = 0; k < n_avg + 1; k++) {
-							stockPrices[k] = exp(stockPrices[k]);
-						}
-						// for each loop, single price path is simulated...
-
-						double callValue;
-						if (time_elapsed == 0) {
-							double sum_stockPrice = 0;
-							for (int l = 0; l < n_avg + 1; l++) {
-								sum_stockPrice += stockPrices[l];
+						else if (put->Checked == true) {
+							for (int l = 0; l < sims; l++) {
+								optionValue.push_back(max(K - stockSamples[l], 0.0));
 							}
-							double mean_stockPrice = sum_stockPrice / (n_avg + 1);
-							callValue = max(mean_stockPrice - K, 0.0) * exp(-r * T);
-							optionValue.push_back(callValue);
-						}
-						else {
-							double sum_stockPrice = 0;
-							for (int l = 1; l < n_avg + 1; l++) {
-								sum_stockPrice += stockPrices[l];
+							double sum = 0;
+							for (int k = 0; k < sims; k++) {
+								sum += optionValue[k];
 							}
-							double payoff = (StAve * (n_avg_prev + 1) + sum_stockPrice) / (n_avg_prev + n_avg + 1) - K;
-							callValue = max(payoff, 0.0) * exp(-r * T);
-							optionValue.push_back(callValue);
+							double mean = sum / sims;
+							double discounted = mean * exp(-r * T);
+							meanLst.push_back(discounted);
+							times += 1;
 						}
 					}
-					double sum = 0;
-					for (int i = 0; i < sims; i++) {
-						sum += optionValue[i];
+
+					double sum_mean = 0;
+					for (int i = 0; i < rep; i++) {
+						sum_mean += meanLst[i];
 					}
-					double mean = sum / sims;
-					means.push_back(mean);
-					times += 1;
+					double meanOfRep = sum_mean / rep;
+
+					double var = 0.0;
+					for (int n = 0; n < rep; n++) {
+						var += (meanLst[n] - meanOfRep) * (meanLst[n] - meanOfRep);
+					}
+					var = var / rep;
+					double sdOfRep = sqrt(var);
+					double upper = meanOfRep + 2 * sdOfRep;
+					double lower = meanOfRep - 2 * sdOfRep;
+
+					//round
+					meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
+					sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
+					upper = round(upper * 1000.0) / 1000.0;
+					lower = round(lower * 1000.0) / 1000.0;
+
+					if (call->Checked == true) {
+						this->outputString->Text = "================================================================================\nEuropean Call\n--------------------------------------------------------------------------------\nmean : "
+							+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
+					}
+					else if (put->Checked == true) {
+						this->outputString->Text = "================================================================================\nEuropean Put\n--------------------------------------------------------------------------------\nmean : "
+							+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
+					}
 				}
-
-				double sum_means = 0;
-				for (int l = 0; l < rep; l++) {
-					sum_means += means[l];
-				}
-				double meanOfRep = sum_means / rep;
-
-				double var = 0.0;
-				for (int n = 0; n < rep; n++) {
-					var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
-				}
-				var = var / rep;
-				double sdOfRep = sqrt(var);
-				double upper = meanOfRep + 2 * sdOfRep;
-				double lower = meanOfRep - 2 * sdOfRep;
-
-				//round
-				meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
-				sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
-				upper = round(upper * 1000.0) / 1000.0;
-				lower = round(lower * 1000.0) / 1000.0;
-
-				this->outputString->Text = "================================================================================\nEuropean Average Call\n--------------------------------------------------------------------------------\nmean : "
-					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
 			}
-			else if (put->Checked == true) {
-				double dt = T / n_avg;
-				int times = 0;
 
-				default_random_engine generator;
-				generator.seed(chrono::system_clock::now().time_since_epoch().count());
-				normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2)))* dt, sigma* sqrt(dt));
 
-				vector<double> means;
-				while (times < rep) {
-					vector<double> optionValue;
 
-					for (int i = 0; i < sims; i++) {
-						vector<double> stockPrices;
-						stockPrices.push_back(log(St));
+			// Lookback MC
+			else if (EU_lb_MC->Checked == true) {
+				String^ n_lb_string = n_lookback_tb->Text;
+				String^ sims_string = sims_tb->Text;
+				String^ rep_string = rep_tb->Text;
 
-						for (int j = 1; j < n_avg + 1; j++) {
-							double dlnS = distribution(generator);
-							double sample = stockPrices[j - 1] + dlnS;
-							stockPrices.push_back(sample);
-						}
-						for (int k = 0; k < n_avg + 1; k++) {
-							stockPrices[k] = exp(stockPrices[k]);
-						}
-						// for each loop, single price path is simulated...
+				if (n_lb_string == "" || sims_string == "" || rep_string == "") {
+					this->outputString->Text = "Invalid input, please check again.";
+				}
+				else {
+					int n_lb = System::Convert::ToInt64(n_lb_string);
+					int sims = System::Convert::ToInt64(sims_string);
+					int rep = System::Convert::ToInt64(rep_string);
 
-						double putValue;
-						if (time_elapsed == 0) {
-							double sum_stockPrice = 0;
-							for (int l = 0; l < n_avg + 1; l++) {
-								sum_stockPrice += stockPrices[l];
+					if (call->Checked == true) {
+						String^ StMin_string = StMin_tb->Text;
+						double StMin = System::Convert::ToDouble(StMin_string);
+
+						double dt = T / n_lb;
+						int times = 0;
+
+						default_random_engine generator;
+						generator.seed(chrono::system_clock::now().time_since_epoch().count());
+						normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
+
+						vector<double> means;
+						while (times < rep) {
+							vector<double> optionValue;
+
+							for (int i = 0; i < sims; i++) {
+								double minPrice = StMin;
+								vector<double> stockPrices;
+								stockPrices.push_back(log(St));
+
+								for (int j = 1; j < n_lb + 1; j++) {
+									double dlnS = distribution(generator);
+									double sample = stockPrices[j - 1] + dlnS;
+									stockPrices.push_back(sample);
+								}
+								for (int k = 0; k < n_lb + 1; k++) {
+									stockPrices[k] = exp(stockPrices[k]);
+									if (stockPrices[k] < minPrice) {
+										minPrice = stockPrices[k];
+									}
+								}
+								// for each loop, single price path is simulated...
+								double callValue = max(stockPrices[n_lb] - minPrice, 0.0) * exp(-r * T);
+								optionValue.push_back(callValue);
 							}
-							double mean_stockPrice = sum_stockPrice / (n_avg + 1);
-							putValue = max(K - mean_stockPrice, 0.0) * exp(-r * T);
-							optionValue.push_back(putValue);
-						}
-						else {
-							double sum_stockPrice = 0;
-							for (int l = 1; l < n_avg + 1; l++) {
-								sum_stockPrice += stockPrices[l];
+
+							double sum = 0;
+							for (int i = 0; i < sims; i++) {
+								sum += optionValue[i];
 							}
-							double payoff = K - (StAve * (n_avg_prev + 1) + sum_stockPrice) / (n_avg_prev + n_avg + 1);
-							putValue = max(payoff, 0.0) * exp(-r * T);
-							optionValue.push_back(putValue);
+							double mean = sum / sims;
+							means.push_back(mean);
+							times += 1;
+						}
+
+						double sum_means = 0;
+						for (int l = 0; l < rep; l++) {
+							sum_means += means[l];
+						}
+						double meanOfRep = sum_means / rep;
+
+						double var = 0.0;
+						for (int n = 0; n < rep; n++) {
+							var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+						}
+						var = var / rep;
+						double sdOfRep = sqrt(var);
+						double upper = meanOfRep + 2 * sdOfRep;
+						double lower = meanOfRep - 2 * sdOfRep;
+
+						//round
+						meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
+						sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
+						upper = round(upper * 1000.0) / 1000.0;
+						lower = round(lower * 1000.0) / 1000.0;
+
+						this->outputString->Text = "================================================================================\nEuropean Lookback Call\n--------------------------------------------------------------------------------\nmean : "
+							+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
+					}
+
+					else if (put->Checked == true) {
+						String^ StMax_string = StMax_tb->Text;
+						double StMax = System::Convert::ToDouble(StMax_string);
+
+						double dt = T / n_lb;
+						int times = 0;
+
+						default_random_engine generator;
+						generator.seed(chrono::system_clock::now().time_since_epoch().count());
+						normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
+
+						vector<double> means;
+						while (times < rep) {
+							vector<double> optionValue;
+
+							for (int i = 0; i < sims; i++) {
+								double maxPrice = StMax;
+								vector<double> stockPrices;
+								stockPrices.push_back(log(St));
+
+								for (int j = 1; j < n_lb + 1; j++) {
+									double dlnS = distribution(generator);
+									double sample = stockPrices[j - 1] + dlnS;
+									stockPrices.push_back(sample);
+								}
+								for (int k = 0; k < n_lb + 1; k++) {
+									stockPrices[k] = exp(stockPrices[k]);
+									if (stockPrices[k] > maxPrice) {
+										maxPrice = stockPrices[k];
+									}
+								}
+								// for each loop, single price path is simulated...
+								double putValue = max(maxPrice - stockPrices[n_lb], 0.0) * exp(-r * T);
+								optionValue.push_back(putValue);
+							}
+
+							double sum = 0;
+							for (int i = 0; i < sims; i++) {
+								sum += optionValue[i];
+							}
+							double mean = sum / sims;
+							means.push_back(mean);
+							times += 1;
+						}
+
+						double sum_means = 0;
+						for (int l = 0; l < rep; l++) {
+							sum_means += means[l];
+						}
+						double meanOfRep = sum_means / rep;
+
+						double var = 0.0;
+						for (int n = 0; n < rep; n++) {
+							var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+						}
+						var = var / rep;
+						double sdOfRep = sqrt(var);
+						double upper = meanOfRep + 2 * sdOfRep;
+						double lower = meanOfRep - 2 * sdOfRep;
+
+						//round
+						meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
+						sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
+						upper = round(upper * 1000.0) / 1000.0;
+						lower = round(lower * 1000.0) / 1000.0;
+
+						this->outputString->Text = "================================================================================\nEuropean Lookback Put\n--------------------------------------------------------------------------------\nmean : "
+							+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
+					}
+				}
+			}
+
+
+
+			// Average MC
+			else if (EU_avg_MC->Checked == true) {
+				String^ K_string = K_tb->Text;
+				String^ StAve_string = StAve_tb->Text;
+				String^ n_avg_string = n_avg_tb->Text;
+				String^ n_avg_prev_string = n_avg_prev_tb->Text;
+				String^ time_elapsed_string = time_elapsed_tb->Text;
+				String^ sims_string = sims_tb->Text;
+				String^ rep_string = rep_tb->Text;
+
+				if (K_string == "" || StAve_string == "" || n_avg_string == "" || n_avg_prev_string == "" || time_elapsed_string == "" || 
+					sims_string == "" || rep_string == "") {
+					this->outputString->Text = "Invalid input, please check again.";
+				}
+				else {
+					double K = System::Convert::ToDouble(K_string);
+					double StAve = System::Convert::ToDouble(StAve_string);
+					int n_avg = System::Convert::ToInt64(n_avg_string);
+					int n_avg_prev = System::Convert::ToInt64(n_avg_prev_string);
+					double time_elapsed = System::Convert::ToDouble(time_elapsed_string);
+					int sims = System::Convert::ToInt64(sims_string);
+					int rep = System::Convert::ToInt64(rep_string);
+
+					if (call->Checked == true) {
+						double dt = T / n_avg;
+						int times = 0;
+
+						default_random_engine generator;
+						generator.seed(chrono::system_clock::now().time_since_epoch().count());
+						normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
+
+						vector<double> means;
+						while (times < rep) {
+							vector<double> optionValue;
+
+							for (int i = 0; i < sims; i++) {
+								vector<double> stockPrices;
+								stockPrices.push_back(log(St));
+
+								for (int j = 1; j < n_avg + 1; j++) {
+									double dlnS = distribution(generator);
+									double sample = stockPrices[j - 1] + dlnS;
+									stockPrices.push_back(sample);
+								}
+								for (int k = 0; k < n_avg + 1; k++) {
+									stockPrices[k] = exp(stockPrices[k]);
+								}
+								// for each loop, single price path is simulated...
+
+								double callValue;
+								if (time_elapsed == 0) {
+									double sum_stockPrice = 0;
+									for (int l = 0; l < n_avg + 1; l++) {
+										sum_stockPrice += stockPrices[l];
+									}
+									double mean_stockPrice = sum_stockPrice / (n_avg + 1);
+									callValue = max(mean_stockPrice - K, 0.0) * exp(-r * T);
+									optionValue.push_back(callValue);
+								}
+								else {
+									double sum_stockPrice = 0;
+									for (int l = 1; l < n_avg + 1; l++) {
+										sum_stockPrice += stockPrices[l];
+									}
+									double payoff = (StAve * (n_avg_prev + 1) + sum_stockPrice) / (n_avg_prev + n_avg + 1) - K;
+									callValue = max(payoff, 0.0) * exp(-r * T);
+									optionValue.push_back(callValue);
+								}
+							}
+							double sum = 0;
+							for (int i = 0; i < sims; i++) {
+								sum += optionValue[i];
+							}
+							double mean = sum / sims;
+							means.push_back(mean);
+							times += 1;
+						}
+
+						double sum_means = 0;
+						for (int l = 0; l < rep; l++) {
+							sum_means += means[l];
+						}
+						double meanOfRep = sum_means / rep;
+
+						double var = 0.0;
+						for (int n = 0; n < rep; n++) {
+							var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+						}
+						var = var / rep;
+						double sdOfRep = sqrt(var);
+						double upper = meanOfRep + 2 * sdOfRep;
+						double lower = meanOfRep - 2 * sdOfRep;
+
+						//round
+						meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
+						sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
+						upper = round(upper * 1000.0) / 1000.0;
+						lower = round(lower * 1000.0) / 1000.0;
+
+						this->outputString->Text = "================================================================================\nEuropean Average Call\n--------------------------------------------------------------------------------\nmean : "
+							+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
+					}
+					else if (put->Checked == true) {
+						double dt = T / n_avg;
+						int times = 0;
+
+						default_random_engine generator;
+						generator.seed(chrono::system_clock::now().time_since_epoch().count());
+						normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
+
+						vector<double> means;
+						while (times < rep) {
+							vector<double> optionValue;
+
+							for (int i = 0; i < sims; i++) {
+								vector<double> stockPrices;
+								stockPrices.push_back(log(St));
+
+								for (int j = 1; j < n_avg + 1; j++) {
+									double dlnS = distribution(generator);
+									double sample = stockPrices[j - 1] + dlnS;
+									stockPrices.push_back(sample);
+								}
+								for (int k = 0; k < n_avg + 1; k++) {
+									stockPrices[k] = exp(stockPrices[k]);
+								}
+								// for each loop, single price path is simulated...
+
+								double putValue;
+								if (time_elapsed == 0) {
+									double sum_stockPrice = 0;
+									for (int l = 0; l < n_avg + 1; l++) {
+										sum_stockPrice += stockPrices[l];
+									}
+									double mean_stockPrice = sum_stockPrice / (n_avg + 1);
+									putValue = max(K - mean_stockPrice, 0.0) * exp(-r * T);
+									optionValue.push_back(putValue);
+								}
+								else {
+									double sum_stockPrice = 0;
+									for (int l = 1; l < n_avg + 1; l++) {
+										sum_stockPrice += stockPrices[l];
+									}
+									double payoff = K - (StAve * (n_avg_prev + 1) + sum_stockPrice) / (n_avg_prev + n_avg + 1);
+									putValue = max(payoff, 0.0) * exp(-r * T);
+									optionValue.push_back(putValue);
+								}
+							}
+							double sum = 0;
+							for (int i = 0; i < sims; i++) {
+								sum += optionValue[i];
+							}
+							double mean = sum / sims;
+							means.push_back(mean);
+							times += 1;
+						}
+
+						double sum_means = 0;
+						for (int l = 0; l < rep; l++) {
+							sum_means += means[l];
+						}
+						double meanOfRep = sum_means / rep;
+
+						double var = 0.0;
+						for (int n = 0; n < rep; n++) {
+							var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+						}
+						var = var / rep;
+						double sdOfRep = sqrt(var);
+						double upper = meanOfRep + 2 * sdOfRep;
+						double lower = meanOfRep - 2 * sdOfRep;
+
+						//round
+						meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
+						sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
+						upper = round(upper * 1000.0) / 1000.0;
+						lower = round(lower * 1000.0) / 1000.0;
+
+						this->outputString->Text = "================================================================================\nEuropean Average Put\n--------------------------------------------------------------------------------\nmean : "
+							+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
+					}
+				}
+			}
+
+
+
+			// EU Tree
+			else if (EU_CRR->Checked == true) {
+				String^ K_string = K_tb->Text;
+				String^ layers_string = layers_tb->Text;
+
+				if (K_string == "" || layers_string == "") {
+					this->outputString->Text = "Invalid input, please check again.";
+				}
+				else {
+					double K = System::Convert::ToDouble(K_string);
+					int layers = System::Convert::ToInt64(layers_string);
+
+					// start calculating
+					double dt = T / layers;
+					double u = exp(sigma * sqrt(dt));
+					double d = exp(-sigma * sqrt(dt));
+					double p = (exp((r - q) * dt) - d) / (u - d);
+
+					vector<double> stockPrice;
+					for (int j = 0; j < layers + 1; j++) {
+						stockPrice.push_back((St * pow(u, layers - j) * pow(d, j)));
+					}
+
+					if (call->Checked == true) {
+						vector<double> callPrice;
+						for (int j = 0; j < layers + 1; j++) {
+							callPrice.push_back(max(stockPrice[j] - K, 0.0));
+						}
+						int times = 0;
+						int i_temp = layers - 1;
+						while (times < layers) {
+							for (int j = 0; j < i_temp + 1; j++) {
+								callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
+							}
+							i_temp -= 1;
+							times += 1;
+						}
+
+						// round
+						callPrice[0] = round(callPrice[0] * 1000.0) / 1000.0;
+
+						this->outputString->Text = "================================================================================\nEuropean Call\n--------------------------------------------------------------------------------\nPrice : "
+							+ callPrice[0] + " (CRR Binomial Tree)";
+					}
+					else if (put->Checked == true) {
+						vector<double> putPrice;
+						for (int j = 0; j < layers + 1; j++) {
+							putPrice.push_back(max(K - stockPrice[j], 0.0));
+						}
+						int times = 0;
+						int i_temp = layers - 1;
+						while (times < layers) {
+							for (int j = 0; j < i_temp + 1; j++) {
+								putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
+							}
+							i_temp -= 1;
+							times += 1;
+						}
+						// round
+						putPrice[0] = round(putPrice[0] * 1000.0) / 1000.0;
+
+						this->outputString->Text = "================================================================================\nEuropean Put\n--------------------------------------------------------------------------------\nPrice : "
+							+ putPrice[0] + " (CRR Binomial Tree)";
+					}
+				}
+			}
+
+
+
+			// US Tree
+			else if (US_CRR->Checked == true) {
+				String^ K_string = K_tb->Text;
+				String^ layers_string = layers_tb->Text;
+
+				if (K_string == "" || layers_string == "") {
+					this->outputString->Text = "Invalid input, please check again.";
+				}
+				else {
+					double K = System::Convert::ToDouble(K_string);
+					int layers = System::Convert::ToInt64(layers_string);
+
+					double dt = T / layers;
+					double u = exp(sigma * sqrt(dt));
+					double d = exp(-sigma * sqrt(dt));
+					double p = (exp((r - q) * dt) - d) / (u - d);
+
+					// simulate stock price
+					vector<vector<double>> stockPrice;
+					for (int i = 0; i < layers + 1; i++) {
+						vector<double> temp;
+						for (int j = 0; j < i + 1; j++) {
+							temp.push_back(0);
+						}
+						stockPrice.push_back(temp);
+					}
+					for (int i = 0; i < layers + 1; i++) {
+						for (int j = 0; j < i + 1; j++) {
+							stockPrice[i][j] = St * pow(u, i - j) * pow(d, j);
 						}
 					}
-					double sum = 0;
-					for (int i = 0; i < sims; i++) {
-						sum += optionValue[i];
+
+					if (call->Checked == true) {
+						// calculate terminal payoff
+						vector<double> callPrice;
+						for (int j = 0; j < layers + 1; j++) {
+							callPrice.push_back(max(stockPrice[layers][j] - K, 0.0));
+						}
+						int times = 0;
+						int i_temp = layers - 1;
+						while (times < layers) {
+							vector<double> xValue;
+							for (int j = 0; j < i_temp + 1; j++) {
+								callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
+								// calculate excersise value and compare it to holding value...
+							}
+							for (int k = 0; k < i_temp - 1; k++) {
+								xValue.push_back(max(stockPrice[i_temp][k] - K, 0.0));
+								callPrice[k] = max(callPrice[k], xValue[k]);
+							}
+							i_temp -= 1;
+							times += 1;
+						}
+						callPrice[0] = round(callPrice[0] * 1000.0) / 1000.0;
+
+						this->outputString->Text = "================================================================================\nAmerican Call\n--------------------------------------------------------------------------------\nPrice : "
+							+ callPrice[0] + " (CRR Binomial Tree)";
 					}
-					double mean = sum / sims;
-					means.push_back(mean);
-					times += 1;
-				}
+					else if (put->Checked == true) {
+						vector<double> putPrice;
+						for (int j = 0; j < layers + 1; j++) {
+							putPrice.push_back((K - stockPrice[layers][j], 0.0));
+						}
 
-				double sum_means = 0;
-				for (int l = 0; l < rep; l++) {
-					sum_means += means[l];
-				}
-				double meanOfRep = sum_means / rep;
+						int times = 0;
+						int i_temp = layers - 1;
+						while (times < layers) {
+							vector<double> xValue;
+							for (int j = 0; j < i_temp + 1; j++) {
+								putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
+								// calculate excersise value and compare it to holding value...
+							}
+							for (int k = 0; k < i_temp + 1; k++) {
+								xValue.push_back(max(K - stockPrice[i_temp][k], 0.0));
+								putPrice[k] = max(putPrice[k], xValue[k]);
+							}
+							i_temp -= 1;
+							times += 1;
+						}
+						putPrice[0] = round(putPrice[0] * 1000.0) / 1000.0;
 
-				double var = 0.0;
-				for (int n = 0; n < rep; n++) {
-					var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
-				}
-				var = var / rep;
-				double sdOfRep = sqrt(var);
-				double upper = meanOfRep + 2 * sdOfRep;
-				double lower = meanOfRep - 2 * sdOfRep;
-
-				//round
-				meanOfRep = round(meanOfRep * 1000.0) / 1000.0;
-				sdOfRep = round(sdOfRep * 1000.0) / 1000.0;
-				upper = round(upper * 1000.0) / 1000.0;
-				lower = round(lower * 1000.0) / 1000.0;
-
-				this->outputString->Text = "================================================================================\nEuropean Average Put\n--------------------------------------------------------------------------------\nmean : "
-					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
-			}
-		}
-
-
-
-		// EU Tree
-		else if (EU_CRR->Checked == true) {
-			String^ K_string = K_tb->Text;
-			String^ layers_string = layers_tb->Text;
-
-			double K = System::Convert::ToDouble(K_string);
-			int layers = System::Convert::ToInt64(layers_string);
-
-			// start calculating
-			double dt = T / layers;
-			double u = exp(sigma * sqrt(dt));
-			double d = exp(-sigma * sqrt(dt));
-			double p = (exp((r - q) * dt) - d) / (u - d);
-
-			vector<double> stockPrice;
-			for (int j = 0; j < layers + 1; j++) {
-				stockPrice.push_back((St * pow(u, layers - j) * pow(d, j)));
-			}
-
-			if (call->Checked == true) {
-				vector<double> callPrice;
-				for (int j = 0; j < layers + 1; j++) {
-					callPrice.push_back(max(stockPrice[j] - K, 0.0));
-				}
-				int times = 0;
-				int i_temp = layers - 1;
-				while (times < layers) {
-					for (int j = 0; j < i_temp + 1; j++) {
-						callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
+						this->outputString->Text = "================================================================================\nAmerican Put\n--------------------------------------------------------------------------------\nPrice : "
+							+ putPrice[0] + " (CRR Binomial Tree)";
 					}
-					i_temp -= 1;
-					times += 1;
 				}
-
-				// round
-				callPrice[0] = round(callPrice[0] * 1000.0) / 1000.0;
-
-				this->outputString->Text = "================================================================================\nEuropean Call\n--------------------------------------------------------------------------------\nPrice : "
-					+ callPrice[0] + " (CRR Binomial Tree)";
-			}
-			else if (put->Checked == true) {
-				vector<double> putPrice;
-				for (int j = 0; j < layers + 1; j++) {
-					putPrice.push_back(max(K - stockPrice[j], 0.0));
-				}
-				int times = 0;
-				int i_temp = layers - 1;
-				while (times < layers) {
-					for (int j = 0; j < i_temp + 1; j++) {
-						putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
-					}
-					i_temp -= 1;
-					times += 1;
-				}
-				// round
-				putPrice[0] = round(putPrice[0] * 1000.0) / 1000.0;
-
-				this->outputString->Text = "================================================================================\nEuropean Put\n--------------------------------------------------------------------------------\nPrice : "
-					+ putPrice[0] + " (CRR Binomial Tree)";
-			}
-		}
-
-
-
-		// US Tree
-		else if (US_CRR->Checked == true) {
-			String^ K_string = K_tb->Text;
-			String^ layers_string = layers_tb->Text;
-
-			double K = System::Convert::ToDouble(K_string);
-			int layers = System::Convert::ToInt64(layers_string);
-
-			if (call->Checked == true) {}
-			else if (put->Checked == true) {}
-
-			double dt = T / layers;
-			double u = exp(sigma * sqrt(dt));
-			double d = exp(-sigma * sqrt(dt));
-			double p = (exp((r - q) * dt) - d) / (u - d);
-
-			// simulate stock price
-			vector<vector<double>> stockPrice;
-			for (int i = 0; i < layers + 1; i++) {
-				vector<double> temp;
-				for (int j = 0; j < i + 1; j++) {
-					temp.push_back(0);
-				}
-				stockPrice.push_back(temp);
-			}
-			for (int i = 0; i < layers + 1; i++) {
-				for (int j = 0; j < i + 1; j++) {
-					stockPrice[i][j] = St * pow(u, i - j) * pow(d, j);
-				}
-			}
-
-			if (call->Checked == true) {
-				// calculate terminal payoff
-				vector<double> callPrice;
-				for (int j = 0; j < layers + 1; j++) {
-					callPrice.push_back(max(stockPrice[layers][j] - K, 0.0));
-				}
-				int times = 0;
-				int i_temp = layers - 1;
-				while (times < layers) {
-					vector<double> xValue;
-					for (int j = 0; j < i_temp + 1; j++) {
-						callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
-						// calculate excersise value and compare it to holding value...
-					}
-					for (int k = 0; k < i_temp - 1; k++) {
-						xValue.push_back(max(stockPrice[i_temp][k] - K, 0.0));
-						callPrice[k] = max(callPrice[k], xValue[k]);
-					}
-					i_temp -= 1;
-					times += 1;
-				}
-				callPrice[0] = round(callPrice[0] * 1000.0) / 1000.0;
-
-				this->outputString->Text = "================================================================================\nAmerican Call\n--------------------------------------------------------------------------------\nPrice : "
-					+ callPrice[0] + " (CRR Binomial Tree)";
-			}
-			else if (put->Checked == true) {
-				vector<double> putPrice;
-				for (int j = 0; j < layers + 1; j++) {
-					putPrice.push_back((K - stockPrice[layers][j], 0.0));
-				}
-
-				int times = 0;
-				int i_temp = layers - 1;
-				while (times < layers) {
-					vector<double> xValue;
-					for (int j = 0; j < i_temp + 1; j++) {
-						putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
-						// calculate excersise value and compare it to holding value...
-					}
-					for (int k = 0; k < i_temp + 1; k++) {
-						xValue.push_back(max(K - stockPrice[i_temp][k], 0.0));
-						putPrice[k] = max(putPrice[k], xValue[k]);
-					}
-					i_temp -= 1;
-					times += 1;
-				}
-				putPrice[0] = round(putPrice[0] * 1000.0) / 1000.0;
-
-				this->outputString->Text = "================================================================================\nAmerican Put\n--------------------------------------------------------------------------------\nPrice : "
-					+ putPrice[0] + " (CRR Binomial Tree)";
 			}
 		}
 	}
