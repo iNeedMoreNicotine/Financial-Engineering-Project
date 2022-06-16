@@ -841,37 +841,55 @@ private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 		double sigma = System::Convert::ToDouble(sigma_string);
 
 		// General MC
-		String^ sims_string = sims_tb->Text;
-		String^ rep_string = rep_tb->Text;
-		int sims = System::Convert::ToInt64(sims_string);
-		int rep = System::Convert::ToInt64(rep_string);
+		if (EU_MC->Checked == true) {
+			String^ sims_string = sims_tb->Text;
+			String^ rep_string = rep_tb->Text;
+			int sims = System::Convert::ToInt64(sims_string);
+			int rep = System::Convert::ToInt64(rep_string);
+		}
 
 		// Lookback MC
-		String^ StMin_string = StMin_tb->Text;
-		String^ StMax_string = StMax_tb->Text;
-		String^ n_lb_string = n_lookback_tb->Text;
+		else if (EU_lb_MC->Checked == true) {
+			String^ StMin_string = StMin_tb->Text;
+			String^ StMax_string = StMax_tb->Text;
+			String^ n_lb_string = n_lookback_tb->Text;
+			String^ sims_string = sims_tb->Text;
+			String^ rep_string = rep_tb->Text;
 
-		double StMin = System::Convert::ToDouble(StMin_string);
-		double StMax = System::Convert::ToDouble(StMax_string);
-		int n_lb = System::Convert::ToInt64(n_lb_string);
+			double StMin = System::Convert::ToDouble(StMin_string);
+			double StMax = System::Convert::ToDouble(StMax_string);
+			int n_lb = System::Convert::ToInt64(n_lb_string);
+			int sims = System::Convert::ToInt64(sims_string);
+			int rep = System::Convert::ToInt64(rep_string);
+		}
 
 		// Average MC
-		String^ StAve_string = StAve_tb->Text;
-		String^ n_avg_string = n_avg_tb->Text;
-		String^ n_avg_prev_string = n_avg_prev_tb->Text;
-		String^ time_elapsed_string = time_elapsed_tb->Text;
+		else if (EU_avg_MC->Checked == true) {
+			String^ StAve_string = StAve_tb->Text;
+			String^ n_avg_string = n_avg_tb->Text;
+			String^ n_avg_prev_string = n_avg_prev_tb->Text;
+			String^ time_elapsed_string = time_elapsed_tb->Text;
+			String^ sims_string = sims_tb->Text;
+			String^ rep_string = rep_tb->Text;
 
-		double StAve = System::Convert::ToDouble(StAve_string);
-		int n_avg = System::Convert::ToInt64(n_avg_string);
-		int n_avg_prev = System::Convert::ToInt64(n_avg_prev_string);
-		double time_elapsed = System::Convert::ToDouble(time_elapsed_string);
+			double StAve = System::Convert::ToDouble(StAve_string);
+			int n_avg = System::Convert::ToInt64(n_avg_string);
+			int n_avg_prev = System::Convert::ToInt64(n_avg_prev_string);
+			double time_elapsed = System::Convert::ToDouble(time_elapsed_string);
+			int sims = System::Convert::ToInt64(sims_string);
+			int rep = System::Convert::ToInt64(rep_string);
+		}
 
 		// Tree
-		String^ layers_string = layers_tb->Text;
-		int layers = System::Convert::ToInt64(layers_string);
+		else if (EU_CRR->Checked == true) {
+			String^ layers_string = layers_tb->Text;
+			int layers = System::Convert::ToInt64(layers_string);
+		}
 
-
-
+		else if (US_CRR->Checked == true) {
+			String^ layers_string = layers_tb->Text;
+			int layers = System::Convert::ToInt64(layers_string);
+		}
 	}
 };
 }
