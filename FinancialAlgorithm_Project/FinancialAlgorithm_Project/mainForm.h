@@ -134,6 +134,7 @@ private: System::Windows::Forms::RadioButton^ EU_avg_MC;
 private: System::Windows::Forms::RadioButton^ EU_lb_MC;
 private: System::Windows::Forms::Label^ label17;
 private: System::Windows::Forms::Label^ outputString;
+private: System::Windows::Forms::GroupBox^ MC;
 
 
 
@@ -161,6 +162,14 @@ private: System::Windows::Forms::Label^ outputString;
 			this->outputBox = (gcnew System::Windows::Forms::GroupBox());
 			this->outputString = (gcnew System::Windows::Forms::Label());
 			this->inputBox = (gcnew System::Windows::Forms::GroupBox());
+			this->MC = (gcnew System::Windows::Forms::GroupBox());
+			this->rep_tb = (gcnew System::Windows::Forms::TextBox());
+			this->sims_tb = (gcnew System::Windows::Forms::TextBox());
+			this->label8 = (gcnew System::Windows::Forms::Label());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->tree = (gcnew System::Windows::Forms::GroupBox());
+			this->layers_tb = (gcnew System::Windows::Forms::TextBox());
+			this->label12 = (gcnew System::Windows::Forms::Label());
 			this->call_put = (gcnew System::Windows::Forms::GroupBox());
 			this->put = (gcnew System::Windows::Forms::RadioButton());
 			this->call = (gcnew System::Windows::Forms::RadioButton());
@@ -173,9 +182,6 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label15 = (gcnew System::Windows::Forms::Label());
 			this->label14 = (gcnew System::Windows::Forms::Label());
 			this->label13 = (gcnew System::Windows::Forms::Label());
-			this->tree = (gcnew System::Windows::Forms::GroupBox());
-			this->layers_tb = (gcnew System::Windows::Forms::TextBox());
-			this->label12 = (gcnew System::Windows::Forms::Label());
 			this->lookback = (gcnew System::Windows::Forms::GroupBox());
 			this->label17 = (gcnew System::Windows::Forms::Label());
 			this->n_lookback_tb = (gcnew System::Windows::Forms::TextBox());
@@ -184,16 +190,12 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label10 = (gcnew System::Windows::Forms::Label());
 			this->StMin_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label9 = (gcnew System::Windows::Forms::Label());
-			this->rep_tb = (gcnew System::Windows::Forms::TextBox());
-			this->sims_tb = (gcnew System::Windows::Forms::TextBox());
 			this->sigma_tb = (gcnew System::Windows::Forms::TextBox());
 			this->q_tb = (gcnew System::Windows::Forms::TextBox());
 			this->r_tb = (gcnew System::Windows::Forms::TextBox());
 			this->T_tb = (gcnew System::Windows::Forms::TextBox());
 			this->K_tb = (gcnew System::Windows::Forms::TextBox());
 			this->St_tb = (gcnew System::Windows::Forms::TextBox());
-			this->label8 = (gcnew System::Windows::Forms::Label());
-			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
@@ -211,9 +213,10 @@ private: System::Windows::Forms::Label^ outputString;
 			this->EU_MC = (gcnew System::Windows::Forms::RadioButton());
 			this->outputBox->SuspendLayout();
 			this->inputBox->SuspendLayout();
+			this->MC->SuspendLayout();
+			this->tree->SuspendLayout();
 			this->call_put->SuspendLayout();
 			this->average->SuspendLayout();
-			this->tree->SuspendLayout();
 			this->lookback->SuspendLayout();
 			this->models->SuspendLayout();
 			this->SuspendLayout();
@@ -225,7 +228,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->outputBox->Font = (gcnew System::Drawing::Font(L"Courier New", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->outputBox->ForeColor = System::Drawing::SystemColors::Control;
-			this->outputBox->Location = System::Drawing::Point(22, 485);
+			this->outputBox->Location = System::Drawing::Point(22, 499);
 			this->outputBox->Name = L"outputBox";
 			this->outputBox->Size = System::Drawing::Size(936, 267);
 			this->outputBox->TabIndex = 0;
@@ -237,7 +240,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->outputString->AutoSize = true;
 			this->outputString->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->outputString->Location = System::Drawing::Point(15, 31);
+			this->outputString->Location = System::Drawing::Point(23, 31);
 			this->outputString->Name = L"outputString";
 			this->outputString->Size = System::Drawing::Size(274, 22);
 			this->outputString->TabIndex = 0;
@@ -245,20 +248,17 @@ private: System::Windows::Forms::Label^ outputString;
 			// 
 			// inputBox
 			// 
+			this->inputBox->Controls->Add(this->MC);
+			this->inputBox->Controls->Add(this->tree);
 			this->inputBox->Controls->Add(this->call_put);
 			this->inputBox->Controls->Add(this->average);
-			this->inputBox->Controls->Add(this->tree);
 			this->inputBox->Controls->Add(this->lookback);
-			this->inputBox->Controls->Add(this->rep_tb);
-			this->inputBox->Controls->Add(this->sims_tb);
 			this->inputBox->Controls->Add(this->sigma_tb);
 			this->inputBox->Controls->Add(this->q_tb);
 			this->inputBox->Controls->Add(this->r_tb);
 			this->inputBox->Controls->Add(this->T_tb);
 			this->inputBox->Controls->Add(this->K_tb);
 			this->inputBox->Controls->Add(this->St_tb);
-			this->inputBox->Controls->Add(this->label8);
-			this->inputBox->Controls->Add(this->label7);
 			this->inputBox->Controls->Add(this->label6);
 			this->inputBox->Controls->Add(this->label5);
 			this->inputBox->Controls->Add(this->label4);
@@ -267,12 +267,98 @@ private: System::Windows::Forms::Label^ outputString;
 			this->inputBox->Controls->Add(this->label1);
 			this->inputBox->Font = (gcnew System::Drawing::Font(L"Courier New", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->inputBox->Location = System::Drawing::Point(22, 130);
+			this->inputBox->Location = System::Drawing::Point(22, 120);
 			this->inputBox->Name = L"inputBox";
-			this->inputBox->Size = System::Drawing::Size(932, 302);
+			this->inputBox->Size = System::Drawing::Size(932, 326);
 			this->inputBox->TabIndex = 1;
 			this->inputBox->TabStop = false;
 			this->inputBox->Text = L"Inputs";
+			// 
+			// MC
+			// 
+			this->MC->Controls->Add(this->rep_tb);
+			this->MC->Controls->Add(this->sims_tb);
+			this->MC->Controls->Add(this->label8);
+			this->MC->Controls->Add(this->label7);
+			this->MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->MC->Location = System::Drawing::Point(272, 219);
+			this->MC->Name = L"MC";
+			this->MC->Size = System::Drawing::Size(306, 90);
+			this->MC->TabIndex = 24;
+			this->MC->TabStop = false;
+			this->MC->Text = L"Monte Carlo";
+			// 
+			// rep_tb
+			// 
+			this->rep_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->rep_tb->Location = System::Drawing::Point(213, 55);
+			this->rep_tb->Name = L"rep_tb";
+			this->rep_tb->Size = System::Drawing::Size(71, 26);
+			this->rep_tb->TabIndex = 19;
+			// 
+			// sims_tb
+			// 
+			this->sims_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->sims_tb->Location = System::Drawing::Point(213, 23);
+			this->sims_tb->Name = L"sims_tb";
+			this->sims_tb->Size = System::Drawing::Size(71, 26);
+			this->sims_tb->TabIndex = 18;
+			// 
+			// label8
+			// 
+			this->label8->AutoSize = true;
+			this->label8->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label8->Location = System::Drawing::Point(19, 57);
+			this->label8->Name = L"label8";
+			this->label8->Size = System::Drawing::Size(118, 18);
+			this->label8->TabIndex = 11;
+			this->label8->Text = L"Repetitions";
+			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label7->Location = System::Drawing::Point(19, 27);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(118, 18);
+			this->label7->TabIndex = 10;
+			this->label7->Text = L"Simulations";
+			// 
+			// tree
+			// 
+			this->tree->Controls->Add(this->layers_tb);
+			this->tree->Controls->Add(this->label12);
+			this->tree->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->tree->Location = System::Drawing::Point(6, 240);
+			this->tree->Name = L"tree";
+			this->tree->Size = System::Drawing::Size(240, 69);
+			this->tree->TabIndex = 21;
+			this->tree->TabStop = false;
+			this->tree->Text = L"Tree";
+			// 
+			// layers_tb
+			// 
+			this->layers_tb->Location = System::Drawing::Point(142, 28);
+			this->layers_tb->Name = L"layers_tb";
+			this->layers_tb->Size = System::Drawing::Size(71, 29);
+			this->layers_tb->TabIndex = 27;
+			// 
+			// label12
+			// 
+			this->label12->AutoSize = true;
+			this->label12->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label12->Location = System::Drawing::Point(10, 34);
+			this->label12->Name = L"label12";
+			this->label12->Size = System::Drawing::Size(118, 18);
+			this->label12->TabIndex = 27;
+			this->label12->Text = L"Tree layers";
 			// 
 			// call_put
 			// 
@@ -282,7 +368,7 @@ private: System::Windows::Forms::Label^ outputString;
 				static_cast<System::Byte>(0)));
 			this->call_put->Location = System::Drawing::Point(605, 207);
 			this->call_put->Name = L"call_put";
-			this->call_put->Size = System::Drawing::Size(303, 81);
+			this->call_put->Size = System::Drawing::Size(321, 102);
 			this->call_put->TabIndex = 23;
 			this->call_put->TabStop = false;
 			this->call_put->Text = L"Call / Put";
@@ -292,7 +378,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->put->AutoSize = true;
 			this->put->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->put->Location = System::Drawing::Point(181, 34);
+			this->put->Location = System::Drawing::Point(195, 43);
 			this->put->Name = L"put";
 			this->put->Size = System::Drawing::Size(67, 27);
 			this->put->TabIndex = 1;
@@ -304,7 +390,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->call->AutoSize = true;
 			this->call->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->call->Location = System::Drawing::Point(51, 34);
+			this->call->Location = System::Drawing::Point(59, 43);
 			this->call->Name = L"call";
 			this->call->Size = System::Drawing::Size(80, 27);
 			this->call->TabIndex = 0;
@@ -325,35 +411,35 @@ private: System::Windows::Forms::Label^ outputString;
 				static_cast<System::Byte>(0)));
 			this->average->Location = System::Drawing::Point(602, 29);
 			this->average->Name = L"average";
-			this->average->Size = System::Drawing::Size(307, 172);
+			this->average->Size = System::Drawing::Size(324, 172);
 			this->average->TabIndex = 22;
 			this->average->TabStop = false;
 			this->average->Text = L"Average Option";
 			// 
 			// time_elapsed_tb
 			// 
-			this->time_elapsed_tb->Location = System::Drawing::Point(219, 130);
+			this->time_elapsed_tb->Location = System::Drawing::Point(229, 130);
 			this->time_elapsed_tb->Name = L"time_elapsed_tb";
 			this->time_elapsed_tb->Size = System::Drawing::Size(71, 29);
 			this->time_elapsed_tb->TabIndex = 33;
 			// 
 			// n_avg_prev_tb
 			// 
-			this->n_avg_prev_tb->Location = System::Drawing::Point(219, 95);
+			this->n_avg_prev_tb->Location = System::Drawing::Point(229, 95);
 			this->n_avg_prev_tb->Name = L"n_avg_prev_tb";
 			this->n_avg_prev_tb->Size = System::Drawing::Size(71, 29);
 			this->n_avg_prev_tb->TabIndex = 32;
 			// 
 			// n_avg_tb
 			// 
-			this->n_avg_tb->Location = System::Drawing::Point(219, 60);
+			this->n_avg_tb->Location = System::Drawing::Point(229, 60);
 			this->n_avg_tb->Name = L"n_avg_tb";
 			this->n_avg_tb->Size = System::Drawing::Size(71, 29);
 			this->n_avg_tb->TabIndex = 31;
 			// 
 			// StAve_tb
 			// 
-			this->StAve_tb->Location = System::Drawing::Point(219, 25);
+			this->StAve_tb->Location = System::Drawing::Point(229, 25);
 			this->StAve_tb->Name = L"StAve_tb";
 			this->StAve_tb->Size = System::Drawing::Size(71, 29);
 			this->StAve_tb->TabIndex = 30;
@@ -363,7 +449,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label16->AutoSize = true;
 			this->label16->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label16->Location = System::Drawing::Point(6, 135);
+			this->label16->Location = System::Drawing::Point(16, 135);
 			this->label16->Name = L"label16";
 			this->label16->Size = System::Drawing::Size(128, 18);
 			this->label16->TabIndex = 30;
@@ -374,7 +460,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label15->AutoSize = true;
 			this->label15->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label15->Location = System::Drawing::Point(6, 100);
+			this->label15->Location = System::Drawing::Point(16, 100);
 			this->label15->Name = L"label15";
 			this->label15->Size = System::Drawing::Size(188, 18);
 			this->label15->TabIndex = 29;
@@ -385,7 +471,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label14->AutoSize = true;
 			this->label14->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label14->Location = System::Drawing::Point(6, 65);
+			this->label14->Location = System::Drawing::Point(16, 65);
 			this->label14->Name = L"label14";
 			this->label14->Size = System::Drawing::Size(128, 18);
 			this->label14->TabIndex = 28;
@@ -396,42 +482,11 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label13->AutoSize = true;
 			this->label13->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label13->Location = System::Drawing::Point(6, 30);
+			this->label13->Location = System::Drawing::Point(16, 30);
 			this->label13->Name = L"label13";
 			this->label13->Size = System::Drawing::Size(68, 18);
 			this->label13->TabIndex = 27;
 			this->label13->Text = L"Save,t";
-			// 
-			// tree
-			// 
-			this->tree->Controls->Add(this->layers_tb);
-			this->tree->Controls->Add(this->label12);
-			this->tree->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->tree->Location = System::Drawing::Point(272, 219);
-			this->tree->Name = L"tree";
-			this->tree->Size = System::Drawing::Size(306, 69);
-			this->tree->TabIndex = 21;
-			this->tree->TabStop = false;
-			this->tree->Text = L"Tree";
-			// 
-			// layers_tb
-			// 
-			this->layers_tb->Location = System::Drawing::Point(213, 27);
-			this->layers_tb->Name = L"layers_tb";
-			this->layers_tb->Size = System::Drawing::Size(71, 29);
-			this->layers_tb->TabIndex = 27;
-			// 
-			// label12
-			// 
-			this->label12->AutoSize = true;
-			this->label12->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->label12->Location = System::Drawing::Point(19, 32);
-			this->label12->Name = L"label12";
-			this->label12->Size = System::Drawing::Size(118, 18);
-			this->label12->TabIndex = 27;
-			this->label12->Text = L"Tree layers";
 			// 
 			// lookback
 			// 
@@ -522,29 +577,11 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label9->TabIndex = 23;
 			this->label9->Text = L"Smin,t (for Call)";
 			// 
-			// rep_tb
-			// 
-			this->rep_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->rep_tb->Location = System::Drawing::Point(148, 262);
-			this->rep_tb->Name = L"rep_tb";
-			this->rep_tb->Size = System::Drawing::Size(71, 26);
-			this->rep_tb->TabIndex = 19;
-			// 
-			// sims_tb
-			// 
-			this->sims_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->sims_tb->Location = System::Drawing::Point(148, 230);
-			this->sims_tb->Name = L"sims_tb";
-			this->sims_tb->Size = System::Drawing::Size(71, 26);
-			this->sims_tb->TabIndex = 18;
-			// 
 			// sigma_tb
 			// 
 			this->sigma_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->sigma_tb->Location = System::Drawing::Point(148, 198);
+			this->sigma_tb->Location = System::Drawing::Point(148, 188);
 			this->sigma_tb->Name = L"sigma_tb";
 			this->sigma_tb->Size = System::Drawing::Size(71, 26);
 			this->sigma_tb->TabIndex = 17;
@@ -553,7 +590,7 @@ private: System::Windows::Forms::Label^ outputString;
 			// 
 			this->q_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->q_tb->Location = System::Drawing::Point(148, 166);
+			this->q_tb->Location = System::Drawing::Point(148, 156);
 			this->q_tb->Name = L"q_tb";
 			this->q_tb->Size = System::Drawing::Size(71, 26);
 			this->q_tb->TabIndex = 16;
@@ -562,7 +599,7 @@ private: System::Windows::Forms::Label^ outputString;
 			// 
 			this->r_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->r_tb->Location = System::Drawing::Point(148, 134);
+			this->r_tb->Location = System::Drawing::Point(148, 124);
 			this->r_tb->Name = L"r_tb";
 			this->r_tb->Size = System::Drawing::Size(71, 26);
 			this->r_tb->TabIndex = 15;
@@ -571,7 +608,7 @@ private: System::Windows::Forms::Label^ outputString;
 			// 
 			this->T_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->T_tb->Location = System::Drawing::Point(148, 103);
+			this->T_tb->Location = System::Drawing::Point(148, 93);
 			this->T_tb->Name = L"T_tb";
 			this->T_tb->Size = System::Drawing::Size(71, 26);
 			this->T_tb->TabIndex = 14;
@@ -580,7 +617,7 @@ private: System::Windows::Forms::Label^ outputString;
 			// 
 			this->K_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->K_tb->Location = System::Drawing::Point(148, 71);
+			this->K_tb->Location = System::Drawing::Point(148, 61);
 			this->K_tb->Name = L"K_tb";
 			this->K_tb->Size = System::Drawing::Size(71, 26);
 			this->K_tb->TabIndex = 13;
@@ -589,39 +626,17 @@ private: System::Windows::Forms::Label^ outputString;
 			// 
 			this->St_tb->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->St_tb->Location = System::Drawing::Point(148, 39);
+			this->St_tb->Location = System::Drawing::Point(148, 29);
 			this->St_tb->Name = L"St_tb";
 			this->St_tb->Size = System::Drawing::Size(71, 26);
 			this->St_tb->TabIndex = 12;
-			// 
-			// label8
-			// 
-			this->label8->AutoSize = true;
-			this->label8->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->label8->Location = System::Drawing::Point(16, 264);
-			this->label8->Name = L"label8";
-			this->label8->Size = System::Drawing::Size(118, 18);
-			this->label8->TabIndex = 11;
-			this->label8->Text = L"Repetitions";
-			// 
-			// label7
-			// 
-			this->label7->AutoSize = true;
-			this->label7->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->label7->Location = System::Drawing::Point(16, 232);
-			this->label7->Name = L"label7";
-			this->label7->Size = System::Drawing::Size(118, 18);
-			this->label7->TabIndex = 10;
-			this->label7->Text = L"Simulations";
 			// 
 			// label6
 			// 
 			this->label6->AutoSize = true;
 			this->label6->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label6->Location = System::Drawing::Point(16, 200);
+			this->label6->Location = System::Drawing::Point(16, 190);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(58, 18);
 			this->label6->TabIndex = 9;
@@ -632,7 +647,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label5->AutoSize = true;
 			this->label5->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label5->Location = System::Drawing::Point(16, 168);
+			this->label5->Location = System::Drawing::Point(16, 158);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(18, 18);
 			this->label5->TabIndex = 8;
@@ -643,7 +658,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label4->AutoSize = true;
 			this->label4->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label4->Location = System::Drawing::Point(16, 136);
+			this->label4->Location = System::Drawing::Point(16, 126);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(18, 18);
 			this->label4->TabIndex = 7;
@@ -654,7 +669,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label3->AutoSize = true;
 			this->label3->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label3->Location = System::Drawing::Point(16, 105);
+			this->label3->Location = System::Drawing::Point(16, 95);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(18, 18);
 			this->label3->TabIndex = 6;
@@ -665,7 +680,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label2->AutoSize = true;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label2->Location = System::Drawing::Point(16, 73);
+			this->label2->Location = System::Drawing::Point(16, 63);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(18, 18);
 			this->label2->TabIndex = 5;
@@ -676,7 +691,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(16, 41);
+			this->label1->Location = System::Drawing::Point(16, 31);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(108, 18);
 			this->label1->TabIndex = 4;
@@ -686,7 +701,7 @@ private: System::Windows::Forms::Label^ outputString;
 			// 
 			this->calc->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->calc->Location = System::Drawing::Point(682, 438);
+			this->calc->Location = System::Drawing::Point(686, 452);
 			this->calc->Name = L"calc";
 			this->calc->Size = System::Drawing::Size(272, 41);
 			this->calc->TabIndex = 4;
@@ -699,18 +714,18 @@ private: System::Windows::Forms::Label^ outputString;
 			this->author->AutoSize = true;
 			this->author->Font = (gcnew System::Drawing::Font(L"Calibri", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->author->Location = System::Drawing::Point(21, 769);
+			this->author->Location = System::Drawing::Point(21, 775);
 			this->author->Name = L"author";
-			this->author->Size = System::Drawing::Size(520, 19);
+			this->author->Size = System::Drawing::Size(537, 19);
 			this->author->TabIndex = 5;
-			this->author->Text = L"Coded by Alex Chen ( 陳柏言 ), Nationl Taiwan University, Finance Department";
+			this->author->Text = L"Coded by Alex Chen ( 陳柏言 ), Nationl Taiwan University, Department of Finance";
 			// 
 			// email
 			// 
 			this->email->AutoSize = true;
 			this->email->Font = (gcnew System::Drawing::Font(L"Calibri", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->email->Location = System::Drawing::Point(21, 798);
+			this->email->Location = System::Drawing::Point(21, 804);
 			this->email->Name = L"email";
 			this->email->Size = System::Drawing::Size(247, 19);
 			this->email->TabIndex = 6;
@@ -727,7 +742,7 @@ private: System::Windows::Forms::Label^ outputString;
 				static_cast<System::Byte>(0)));
 			this->models->Location = System::Drawing::Point(25, 19);
 			this->models->Name = L"models";
-			this->models->Size = System::Drawing::Size(929, 105);
+			this->models->Size = System::Drawing::Size(929, 95);
 			this->models->TabIndex = 7;
 			this->models->TabStop = false;
 			this->models->Text = L"Pricing Models";
@@ -737,7 +752,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->EU_avg_MC->AutoSize = true;
 			this->EU_avg_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->EU_avg_MC->Location = System::Drawing::Point(327, 66);
+			this->EU_avg_MC->Location = System::Drawing::Point(327, 63);
 			this->EU_avg_MC->Name = L"EU_avg_MC";
 			this->EU_avg_MC->Size = System::Drawing::Size(237, 26);
 			this->EU_avg_MC->TabIndex = 4;
@@ -750,7 +765,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->EU_lb_MC->AutoSize = true;
 			this->EU_lb_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->EU_lb_MC->Location = System::Drawing::Point(327, 34);
+			this->EU_lb_MC->Location = System::Drawing::Point(327, 31);
 			this->EU_lb_MC->Name = L"EU_lb_MC";
 			this->EU_lb_MC->Size = System::Drawing::Size(248, 26);
 			this->EU_lb_MC->TabIndex = 3;
@@ -763,7 +778,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->US_CRR->AutoSize = true;
 			this->US_CRR->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->US_CRR->Location = System::Drawing::Point(653, 66);
+			this->US_CRR->Location = System::Drawing::Point(653, 63);
 			this->US_CRR->Name = L"US_CRR";
 			this->US_CRR->Size = System::Drawing::Size(160, 26);
 			this->US_CRR->TabIndex = 2;
@@ -776,7 +791,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->EU_CRR->AutoSize = true;
 			this->EU_CRR->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->EU_CRR->Location = System::Drawing::Point(653, 34);
+			this->EU_CRR->Location = System::Drawing::Point(653, 31);
 			this->EU_CRR->Name = L"EU_CRR";
 			this->EU_CRR->Size = System::Drawing::Size(160, 26);
 			this->EU_CRR->TabIndex = 1;
@@ -789,7 +804,7 @@ private: System::Windows::Forms::Label^ outputString;
 			this->EU_MC->AutoSize = true;
 			this->EU_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->EU_MC->Location = System::Drawing::Point(99, 34);
+			this->EU_MC->Location = System::Drawing::Point(94, 31);
 			this->EU_MC->Name = L"EU_MC";
 			this->EU_MC->Size = System::Drawing::Size(149, 26);
 			this->EU_MC->TabIndex = 0;
@@ -817,12 +832,14 @@ private: System::Windows::Forms::Label^ outputString;
 			this->outputBox->PerformLayout();
 			this->inputBox->ResumeLayout(false);
 			this->inputBox->PerformLayout();
+			this->MC->ResumeLayout(false);
+			this->MC->PerformLayout();
+			this->tree->ResumeLayout(false);
+			this->tree->PerformLayout();
 			this->call_put->ResumeLayout(false);
 			this->call_put->PerformLayout();
 			this->average->ResumeLayout(false);
 			this->average->PerformLayout();
-			this->tree->ResumeLayout(false);
-			this->tree->PerformLayout();
 			this->lookback->ResumeLayout(false);
 			this->lookback->PerformLayout();
 			this->models->ResumeLayout(false);
@@ -839,7 +856,7 @@ private: System::Windows::Forms::Label^ outputString;
 		// Lookback European Option(MC)
 		// Average European Option(MC)
 
-		this->outputString->Text = "Calcuating......";
+		this->outputString->Text = "Wrong input. Please restart application......";
 
 		// General
 		String^ St_string = St_tb->Text;
@@ -855,7 +872,7 @@ private: System::Windows::Forms::Label^ outputString;
 		double sigma = System::Convert::ToDouble(sigma_string);
 
 
-		// General MC
+		// Vanila MC
 		if (EU_MC->Checked == true) {
 			String^ K_string = K_tb->Text;
 			String^ sims_string = sims_tb->Text;
@@ -864,9 +881,6 @@ private: System::Windows::Forms::Label^ outputString;
 			double K = System::Convert::ToDouble(K_string);
 			int sims = System::Convert::ToInt64(sims_string);
 			int rep = System::Convert::ToInt64(rep_string);
-
-			if (call->Checked == true) { string call_put = "call"; }
-			else if (put->Checked == true) { string call_put = "put"; }
 
 			// start calulating...
 			vector<double> meanLst;
@@ -937,11 +951,11 @@ private: System::Windows::Forms::Label^ outputString;
 			lower = round(lower * 1000.0) / 1000.0;
 
 			if (call->Checked == true) {
-				this->outputString->Text = "==================================================\nEuropean Call\n--------------------------------------------------\nmean : " 
+				this->outputString->Text = "================================================================================\nEuropean Call\n--------------------------------------------------------------------------------\nmean : " 
 					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
 			}
 			else if (put->Checked == true) {
-				this->outputString->Text = "==================================================\nEuropean Put\n--------------------------------------------------\nmean : "
+				this->outputString->Text = "================================================================================\nEuropean Put\n--------------------------------------------------------------------------------\nmean : "
 					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
 			}
 		}
@@ -950,12 +964,10 @@ private: System::Windows::Forms::Label^ outputString;
 
 		// Lookback MC
 		else if (EU_lb_MC->Checked == true) {
-			String^ K_string = K_tb->Text;
 			String^ n_lb_string = n_lookback_tb->Text;
 			String^ sims_string = sims_tb->Text;
 			String^ rep_string = rep_tb->Text;
 
-			double K = System::Convert::ToDouble(K_string);
 			int n_lb = System::Convert::ToInt64(n_lb_string);
 			int sims = System::Convert::ToInt64(sims_string);
 			int rep = System::Convert::ToInt64(rep_string);
@@ -964,7 +976,6 @@ private: System::Windows::Forms::Label^ outputString;
 				String^ StMin_string = StMin_tb->Text;
 				double StMin = System::Convert::ToDouble(StMin_string);
 
-				// start calulating...
 				double dt = T / n_lb;
 				int times = 0;
 
@@ -994,7 +1005,6 @@ private: System::Windows::Forms::Label^ outputString;
 						}
 						// for each loop, single price path is simulated...
 						double callValue = max(stockPrices[n_lb] - minPrice, 0.0) * exp(-r * T);
-						// cout << putValue << endl;
 						optionValue.push_back(callValue);
 					}
 
@@ -1028,7 +1038,7 @@ private: System::Windows::Forms::Label^ outputString;
 				upper = round(upper * 1000.0) / 1000.0;
 				lower = round(lower * 1000.0) / 1000.0;
 
-				this->outputString->Text = "==================================================\nEuropean Lookback Call\n--------------------------------------------------\nmean : "
+				this->outputString->Text = "================================================================================\nEuropean Lookback Call\n--------------------------------------------------------------------------------\nmean : "
 					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
 			}
 
@@ -1065,7 +1075,6 @@ private: System::Windows::Forms::Label^ outputString;
 						}
 						// for each loop, single price path is simulated...
 						double putValue = max(maxPrice - stockPrices[n_lb], 0.0) * exp(-r * T);
-						// cout << putValue << endl;
 						optionValue.push_back(putValue);
 					}
 
@@ -1099,7 +1108,7 @@ private: System::Windows::Forms::Label^ outputString;
 				upper = round(upper * 1000.0) / 1000.0;
 				lower = round(lower * 1000.0) / 1000.0;
 
-				this->outputString->Text = "==================================================\nEuropean Lookback Put\n--------------------------------------------------\nmean : "
+				this->outputString->Text = "================================================================================\nEuropean Lookback Put\n--------------------------------------------------------------------------------\nmean : "
 					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
 			}
 		}
@@ -1200,7 +1209,7 @@ private: System::Windows::Forms::Label^ outputString;
 				upper = round(upper * 1000.0) / 1000.0;
 				lower = round(lower * 1000.0) / 1000.0;
 
-				this->outputString->Text = "==================================================\nEuropean Average Call\n--------------------------------------------------\nmean : "
+				this->outputString->Text = "================================================================================\nEuropean Average Call\n--------------------------------------------------------------------------------\nmean : "
 					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
 			}
 			else if (put->Checked == true) {
@@ -1279,7 +1288,7 @@ private: System::Windows::Forms::Label^ outputString;
 				upper = round(upper * 1000.0) / 1000.0;
 				lower = round(lower * 1000.0) / 1000.0;
 
-				this->outputString->Text = "==================================================\nEuropean Average Put\n--------------------------------------------------\nmean : "
+				this->outputString->Text = "================================================================================\nEuropean Average Put\n--------------------------------------------------------------------------------\nmean : "
 					+ meanOfRep + "\n" + "standard error : " + sdOfRep + "\n" + "0.95 confidence interval : [ " + lower + ", " + upper + " ]";
 			}
 		}
@@ -1288,25 +1297,152 @@ private: System::Windows::Forms::Label^ outputString;
 
 		// EU Tree
 		else if (EU_CRR->Checked == true) {
+			String^ K_string = K_tb->Text;
 			String^ layers_string = layers_tb->Text;
+
+			double K = System::Convert::ToDouble(K_string);
 			int layers = System::Convert::ToInt64(layers_string);
 
-			if (call->Checked == true) { string call_put = "call"; }
-			else if (put->Checked == true) { string call_put = "put"; }
+			// start calculating
+			double dt = T / layers;
+			double u = exp(sigma * sqrt(dt));
+			double d = exp(-sigma * sqrt(dt));
+			double p = (exp((r - q) * dt) - d) / (u - d);
+
+			vector<double> stockPrice;
+			for (int j = 0; j < layers + 1; j++) {
+				stockPrice.push_back((St * pow(u, layers - j) * pow(d, j)));
+			}
+
+			if (call->Checked == true) {
+				vector<double> callPrice;
+				for (int j = 0; j < layers + 1; j++) {
+					callPrice.push_back(max(stockPrice[j] - K, 0.0));
+				}
+				int times = 0;
+				int i_temp = layers - 1;
+				while (times < layers) {
+					for (int j = 0; j < i_temp + 1; j++) {
+						callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
+					}
+					i_temp -= 1;
+					times += 1;
+				}
+
+				// round
+				callPrice[0] = round(callPrice[0] * 1000.0) / 1000.0;
+
+				this->outputString->Text = "================================================================================\nEuropean Call\n--------------------------------------------------------------------------------\nPrice : "
+					+ callPrice[0] + " (CRR Binomial Tree)";
+			}
+			else if (put->Checked == true) {
+				vector<double> putPrice;
+				for (int j = 0; j < layers + 1; j++) {
+					putPrice.push_back(max(K - stockPrice[j], 0.0));
+				}
+				int times = 0;
+				int i_temp = layers - 1;
+				while (times < layers) {
+					for (int j = 0; j < i_temp + 1; j++) {
+						putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
+					}
+					i_temp -= 1;
+					times += 1;
+				}
+				// round
+				putPrice[0] = round(putPrice[0] * 1000.0) / 1000.0;
+
+				this->outputString->Text = "================================================================================\nEuropean Put\n--------------------------------------------------------------------------------\nPrice : "
+					+ putPrice[0] + " (CRR Binomial Tree)";
+			}
 		}
 
 
 
 		// US Tree
 		else if (US_CRR->Checked == true) {
+			String^ K_string = K_tb->Text;
 			String^ layers_string = layers_tb->Text;
+
+			double K = System::Convert::ToDouble(K_string);
 			int layers = System::Convert::ToInt64(layers_string);
 
-			if (call->Checked == true) { string call_put = "call"; }
-			else if (put->Checked == true) { string call_put = "put"; }
+			if (call->Checked == true) {}
+			else if (put->Checked == true) {}
+
+			double dt = T / layers;
+			double u = exp(sigma * sqrt(dt));
+			double d = exp(-sigma * sqrt(dt));
+			double p = (exp((r - q) * dt) - d) / (u - d);
+
+			// simulate stock price
+			vector<vector<double>> stockPrice;
+			for (int i = 0; i < layers + 1; i++) {
+				vector<double> temp;
+				for (int j = 0; j < i + 1; j++) {
+					temp.push_back(0);
+				}
+				stockPrice.push_back(temp);
+			}
+			for (int i = 0; i < layers + 1; i++) {
+				for (int j = 0; j < i + 1; j++) {
+					stockPrice[i][j] = St * pow(u, i - j) * pow(d, j);
+				}
+			}
+
+			if (call->Checked == true) {
+				// calculate terminal payoff
+				vector<double> callPrice;
+				for (int j = 0; j < layers + 1; j++) {
+					callPrice.push_back(max(stockPrice[layers][j] - K, 0.0));
+				}
+				int times = 0;
+				int i_temp = layers - 1;
+				while (times < layers) {
+					vector<double> xValue;
+					for (int j = 0; j < i_temp + 1; j++) {
+						callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
+						// calculate excersise value and compare it to holding value...
+					}
+					for (int k = 0; k < i_temp - 1; k++) {
+						xValue.push_back(max(stockPrice[i_temp][k] - K, 0.0));
+						callPrice[k] = max(callPrice[k], xValue[k]);
+					}
+					i_temp -= 1;
+					times += 1;
+				}
+				callPrice[0] = round(callPrice[0] * 1000.0) / 1000.0;
+
+				this->outputString->Text = "================================================================================\nAmerican Call\n--------------------------------------------------------------------------------\nPrice : "
+					+ callPrice[0] + " (CRR Binomial Tree)";
+			}
+			else if (put->Checked == true) {
+				vector<double> putPrice;
+				for (int j = 0; j < layers + 1; j++) {
+					putPrice.push_back((K - stockPrice[layers][j], 0.0));
+				}
+
+				int times = 0;
+				int i_temp = layers - 1;
+				while (times < layers) {
+					vector<double> xValue;
+					for (int j = 0; j < i_temp + 1; j++) {
+						putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
+						// calculate excersise value and compare it to holding value...
+					}
+					for (int k = 0; k < i_temp + 1; k++) {
+						xValue.push_back(max(K - stockPrice[i_temp][k], 0.0));
+						putPrice[k] = max(putPrice[k], xValue[k]);
+					}
+					i_temp -= 1;
+					times += 1;
+				}
+				putPrice[0] = round(putPrice[0] * 1000.0) / 1000.0;
+
+				this->outputString->Text = "================================================================================\nAmerican Put\n--------------------------------------------------------------------------------\nPrice : "
+					+ putPrice[0] + " (CRR Binomial Tree)";
+			}
 		}
-
-
 	}
 };
 }
