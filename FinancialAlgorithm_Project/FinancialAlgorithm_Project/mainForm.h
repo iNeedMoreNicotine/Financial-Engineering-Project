@@ -1,4 +1,9 @@
 ﻿#pragma once
+
+//
+// Created by 陳柏言 (Alex Chen), National Taiwan University, Dpt. of Finance
+//
+
 # include <string>
 # include <iostream>
 # include <cmath>
@@ -7,9 +12,491 @@
 # include <chrono>
 # include <format>
 
-//
-// Created by 陳柏言 (Alex Chen), National Taiwan University, Dpt. of Finance
-//
+using namespace std;
+
+void monte_carlo_European(double S0, double K, double T, double r, double q, double sigma, string call_put, int sims, int rep) {
+	vector<double> meanLst;
+	int times = 0;
+
+	default_random_engine generator;
+	generator.seed(chrono::system_clock::now().time_since_epoch().count());
+	normal_distribution<double> distribution(log(S0) + (r - q - 0.5 * (pow(sigma, 2))) * T, sigma * sqrt(T));
+
+	while (times < rep) {
+		vector<double> stockSamples;
+		for (int i = 0; i < sims; i++) {
+			double lnSample = distribution(generator);
+			// cout << lnSample << endl;
+			double sample = exp(lnSample);
+			// cout << sample << endl;
+			stockSamples.push_back(sample);
+		}
+
+		vector<double> optionValue;
+		if (call_put == "call") {
+			for (int j = 0; j < sims; j++) {
+				optionValue.push_back(max(stockSamples[j] - K, 0.0));
+			}
+			double sum = 0;
+			for (int k = 0; k < sims; k++) {
+				sum += optionValue[k];
+			}
+			double mean = sum / sims;
+			double discounted = mean * exp(-r * T);
+			meanLst.push_back(discounted);
+			times += 1;
+		}
+		else {
+			for (int l = 0; l < sims; l++) {
+				optionValue.push_back(max(K - stockSamples[l], 0.0));
+			}
+			double sum = 0;
+			for (int k = 0; k < sims; k++) {
+				sum += optionValue[k];
+			}
+			double mean = sum / sims;
+			double discounted = mean * exp(-r * T);
+			meanLst.push_back(discounted);
+			times += 1;
+		}
+	}
+
+
+	double sum_mean = 0;
+	for (int i = 0; i < rep; i++) {
+		sum_mean += meanLst[i];
+	}
+	double meanOfRep = sum_mean / rep;
+
+	double var = 0.0;
+	for (int n = 0; n < rep; n++) {
+		var += (meanLst[n] - meanOfRep) * (meanLst[n] - meanOfRep);
+	}
+	var = var / rep;
+	double sdOfRep = sqrt(var);
+	double upper = meanOfRep + 2 * sdOfRep;
+	double lower = meanOfRep - 2 * sdOfRep;
+	vector<double> results = { meanOfRep, lower, upper };
+	cout << "==================================================" << endl;
+	cout << "European " << call_put << endl;
+	cout << "--------------------------------------------------" << endl;
+	cout << "mean : " << meanOfRep << endl;
+	cout << "standard error : " << sdOfRep << endl;
+	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
+	cout << endl;
+}
+
+void lookback_MC_call(double StMin, double St, double time_left_to_maturity, double r, double q, double sigma, int n, int sims, int rep) {
+	double dt = time_left_to_maturity / n;
+	int times = 0;
+
+	default_random_engine generator;
+	generator.seed(chrono::system_clock::now().time_since_epoch().count());
+	normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
+
+	vector<double> means;
+	while (times < rep) {
+		vector<double> optionValue;
+
+		for (int i = 0; i < sims; i++) {
+			double minPrice = StMin;
+			vector<double> stockPrices;
+			stockPrices.push_back(log(St));
+
+			for (int j = 1; j < n + 1; j++) {
+				double dlnS = distribution(generator);
+				double sample = stockPrices[j - 1] + dlnS;
+				stockPrices.push_back(sample);
+			}
+			for (int k = 0; k < n + 1; k++) {
+				stockPrices[k] = exp(stockPrices[k]);
+				if (stockPrices[k] < minPrice) {
+					minPrice = stockPrices[k];
+				}
+			}
+			// for each loop, single price path is simulated...
+			double callValue = max(stockPrices[n] - minPrice, 0.0) * exp(-r * time_left_to_maturity);
+			// cout << putValue << endl;
+			optionValue.push_back(callValue);
+		}
+
+		double sum = 0;
+		for (int i = 0; i < sims; i++) {
+			sum += optionValue[i];
+		}
+		double mean = sum / sims;
+		means.push_back(mean);
+		times += 1;
+	}
+
+	double sum_means = 0;
+	for (int l = 0; l < rep; l++) {
+		sum_means += means[l];
+	}
+	double meanOfRep = sum_means / rep;
+
+	double var = 0.0;
+	for (int n = 0; n < rep; n++) {
+		var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+	}
+	var = var / rep;
+	double sdOfRep = sqrt(var);
+	double upper = meanOfRep + 2 * sdOfRep;
+	double lower = meanOfRep - 2 * sdOfRep;
+	vector<double> results = { meanOfRep, lower, upper };
+	cout << "==================================================" << endl;
+	cout << "Lookback Option : European call " << endl;
+	cout << "[ Smin,t = " << StMin << " ]" << endl;
+	cout << "--------------------------------------------------" << endl;
+	cout << "mean : " << meanOfRep << endl;
+	cout << "standard error : " << sdOfRep << endl;
+	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
+	cout << endl;
+}
+
+void lookback_MC_put(double StMax, double St, double time_left_to_maturity, double r, double q, double sigma, int n, int sims, int rep) {
+	double dt = time_left_to_maturity / n;
+	int times = 0;
+
+	default_random_engine generator;
+	generator.seed(chrono::system_clock::now().time_since_epoch().count());
+	normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
+
+	vector<double> means;
+	while (times < rep) {
+		vector<double> optionValue;
+
+		for (int i = 0; i < sims; i++) {
+			double maxPrice = StMax;
+			vector<double> stockPrices;
+			stockPrices.push_back(log(St));
+
+			for (int j = 1; j < n + 1; j++) {
+				double dlnS = distribution(generator);
+				double sample = stockPrices[j - 1] + dlnS;
+				stockPrices.push_back(sample);
+			}
+			for (int k = 0; k < n + 1; k++) {
+				stockPrices[k] = exp(stockPrices[k]);
+				if (stockPrices[k] > maxPrice) {
+					maxPrice = stockPrices[k];
+				}
+			}
+			// for each loop, single price path is simulated...
+			double putValue = max(maxPrice - stockPrices[n], 0.0) * exp(-r * time_left_to_maturity);
+			// cout << putValue << endl;
+			optionValue.push_back(putValue);
+		}
+
+		double sum = 0;
+		for (int i = 0; i < sims; i++) {
+			sum += optionValue[i];
+		}
+		double mean = sum / sims;
+		means.push_back(mean);
+		times += 1;
+	}
+
+	double sum_means = 0;
+	for (int l = 0; l < rep; l++) {
+		sum_means += means[l];
+	}
+	double meanOfRep = sum_means / rep;
+
+	double var = 0.0;
+	for (int n = 0; n < rep; n++) {
+		var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+	}
+	var = var / rep;
+	double sdOfRep = sqrt(var);
+	double upper = meanOfRep + 2 * sdOfRep;
+	double lower = meanOfRep - 2 * sdOfRep;
+	vector<double> results = { meanOfRep, lower, upper };
+	cout << "==================================================" << endl;
+	cout << "Lookback Option : European put " << endl;
+	cout << "[ Smax,t = " << StMax << " ]" << endl;
+	cout << "--------------------------------------------------" << endl;
+	cout << "mean : " << meanOfRep << endl;
+	cout << "standard error : " << sdOfRep << endl;
+	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
+	cout << endl;
+}
+
+void average_MC_call(double StAve, double St, double K, double time_elapsed, double time_left_to_maturity, double r, double q, double sigma, int n_prev, int n, int sims, int rep) {
+	double dt = time_left_to_maturity / n;
+	int times = 0;
+
+	default_random_engine generator;
+	generator.seed(chrono::system_clock::now().time_since_epoch().count());
+	normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
+
+	vector<double> means;
+	while (times < rep) {
+		vector<double> optionValue;
+
+		for (int i = 0; i < sims; i++) {
+			vector<double> stockPrices;
+			stockPrices.push_back(log(St));
+
+			for (int j = 1; j < n + 1; j++) {
+				double dlnS = distribution(generator);
+				double sample = stockPrices[j - 1] + dlnS;
+				stockPrices.push_back(sample);
+			}
+			for (int k = 0; k < n + 1; k++) {
+				stockPrices[k] = exp(stockPrices[k]);
+			}
+			// for each loop, single price path is simulated...
+
+			double callValue;
+			if (time_elapsed == 0) {
+				double sum_stockPrice = 0;
+				for (int l = 0; l < n + 1; l++) {
+					sum_stockPrice += stockPrices[l];
+				}
+				double mean_stockPrice = sum_stockPrice / (n + 1);
+				callValue = max(mean_stockPrice - K, 0.0) * exp(-r * time_left_to_maturity);
+				optionValue.push_back(callValue);
+			}
+			else {
+				double sum_stockPrice = 0;
+				for (int l = 1; l < n + 1; l++) {
+					sum_stockPrice += stockPrices[l];
+				}
+				double payoff = (StAve * (n_prev + 1) + sum_stockPrice) / (n_prev + n + 1) - K;
+				callValue = max(payoff, 0.0) * exp(-r * time_left_to_maturity);
+				optionValue.push_back(callValue);
+			}
+		}
+		double sum = 0;
+		for (int i = 0; i < sims; i++) {
+			sum += optionValue[i];
+		}
+		double mean = sum / sims;
+		means.push_back(mean);
+		times += 1;
+	}
+
+	double sum_means = 0;
+	for (int l = 0; l < rep; l++) {
+		sum_means += means[l];
+	}
+	double meanOfRep = sum_means / rep;
+
+	double var = 0.0;
+	for (int n = 0; n < rep; n++) {
+		var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+	}
+	var = var / rep;
+	double sdOfRep = sqrt(var);
+	double upper = meanOfRep + 2 * sdOfRep;
+	double lower = meanOfRep - 2 * sdOfRep;
+	vector<double> results = { meanOfRep, lower, upper };
+	cout << "==================================================" << endl;
+	cout << "Average Option : European call " << endl;
+	cout << "[ Save,t = " << StAve << " | " << "time_elapsed = " << time_elapsed << " ]" << endl;
+	cout << "--------------------------------------------------" << endl;
+	cout << "mean : " << meanOfRep << endl;
+	cout << "standard error : " << sdOfRep << endl;
+	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
+	cout << endl;
+}
+
+void average_MC_put(double StAve, double St, double K, double time_elapsed, double time_left_to_maturity, double r, double q, double sigma, int n_prev, int n, int sims, int rep) {
+	double dt = time_left_to_maturity / n;
+	int times = 0;
+
+	default_random_engine generator;
+	generator.seed(chrono::system_clock::now().time_since_epoch().count());
+	normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
+
+	vector<double> means;
+	while (times < rep) {
+		vector<double> optionValue;
+
+		for (int i = 0; i < sims; i++) {
+			vector<double> stockPrices;
+			stockPrices.push_back(log(St));
+
+			for (int j = 1; j < n + 1; j++) {
+				double dlnS = distribution(generator);
+				double sample = stockPrices[j - 1] + dlnS;
+				stockPrices.push_back(sample);
+			}
+			for (int k = 0; k < n + 1; k++) {
+				stockPrices[k] = exp(stockPrices[k]);
+			}
+			// for each loop, single price path is simulated...
+
+			double putValue;
+			if (time_elapsed == 0) {
+				double sum_stockPrice = 0;
+				for (int l = 0; l < n + 1; l++) {
+					sum_stockPrice += stockPrices[l];
+				}
+				double mean_stockPrice = sum_stockPrice / (n + 1);
+				putValue = max(K - mean_stockPrice, 0.0) * exp(-r * time_left_to_maturity);
+				optionValue.push_back(putValue);
+			}
+			else {
+				double sum_stockPrice = 0;
+				for (int l = 1; l < n + 1; l++) {
+					sum_stockPrice += stockPrices[l];
+				}
+				double payoff = K - (StAve * (n_prev + 1) + sum_stockPrice) / (n_prev + n + 1);
+				putValue = max(payoff, 0.0) * exp(-r * time_left_to_maturity);
+				optionValue.push_back(putValue);
+			}
+		}
+		double sum = 0;
+		for (int i = 0; i < sims; i++) {
+			sum += optionValue[i];
+		}
+		double mean = sum / sims;
+		means.push_back(mean);
+		times += 1;
+	}
+
+	double sum_means = 0;
+	for (int l = 0; l < rep; l++) {
+		sum_means += means[l];
+	}
+	double meanOfRep = sum_means / rep;
+
+	double var = 0.0;
+	for (int n = 0; n < rep; n++) {
+		var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
+	}
+	var = var / rep;
+	double sdOfRep = sqrt(var);
+	double upper = meanOfRep + 2 * sdOfRep;
+	double lower = meanOfRep - 2 * sdOfRep;
+	vector<double> results = { meanOfRep, lower, upper };
+	cout << "==================================================" << endl;
+	cout << "Average Option : European put " << endl;
+	cout << "[ Save,t = " << StAve << " | " << "time_elapsed = " << time_elapsed << " ]" << endl;
+	cout << "--------------------------------------------------" << endl;
+	cout << "mean : " << meanOfRep << endl;
+	cout << "standard error : " << sdOfRep << endl;
+	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
+	cout << endl;
+}
+
+void binomial_European(double S0, double K, double T, double r, double q, double sigma, int layers, string call_put) {
+	double dt = T / layers;
+	double u = exp(sigma * sqrt(dt));
+	double d = exp(-sigma * sqrt(dt));
+	double p = (exp((r - q) * dt) - d) / (u - d);
+
+	vector<double> stockPrice;
+	for (int j = 0; j < layers + 1; j++) {
+		stockPrice.push_back((S0 * pow(u, layers - j) * pow(d, j)));
+	}
+
+	if (call_put == "call") {
+		vector<double> callPrice;
+		for (int j = 0; j < layers + 1; j++) {
+			callPrice.push_back(max(stockPrice[j] - K, 0.0));
+		}
+		int times = 0;
+		int i_temp = layers - 1;
+		while (times < layers) {
+			for (int j = 0; j < i_temp + 1; j++) {
+				callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
+			}
+			i_temp -= 1;
+			times += 1;
+		}
+
+		cout << "(CRR Binomial Tree) Price of European " << call_put << " : " << callPrice[0] << endl;
+
+	}
+	else {
+		vector<double> putPrice;
+		for (int j = 0; j < layers + 1; j++) {
+			putPrice.push_back(max(K - stockPrice[j], 0.0));
+		}
+		int times = 0;
+		int i_temp = layers - 1;
+		while (times < layers) {
+			for (int j = 0; j < i_temp + 1; j++) {
+				putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
+			}
+			i_temp -= 1;
+			times += 1;
+		}
+		cout << "(CRR Binomial Tree) Price of European " << call_put << " : " << putPrice[0] << endl;
+	}
+}
+
+void binomial_American(double S0, double K, double T, double r, double q, double sigma, int layers, string call_put) {
+	double dt = T / layers;
+	double u = exp(sigma * sqrt(dt));
+	double d = exp(-sigma * sqrt(dt));
+	double p = (exp((r - q) * dt) - d) / (u - d);
+
+	// simulate stock price
+	vector<vector<double>> stockPrice;
+	for (int i = 0; i < layers + 1; i++) {
+		vector<double> temp;
+		for (int j = 0; j < i + 1; j++) {
+			temp.push_back(0);
+		}
+		stockPrice.push_back(temp);
+	}
+	for (int i = 0; i < layers + 1; i++) {
+		for (int j = 0; j < i + 1; j++) {
+			stockPrice[i][j] = S0 * pow(u, i - j) * pow(d, j);
+		}
+	}
+
+	if (call_put == "call") {
+		// calculate terminal payoff
+		vector<double> callPrice;
+		for (int j = 0; j < layers + 1; j++) {
+			callPrice.push_back(max(stockPrice[layers][j] - K, 0.0));
+		}
+		int times = 0;
+		int i_temp = layers - 1;
+		while (times < layers) {
+			vector<double> xValue;
+			for (int j = 0; j < i_temp + 1; j++) {
+				callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
+				// calculate excersise value and compare it to holding value...
+			}
+			for (int k = 0; k < i_temp - 1; k++) {
+				xValue.push_back(max(stockPrice[i_temp][k] - K, 0.0));
+				callPrice[k] = max(callPrice[k], xValue[k]);
+			}
+			i_temp -= 1;
+			times += 1;
+		}
+		cout << "(CRR Binomial Tree) Price of American " << call_put << " : " << callPrice[0] << endl;
+	}
+	else {
+		vector<double> putPrice;
+		for (int j = 0; j < layers + 1; j++) {
+			putPrice.push_back((K - stockPrice[layers][j], 0.0));
+		}
+
+		int times = 0;
+		int i_temp = layers - 1;
+		while (times < layers) {
+			vector<double> xValue;
+			for (int j = 0; j < i_temp + 1; j++) {
+				putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
+				// calculate excersise value and compare it to holding value...
+			}
+			for (int k = 0; k < i_temp + 1; k++) {
+				xValue.push_back(max(K - stockPrice[i_temp][k], 0.0));
+				putPrice[k] = max(putPrice[k], xValue[k]);
+			}
+			i_temp -= 1;
+			times += 1;
+		}
+		cout << "(CRR Binomial Tree) Price of American " << call_put << " : " << putPrice[0] << endl;
+	}
+}
 
 
 namespace FinAlgoProhect {
