@@ -12,494 +12,8 @@
 # include <chrono>
 # include <format>
 
-using namespace std;
 
-void monte_carlo_European(double S0, double K, double T, double r, double q, double sigma, string call_put, int sims, int rep) {
-	vector<double> meanLst;
-	int times = 0;
-
-	default_random_engine generator;
-	generator.seed(chrono::system_clock::now().time_since_epoch().count());
-	normal_distribution<double> distribution(log(S0) + (r - q - 0.5 * (pow(sigma, 2))) * T, sigma * sqrt(T));
-
-	while (times < rep) {
-		vector<double> stockSamples;
-		for (int i = 0; i < sims; i++) {
-			double lnSample = distribution(generator);
-			// cout << lnSample << endl;
-			double sample = exp(lnSample);
-			// cout << sample << endl;
-			stockSamples.push_back(sample);
-		}
-
-		vector<double> optionValue;
-		if (call_put == "call") {
-			for (int j = 0; j < sims; j++) {
-				optionValue.push_back(max(stockSamples[j] - K, 0.0));
-			}
-			double sum = 0;
-			for (int k = 0; k < sims; k++) {
-				sum += optionValue[k];
-			}
-			double mean = sum / sims;
-			double discounted = mean * exp(-r * T);
-			meanLst.push_back(discounted);
-			times += 1;
-		}
-		else {
-			for (int l = 0; l < sims; l++) {
-				optionValue.push_back(max(K - stockSamples[l], 0.0));
-			}
-			double sum = 0;
-			for (int k = 0; k < sims; k++) {
-				sum += optionValue[k];
-			}
-			double mean = sum / sims;
-			double discounted = mean * exp(-r * T);
-			meanLst.push_back(discounted);
-			times += 1;
-		}
-	}
-
-
-	double sum_mean = 0;
-	for (int i = 0; i < rep; i++) {
-		sum_mean += meanLst[i];
-	}
-	double meanOfRep = sum_mean / rep;
-
-	double var = 0.0;
-	for (int n = 0; n < rep; n++) {
-		var += (meanLst[n] - meanOfRep) * (meanLst[n] - meanOfRep);
-	}
-	var = var / rep;
-	double sdOfRep = sqrt(var);
-	double upper = meanOfRep + 2 * sdOfRep;
-	double lower = meanOfRep - 2 * sdOfRep;
-	vector<double> results = { meanOfRep, lower, upper };
-	cout << "==================================================" << endl;
-	cout << "European " << call_put << endl;
-	cout << "--------------------------------------------------" << endl;
-	cout << "mean : " << meanOfRep << endl;
-	cout << "standard error : " << sdOfRep << endl;
-	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
-	cout << endl;
-}
-
-void lookback_MC_call(double StMin, double St, double time_left_to_maturity, double r, double q, double sigma, int n, int sims, int rep) {
-	double dt = time_left_to_maturity / n;
-	int times = 0;
-
-	default_random_engine generator;
-	generator.seed(chrono::system_clock::now().time_since_epoch().count());
-	normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
-
-	vector<double> means;
-	while (times < rep) {
-		vector<double> optionValue;
-
-		for (int i = 0; i < sims; i++) {
-			double minPrice = StMin;
-			vector<double> stockPrices;
-			stockPrices.push_back(log(St));
-
-			for (int j = 1; j < n + 1; j++) {
-				double dlnS = distribution(generator);
-				double sample = stockPrices[j - 1] + dlnS;
-				stockPrices.push_back(sample);
-			}
-			for (int k = 0; k < n + 1; k++) {
-				stockPrices[k] = exp(stockPrices[k]);
-				if (stockPrices[k] < minPrice) {
-					minPrice = stockPrices[k];
-				}
-			}
-			// for each loop, single price path is simulated...
-			double callValue = max(stockPrices[n] - minPrice, 0.0) * exp(-r * time_left_to_maturity);
-			// cout << putValue << endl;
-			optionValue.push_back(callValue);
-		}
-
-		double sum = 0;
-		for (int i = 0; i < sims; i++) {
-			sum += optionValue[i];
-		}
-		double mean = sum / sims;
-		means.push_back(mean);
-		times += 1;
-	}
-
-	double sum_means = 0;
-	for (int l = 0; l < rep; l++) {
-		sum_means += means[l];
-	}
-	double meanOfRep = sum_means / rep;
-
-	double var = 0.0;
-	for (int n = 0; n < rep; n++) {
-		var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
-	}
-	var = var / rep;
-	double sdOfRep = sqrt(var);
-	double upper = meanOfRep + 2 * sdOfRep;
-	double lower = meanOfRep - 2 * sdOfRep;
-	vector<double> results = { meanOfRep, lower, upper };
-	cout << "==================================================" << endl;
-	cout << "Lookback Option : European call " << endl;
-	cout << "[ Smin,t = " << StMin << " ]" << endl;
-	cout << "--------------------------------------------------" << endl;
-	cout << "mean : " << meanOfRep << endl;
-	cout << "standard error : " << sdOfRep << endl;
-	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
-	cout << endl;
-}
-
-void lookback_MC_put(double StMax, double St, double time_left_to_maturity, double r, double q, double sigma, int n, int sims, int rep) {
-	double dt = time_left_to_maturity / n;
-	int times = 0;
-
-	default_random_engine generator;
-	generator.seed(chrono::system_clock::now().time_since_epoch().count());
-	normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
-
-	vector<double> means;
-	while (times < rep) {
-		vector<double> optionValue;
-
-		for (int i = 0; i < sims; i++) {
-			double maxPrice = StMax;
-			vector<double> stockPrices;
-			stockPrices.push_back(log(St));
-
-			for (int j = 1; j < n + 1; j++) {
-				double dlnS = distribution(generator);
-				double sample = stockPrices[j - 1] + dlnS;
-				stockPrices.push_back(sample);
-			}
-			for (int k = 0; k < n + 1; k++) {
-				stockPrices[k] = exp(stockPrices[k]);
-				if (stockPrices[k] > maxPrice) {
-					maxPrice = stockPrices[k];
-				}
-			}
-			// for each loop, single price path is simulated...
-			double putValue = max(maxPrice - stockPrices[n], 0.0) * exp(-r * time_left_to_maturity);
-			// cout << putValue << endl;
-			optionValue.push_back(putValue);
-		}
-
-		double sum = 0;
-		for (int i = 0; i < sims; i++) {
-			sum += optionValue[i];
-		}
-		double mean = sum / sims;
-		means.push_back(mean);
-		times += 1;
-	}
-
-	double sum_means = 0;
-	for (int l = 0; l < rep; l++) {
-		sum_means += means[l];
-	}
-	double meanOfRep = sum_means / rep;
-
-	double var = 0.0;
-	for (int n = 0; n < rep; n++) {
-		var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
-	}
-	var = var / rep;
-	double sdOfRep = sqrt(var);
-	double upper = meanOfRep + 2 * sdOfRep;
-	double lower = meanOfRep - 2 * sdOfRep;
-	vector<double> results = { meanOfRep, lower, upper };
-	cout << "==================================================" << endl;
-	cout << "Lookback Option : European put " << endl;
-	cout << "[ Smax,t = " << StMax << " ]" << endl;
-	cout << "--------------------------------------------------" << endl;
-	cout << "mean : " << meanOfRep << endl;
-	cout << "standard error : " << sdOfRep << endl;
-	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
-	cout << endl;
-}
-
-void average_MC_call(double StAve, double St, double K, double time_elapsed, double time_left_to_maturity, double r, double q, double sigma, int n_prev, int n, int sims, int rep) {
-	double dt = time_left_to_maturity / n;
-	int times = 0;
-
-	default_random_engine generator;
-	generator.seed(chrono::system_clock::now().time_since_epoch().count());
-	normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
-
-	vector<double> means;
-	while (times < rep) {
-		vector<double> optionValue;
-
-		for (int i = 0; i < sims; i++) {
-			vector<double> stockPrices;
-			stockPrices.push_back(log(St));
-
-			for (int j = 1; j < n + 1; j++) {
-				double dlnS = distribution(generator);
-				double sample = stockPrices[j - 1] + dlnS;
-				stockPrices.push_back(sample);
-			}
-			for (int k = 0; k < n + 1; k++) {
-				stockPrices[k] = exp(stockPrices[k]);
-			}
-			// for each loop, single price path is simulated...
-
-			double callValue;
-			if (time_elapsed == 0) {
-				double sum_stockPrice = 0;
-				for (int l = 0; l < n + 1; l++) {
-					sum_stockPrice += stockPrices[l];
-				}
-				double mean_stockPrice = sum_stockPrice / (n + 1);
-				callValue = max(mean_stockPrice - K, 0.0) * exp(-r * time_left_to_maturity);
-				optionValue.push_back(callValue);
-			}
-			else {
-				double sum_stockPrice = 0;
-				for (int l = 1; l < n + 1; l++) {
-					sum_stockPrice += stockPrices[l];
-				}
-				double payoff = (StAve * (n_prev + 1) + sum_stockPrice) / (n_prev + n + 1) - K;
-				callValue = max(payoff, 0.0) * exp(-r * time_left_to_maturity);
-				optionValue.push_back(callValue);
-			}
-		}
-		double sum = 0;
-		for (int i = 0; i < sims; i++) {
-			sum += optionValue[i];
-		}
-		double mean = sum / sims;
-		means.push_back(mean);
-		times += 1;
-	}
-
-	double sum_means = 0;
-	for (int l = 0; l < rep; l++) {
-		sum_means += means[l];
-	}
-	double meanOfRep = sum_means / rep;
-
-	double var = 0.0;
-	for (int n = 0; n < rep; n++) {
-		var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
-	}
-	var = var / rep;
-	double sdOfRep = sqrt(var);
-	double upper = meanOfRep + 2 * sdOfRep;
-	double lower = meanOfRep - 2 * sdOfRep;
-	vector<double> results = { meanOfRep, lower, upper };
-	cout << "==================================================" << endl;
-	cout << "Average Option : European call " << endl;
-	cout << "[ Save,t = " << StAve << " | " << "time_elapsed = " << time_elapsed << " ]" << endl;
-	cout << "--------------------------------------------------" << endl;
-	cout << "mean : " << meanOfRep << endl;
-	cout << "standard error : " << sdOfRep << endl;
-	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
-	cout << endl;
-}
-
-void average_MC_put(double StAve, double St, double K, double time_elapsed, double time_left_to_maturity, double r, double q, double sigma, int n_prev, int n, int sims, int rep) {
-	double dt = time_left_to_maturity / n;
-	int times = 0;
-
-	default_random_engine generator;
-	generator.seed(chrono::system_clock::now().time_since_epoch().count());
-	normal_distribution<double> distribution((r - q - 0.5 * (pow(sigma, 2))) * dt, sigma * sqrt(dt));
-
-	vector<double> means;
-	while (times < rep) {
-		vector<double> optionValue;
-
-		for (int i = 0; i < sims; i++) {
-			vector<double> stockPrices;
-			stockPrices.push_back(log(St));
-
-			for (int j = 1; j < n + 1; j++) {
-				double dlnS = distribution(generator);
-				double sample = stockPrices[j - 1] + dlnS;
-				stockPrices.push_back(sample);
-			}
-			for (int k = 0; k < n + 1; k++) {
-				stockPrices[k] = exp(stockPrices[k]);
-			}
-			// for each loop, single price path is simulated...
-
-			double putValue;
-			if (time_elapsed == 0) {
-				double sum_stockPrice = 0;
-				for (int l = 0; l < n + 1; l++) {
-					sum_stockPrice += stockPrices[l];
-				}
-				double mean_stockPrice = sum_stockPrice / (n + 1);
-				putValue = max(K - mean_stockPrice, 0.0) * exp(-r * time_left_to_maturity);
-				optionValue.push_back(putValue);
-			}
-			else {
-				double sum_stockPrice = 0;
-				for (int l = 1; l < n + 1; l++) {
-					sum_stockPrice += stockPrices[l];
-				}
-				double payoff = K - (StAve * (n_prev + 1) + sum_stockPrice) / (n_prev + n + 1);
-				putValue = max(payoff, 0.0) * exp(-r * time_left_to_maturity);
-				optionValue.push_back(putValue);
-			}
-		}
-		double sum = 0;
-		for (int i = 0; i < sims; i++) {
-			sum += optionValue[i];
-		}
-		double mean = sum / sims;
-		means.push_back(mean);
-		times += 1;
-	}
-
-	double sum_means = 0;
-	for (int l = 0; l < rep; l++) {
-		sum_means += means[l];
-	}
-	double meanOfRep = sum_means / rep;
-
-	double var = 0.0;
-	for (int n = 0; n < rep; n++) {
-		var += (means[n] - meanOfRep) * (means[n] - meanOfRep);
-	}
-	var = var / rep;
-	double sdOfRep = sqrt(var);
-	double upper = meanOfRep + 2 * sdOfRep;
-	double lower = meanOfRep - 2 * sdOfRep;
-	vector<double> results = { meanOfRep, lower, upper };
-	cout << "==================================================" << endl;
-	cout << "Average Option : European put " << endl;
-	cout << "[ Save,t = " << StAve << " | " << "time_elapsed = " << time_elapsed << " ]" << endl;
-	cout << "--------------------------------------------------" << endl;
-	cout << "mean : " << meanOfRep << endl;
-	cout << "standard error : " << sdOfRep << endl;
-	cout << "0.95 confidence interval : [ " << lower << ", " << upper << " ]" << endl;
-	cout << endl;
-}
-
-void binomial_European(double S0, double K, double T, double r, double q, double sigma, int layers, string call_put) {
-	double dt = T / layers;
-	double u = exp(sigma * sqrt(dt));
-	double d = exp(-sigma * sqrt(dt));
-	double p = (exp((r - q) * dt) - d) / (u - d);
-
-	vector<double> stockPrice;
-	for (int j = 0; j < layers + 1; j++) {
-		stockPrice.push_back((S0 * pow(u, layers - j) * pow(d, j)));
-	}
-
-	if (call_put == "call") {
-		vector<double> callPrice;
-		for (int j = 0; j < layers + 1; j++) {
-			callPrice.push_back(max(stockPrice[j] - K, 0.0));
-		}
-		int times = 0;
-		int i_temp = layers - 1;
-		while (times < layers) {
-			for (int j = 0; j < i_temp + 1; j++) {
-				callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
-			}
-			i_temp -= 1;
-			times += 1;
-		}
-
-		cout << "(CRR Binomial Tree) Price of European " << call_put << " : " << callPrice[0] << endl;
-
-	}
-	else {
-		vector<double> putPrice;
-		for (int j = 0; j < layers + 1; j++) {
-			putPrice.push_back(max(K - stockPrice[j], 0.0));
-		}
-		int times = 0;
-		int i_temp = layers - 1;
-		while (times < layers) {
-			for (int j = 0; j < i_temp + 1; j++) {
-				putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
-			}
-			i_temp -= 1;
-			times += 1;
-		}
-		cout << "(CRR Binomial Tree) Price of European " << call_put << " : " << putPrice[0] << endl;
-	}
-}
-
-void binomial_American(double S0, double K, double T, double r, double q, double sigma, int layers, string call_put) {
-	double dt = T / layers;
-	double u = exp(sigma * sqrt(dt));
-	double d = exp(-sigma * sqrt(dt));
-	double p = (exp((r - q) * dt) - d) / (u - d);
-
-	// simulate stock price
-	vector<vector<double>> stockPrice;
-	for (int i = 0; i < layers + 1; i++) {
-		vector<double> temp;
-		for (int j = 0; j < i + 1; j++) {
-			temp.push_back(0);
-		}
-		stockPrice.push_back(temp);
-	}
-	for (int i = 0; i < layers + 1; i++) {
-		for (int j = 0; j < i + 1; j++) {
-			stockPrice[i][j] = S0 * pow(u, i - j) * pow(d, j);
-		}
-	}
-
-	if (call_put == "call") {
-		// calculate terminal payoff
-		vector<double> callPrice;
-		for (int j = 0; j < layers + 1; j++) {
-			callPrice.push_back(max(stockPrice[layers][j] - K, 0.0));
-		}
-		int times = 0;
-		int i_temp = layers - 1;
-		while (times < layers) {
-			vector<double> xValue;
-			for (int j = 0; j < i_temp + 1; j++) {
-				callPrice[j] = (callPrice[j] * p + callPrice[j + 1] * (1 - p)) * exp(-r * dt);
-				// calculate excersise value and compare it to holding value...
-			}
-			for (int k = 0; k < i_temp - 1; k++) {
-				xValue.push_back(max(stockPrice[i_temp][k] - K, 0.0));
-				callPrice[k] = max(callPrice[k], xValue[k]);
-			}
-			i_temp -= 1;
-			times += 1;
-		}
-		cout << "(CRR Binomial Tree) Price of American " << call_put << " : " << callPrice[0] << endl;
-	}
-	else {
-		vector<double> putPrice;
-		for (int j = 0; j < layers + 1; j++) {
-			putPrice.push_back((K - stockPrice[layers][j], 0.0));
-		}
-
-		int times = 0;
-		int i_temp = layers - 1;
-		while (times < layers) {
-			vector<double> xValue;
-			for (int j = 0; j < i_temp + 1; j++) {
-				putPrice[j] = (putPrice[j] * p + putPrice[j + 1] * (1 - p)) * exp(-r * dt);
-				// calculate excersise value and compare it to holding value...
-			}
-			for (int k = 0; k < i_temp + 1; k++) {
-				xValue.push_back(max(K - stockPrice[i_temp][k], 0.0));
-				putPrice[k] = max(putPrice[k], xValue[k]);
-			}
-			i_temp -= 1;
-			times += 1;
-		}
-		cout << "(CRR Binomial Tree) Price of American " << call_put << " : " << putPrice[0] << endl;
-	}
-}
-
-
-namespace FinAlgoProhect {
+namespace FinAlgoProject {
 	using namespace std;
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -538,7 +52,7 @@ namespace FinAlgoProhect {
 	private: System::Windows::Forms::GroupBox^ outputBox;
 	private: System::Windows::Forms::GroupBox^ inputBox;
 
-	private: System::Windows::Forms::Label^ label0;
+
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label8;
 	private: System::Windows::Forms::Label^ label7;
@@ -607,12 +121,18 @@ namespace FinAlgoProhect {
 	private: System::Windows::Forms::Label^ outputString;
 	private: System::Windows::Forms::Label^ author;
 	private: System::Windows::Forms::Label^ email;
-	private: System::Windows::Forms::RadioButton^ US;
-	private: System::Windows::Forms::RadioButton^ EU;
+
+
 	private: System::Windows::Forms::GroupBox^ call_put;
 	private: System::Windows::Forms::RadioButton^ put;
 	private: System::Windows::Forms::RadioButton^ call;
-	private: System::Windows::Forms::ListBox^ models;
+	private: System::Windows::Forms::GroupBox^ models;
+	private: System::Windows::Forms::RadioButton^ US_CRR;
+	private: System::Windows::Forms::RadioButton^ EU_CRR;
+	private: System::Windows::Forms::RadioButton^ EU_MC;
+private: System::Windows::Forms::RadioButton^ EU_avg_MC;
+private: System::Windows::Forms::RadioButton^ EU_lb_MC;
+
 
 
 
@@ -652,8 +172,6 @@ namespace FinAlgoProhect {
 			this->label14 = (gcnew System::Windows::Forms::Label());
 			this->label13 = (gcnew System::Windows::Forms::Label());
 			this->tree = (gcnew System::Windows::Forms::GroupBox());
-			this->US = (gcnew System::Windows::Forms::RadioButton());
-			this->EU = (gcnew System::Windows::Forms::RadioButton());
 			this->layers_tb = (gcnew System::Windows::Forms::TextBox());
 			this->label12 = (gcnew System::Windows::Forms::Label());
 			this->lookback = (gcnew System::Windows::Forms::GroupBox());
@@ -679,17 +197,22 @@ namespace FinAlgoProhect {
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->models = (gcnew System::Windows::Forms::ListBox());
-			this->label0 = (gcnew System::Windows::Forms::Label());
 			this->calc = (gcnew System::Windows::Forms::Button());
 			this->author = (gcnew System::Windows::Forms::Label());
 			this->email = (gcnew System::Windows::Forms::Label());
+			this->models = (gcnew System::Windows::Forms::GroupBox());
+			this->EU_MC = (gcnew System::Windows::Forms::RadioButton());
+			this->EU_CRR = (gcnew System::Windows::Forms::RadioButton());
+			this->US_CRR = (gcnew System::Windows::Forms::RadioButton());
+			this->EU_lb_MC = (gcnew System::Windows::Forms::RadioButton());
+			this->EU_avg_MC = (gcnew System::Windows::Forms::RadioButton());
 			this->outputBox->SuspendLayout();
 			this->inputBox->SuspendLayout();
 			this->call_put->SuspendLayout();
 			this->average->SuspendLayout();
 			this->tree->SuspendLayout();
 			this->lookback->SuspendLayout();
+			this->models->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// outputBox
@@ -699,7 +222,7 @@ namespace FinAlgoProhect {
 			this->outputBox->Font = (gcnew System::Drawing::Font(L"Courier New", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->outputBox->ForeColor = System::Drawing::SystemColors::Control;
-			this->outputBox->Location = System::Drawing::Point(23, 418);
+			this->outputBox->Location = System::Drawing::Point(22, 485);
 			this->outputBox->Name = L"outputBox";
 			this->outputBox->Size = System::Drawing::Size(936, 321);
 			this->outputBox->TabIndex = 0;
@@ -741,7 +264,7 @@ namespace FinAlgoProhect {
 			this->inputBox->Controls->Add(this->label1);
 			this->inputBox->Font = (gcnew System::Drawing::Font(L"Courier New", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->inputBox->Location = System::Drawing::Point(23, 63);
+			this->inputBox->Location = System::Drawing::Point(22, 130);
 			this->inputBox->Name = L"inputBox";
 			this->inputBox->Size = System::Drawing::Size(932, 302);
 			this->inputBox->TabIndex = 1;
@@ -878,8 +401,6 @@ namespace FinAlgoProhect {
 			// 
 			// tree
 			// 
-			this->tree->Controls->Add(this->US);
-			this->tree->Controls->Add(this->EU);
 			this->tree->Controls->Add(this->layers_tb);
 			this->tree->Controls->Add(this->label12);
 			this->tree->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
@@ -890,26 +411,6 @@ namespace FinAlgoProhect {
 			this->tree->TabIndex = 21;
 			this->tree->TabStop = false;
 			this->tree->Text = L"Tree";
-			// 
-			// US
-			// 
-			this->US->AutoSize = true;
-			this->US->Location = System::Drawing::Point(168, 75);
-			this->US->Name = L"US";
-			this->US->Size = System::Drawing::Size(116, 26);
-			this->US->TabIndex = 29;
-			this->US->Text = L"American";
-			this->US->UseVisualStyleBackColor = true;
-			// 
-			// EU
-			// 
-			this->EU->AutoSize = true;
-			this->EU->Location = System::Drawing::Point(13, 75);
-			this->EU->Name = L"EU";
-			this->EU->Size = System::Drawing::Size(116, 26);
-			this->EU->TabIndex = 28;
-			this->EU->Text = L"European";
-			this->EU->UseVisualStyleBackColor = true;
 			// 
 			// layers_tb
 			// 
@@ -1166,37 +667,11 @@ namespace FinAlgoProhect {
 			this->label1->TabIndex = 4;
 			this->label1->Text = L"Spot Price";
 			// 
-			// models
-			// 
-			this->models->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->models->FormattingEnabled = true;
-			this->models->ItemHeight = 21;
-			this->models->Items->AddRange(gcnew cli::array< System::Object^  >(5) {
-				L"American Option (CRR)", L"European Option (CRR)",
-					L"European Option (MC)", L"Lookback European Option (MC)", L"Average European Option (MC)"
-			});
-			this->models->Location = System::Drawing::Point(308, 32);
-			this->models->Name = L"models";
-			this->models->Size = System::Drawing::Size(526, 25);
-			this->models->TabIndex = 2;
-			// 
-			// label0
-			// 
-			this->label0->AutoSize = true;
-			this->label0->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->label0->Location = System::Drawing::Point(19, 32);
-			this->label0->Name = L"label0";
-			this->label0->Size = System::Drawing::Size(283, 23);
-			this->label0->TabIndex = 3;
-			this->label0->Text = L"Choose option type : ";
-			// 
 			// calc
 			// 
 			this->calc->Font = (gcnew System::Drawing::Font(L"Courier New", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->calc->Location = System::Drawing::Point(683, 371);
+			this->calc->Location = System::Drawing::Point(682, 438);
 			this->calc->Name = L"calc";
 			this->calc->Size = System::Drawing::Size(272, 41);
 			this->calc->TabIndex = 4;
@@ -1209,7 +684,7 @@ namespace FinAlgoProhect {
 			this->author->AutoSize = true;
 			this->author->Font = (gcnew System::Drawing::Font(L"Calibri", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->author->Location = System::Drawing::Point(27, 752);
+			this->author->Location = System::Drawing::Point(26, 824);
 			this->author->Name = L"author";
 			this->author->Size = System::Drawing::Size(520, 19);
 			this->author->TabIndex = 5;
@@ -1220,27 +695,107 @@ namespace FinAlgoProhect {
 			this->email->AutoSize = true;
 			this->email->Font = (gcnew System::Drawing::Font(L"Calibri", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->email->Location = System::Drawing::Point(27, 781);
+			this->email->Location = System::Drawing::Point(26, 853);
 			this->email->Name = L"email";
 			this->email->Size = System::Drawing::Size(247, 19);
 			this->email->TabIndex = 6;
 			this->email->Text = L"Contact me : r10723046@ntu.edu.tw";
+			// 
+			// models
+			// 
+			this->models->Controls->Add(this->EU_avg_MC);
+			this->models->Controls->Add(this->EU_lb_MC);
+			this->models->Controls->Add(this->US_CRR);
+			this->models->Controls->Add(this->EU_CRR);
+			this->models->Controls->Add(this->EU_MC);
+			this->models->Font = (gcnew System::Drawing::Font(L"Courier New", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->models->Location = System::Drawing::Point(25, 19);
+			this->models->Name = L"models";
+			this->models->Size = System::Drawing::Size(929, 105);
+			this->models->TabIndex = 7;
+			this->models->TabStop = false;
+			this->models->Text = L"Pricing Models";
+			// 
+			// EU_MC
+			// 
+			this->EU_MC->AutoSize = true;
+			this->EU_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->EU_MC->Location = System::Drawing::Point(99, 34);
+			this->EU_MC->Name = L"EU_MC";
+			this->EU_MC->Size = System::Drawing::Size(149, 26);
+			this->EU_MC->TabIndex = 0;
+			this->EU_MC->TabStop = true;
+			this->EU_MC->Text = L"European MC";
+			this->EU_MC->UseVisualStyleBackColor = true;
+			// 
+			// EU_CRR
+			// 
+			this->EU_CRR->AutoSize = true;
+			this->EU_CRR->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->EU_CRR->Location = System::Drawing::Point(653, 34);
+			this->EU_CRR->Name = L"EU_CRR";
+			this->EU_CRR->Size = System::Drawing::Size(160, 26);
+			this->EU_CRR->TabIndex = 1;
+			this->EU_CRR->TabStop = true;
+			this->EU_CRR->Text = L"European CRR";
+			this->EU_CRR->UseVisualStyleBackColor = true;
+			// 
+			// US_CRR
+			// 
+			this->US_CRR->AutoSize = true;
+			this->US_CRR->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->US_CRR->Location = System::Drawing::Point(653, 66);
+			this->US_CRR->Name = L"US_CRR";
+			this->US_CRR->Size = System::Drawing::Size(160, 26);
+			this->US_CRR->TabIndex = 2;
+			this->US_CRR->TabStop = true;
+			this->US_CRR->Text = L"American CRR";
+			this->US_CRR->UseVisualStyleBackColor = true;
+			// 
+			// EU_lb_MC
+			// 
+			this->EU_lb_MC->AutoSize = true;
+			this->EU_lb_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->EU_lb_MC->Location = System::Drawing::Point(327, 34);
+			this->EU_lb_MC->Name = L"EU_lb_MC";
+			this->EU_lb_MC->Size = System::Drawing::Size(248, 26);
+			this->EU_lb_MC->TabIndex = 3;
+			this->EU_lb_MC->TabStop = true;
+			this->EU_lb_MC->Text = L"European lookback MC";
+			this->EU_lb_MC->UseVisualStyleBackColor = true;
+			// 
+			// EU_avg_MC
+			// 
+			this->EU_avg_MC->AutoSize = true;
+			this->EU_avg_MC->Font = (gcnew System::Drawing::Font(L"Courier New", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->EU_avg_MC->Location = System::Drawing::Point(327, 66);
+			this->EU_avg_MC->Name = L"EU_avg_MC";
+			this->EU_avg_MC->Size = System::Drawing::Size(237, 26);
+			this->EU_avg_MC->TabIndex = 4;
+			this->EU_avg_MC->TabStop = true;
+			this->EU_avg_MC->Text = L"European average MC";
+			this->EU_avg_MC->UseVisualStyleBackColor = true;
 			// 
 			// mainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Menu;
-			this->ClientSize = System::Drawing::Size(984, 811);
+			this->ClientSize = System::Drawing::Size(984, 886);
+			this->Controls->Add(this->models);
 			this->Controls->Add(this->email);
 			this->Controls->Add(this->author);
 			this->Controls->Add(this->calc);
-			this->Controls->Add(this->label0);
-			this->Controls->Add(this->models);
 			this->Controls->Add(this->inputBox);
 			this->Controls->Add(this->outputBox);
-			this->MaximumSize = System::Drawing::Size(1000, 850);
-			this->MinimumSize = System::Drawing::Size(1000, 850);
+			this->MaximumSize = System::Drawing::Size(1000, 925);
+			this->MinimumSize = System::Drawing::Size(1000, 925);
 			this->Name = L"mainForm";
 			this->Text = L"Option Price Calculator";
 			this->outputBox->ResumeLayout(false);
@@ -1255,6 +810,8 @@ namespace FinAlgoProhect {
 			this->tree->PerformLayout();
 			this->lookback->ResumeLayout(false);
 			this->lookback->PerformLayout();
+			this->models->ResumeLayout(false);
+			this->models->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -1283,13 +840,11 @@ namespace FinAlgoProhect {
 		double q = System::Convert::ToDouble(q_string);
 		double sigma = System::Convert::ToDouble(sigma_string);
 
-
 		// General MC
 		String^ sims_string = sims_tb->Text;
 		String^ rep_string = rep_tb->Text;
 		int sims = System::Convert::ToInt64(sims_string);
 		int rep = System::Convert::ToInt64(rep_string);
-
 
 		// Lookback MC
 		String^ StMin_string = StMin_tb->Text;
@@ -1299,7 +854,6 @@ namespace FinAlgoProhect {
 		double StMin = System::Convert::ToDouble(StMin_string);
 		double StMax = System::Convert::ToDouble(StMax_string);
 		int n_lb = System::Convert::ToInt64(n_lb_string);
-
 
 		// Average MC
 		String^ StAve_string = StAve_tb->Text;
@@ -1311,7 +865,6 @@ namespace FinAlgoProhect {
 		int n_avg = System::Convert::ToInt64(n_avg_string);
 		int n_avg_prev = System::Convert::ToInt64(n_avg_prev_string);
 		double time_elapsed = System::Convert::ToDouble(time_elapsed_string);
-
 
 		// Tree
 		String^ layers_string = layers_tb->Text;

@@ -13,7 +13,7 @@ void main(array<String^>^ args)
 {
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
-	FinAlgoProhect::mainForm form;
+	FinAlgoProject::mainForm form;
 	Application::Run(%form);
 
 }
