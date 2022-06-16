@@ -24,8 +24,18 @@ C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorith
 C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1117,19): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
 C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1119,13): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
 C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1120,12): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1131,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1142,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1127,72): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+          with
+          [
+              _Rep=std::chrono::system_clock::rep
+          ]
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1206,72): warning C4244: '引數': 將 '_Rep' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+          with
+          [
+              _Rep=std::chrono::system_clock::rep
+          ]
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1287,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.h(1298,15): warning C4244: '正在初始化': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
 C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\FinancialAlgorithm_Project\mainForm.cpp(13,1): warning C4829: 函式 main 的參數可能不正確。請考慮 'int main(Platform::Array<Platform::String^>^ argv)'
   mainForm.obj : 發現 MSIL 模組。MSIL 的累加連結已停用。正在執行完整連結
   FinancialAlgorithm_Project.vcxproj -> C:\Users\ns3pr\桌面\CodingBoi\C++\FinancialAlgorithm_Project\x64\Debug\FinancialAlgorithm_Project.exe
