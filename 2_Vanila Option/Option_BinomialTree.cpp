@@ -10,7 +10,6 @@ double binomial_prob(int n, int j, double p){
     for(int i = 0; i < n-j; i++){
         temp1[i] = log(n-i);
     }
-    
     double sum1 = 0;
     for(int i = 0; i < n-j; i++){
         sum1 += temp1[i];
@@ -42,9 +41,9 @@ double binomial_European(double S0, double K, double T, double r, double q, doub
     }
 
     if(call_put == "call"){
-        double callPrice[layers+1];
+        vector<double> callPrice;
         for(int j = 0; j < layers+1; j++){
-            callPrice[j] = max(stockPrice[j] - K, 0.0);
+            callPrice.push_back(max(stockPrice[j] - K, 0.0));
        }
        int times = 0;
        int i_temp = layers-1;
@@ -60,9 +59,9 @@ double binomial_European(double S0, double K, double T, double r, double q, doub
         return callPrice[0];
     }
     else{
-        double putPrice[layers+1];
+        vector<double> putPrice;
         for(int j = 0; j < layers+1; j++){
-            putPrice[j] = max(K - stockPrice[j], 0.0);
+            putPrice.push_back(max(K - stockPrice[j], 0.0));
        }
        int times = 0;
        int i_temp = layers-1;
@@ -101,9 +100,9 @@ double binomial_American(double S0, double K, double T, double r, double q, doub
 
     if(call_put == "call"){
         // calculate terminal payoff
-        double callPrice[layers+1];
+        vector<double> callPrice;
         for(int j = 0; j < layers+1; j++){
-            callPrice[j] = max(stockPrice[layers][j] - K, 0.0);
+            callPrice.push_back(max(stockPrice[layers][j] - K, 0.0));
         }
         int times = 0;
         int i_temp = layers-1;
@@ -121,9 +120,9 @@ double binomial_American(double S0, double K, double T, double r, double q, doub
         return callPrice[0];
     }
     else{
-        double putPrice[layers+1];
+        vector<double> putPrice;
         for(int j = 0; j < layers+1; j++){
-            putPrice[j] = max(K - stockPrice[layers][j], 0.0);
+            putPrice.push_back((K - stockPrice[layers][j], 0.0));
         }
 
         int times = 0;
@@ -155,7 +154,7 @@ int main(){
     double sigma = 0.4;
     double T = 0.5;
 
-    int layers = 3000;
+    int layers = 5000;
     cout << "============================================================" << endl;
     cout << "n = " << layers << endl; 
     cout << "-------------------------CALL-------------------------" << endl;

@@ -46,10 +46,14 @@ vector<double> monte_carlo_European(double S0, double K, double T, double r, dou
             times += 1;
         }
     }
-
-    double sum_mean = accumulate(begin(meanLst), end(meanLst), 0.0);
-    double meanOfRep = sum_mean/rep;
     
+    
+    double sum_mean = 0;
+    for(int i = 0; i < rep; i++){
+        sum_mean += meanLst[i];
+    }
+    double meanOfRep = sum_mean/rep;
+
     double var = 0.0;
     for(int n = 0; n < rep; n++){
         var += (meanLst[n] - meanOfRep) * (meanLst[n] - meanOfRep);
