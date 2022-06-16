@@ -462,9 +462,9 @@ private: System::Windows::Forms::GroupBox^ MC;
 				static_cast<System::Byte>(0)));
 			this->label15->Location = System::Drawing::Point(16, 100);
 			this->label15->Name = L"label15";
-			this->label15->Size = System::Drawing::Size(188, 18);
+			this->label15->Size = System::Drawing::Size(78, 18);
 			this->label15->TabIndex = 29;
-			this->label15->Text = L"Prev. trading days";
+			this->label15->Text = L"Prev. n";
 			// 
 			// label14
 			// 
@@ -473,9 +473,9 @@ private: System::Windows::Forms::GroupBox^ MC;
 				static_cast<System::Byte>(0)));
 			this->label14->Location = System::Drawing::Point(16, 65);
 			this->label14->Name = L"label14";
-			this->label14->Size = System::Drawing::Size(128, 18);
+			this->label14->Size = System::Drawing::Size(18, 18);
 			this->label14->TabIndex = 28;
-			this->label14->Text = L"Trading days";
+			this->label14->Text = L"n";
 			// 
 			// label13
 			// 
@@ -533,9 +533,9 @@ private: System::Windows::Forms::GroupBox^ MC;
 				static_cast<System::Byte>(0)));
 			this->label11->Location = System::Drawing::Point(19, 94);
 			this->label11->Name = L"label11";
-			this->label11->Size = System::Drawing::Size(128, 18);
+			this->label11->Size = System::Drawing::Size(18, 18);
 			this->label11->TabIndex = 21;
-			this->label11->Text = L"Trading days";
+			this->label11->Text = L"n";
 			// 
 			// StMax_tb
 			// 
