@@ -1,7 +1,6 @@
 from math import log, exp, sqrt
 import numpy as np
-from scipy.stats import norm
-import scipy.linalg 
+
 
 def cholesky_decomposition(cov_matrix):
     A = []
@@ -36,82 +35,145 @@ def cholesky_decomposition(cov_matrix):
 
     return A
 
+def construct_cov_matrix(n, sigma_lst, rho_dict):
+    cov_matrix = []
+    for i in range(n):
+        temp = []
+        for j in range(n):
+           temp.append(0)
+        cov_matrix.append(temp)
+    
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                cov_matrix[i][j] = round(sigma_lst[i]**2, 6)
+            else:
+                try:
+                    cov_matrix[i][j] = round(sigma_lst[i] * sigma_lst[j] * rho_dict[f'rho{i+1}{j+1}'], 6)
+                except:
+                    cov_matrix[i][j] = round(sigma_lst[i] * sigma_lst[j] * rho_dict[f'rho{j+1}{i+1}'], 6)
+
+    return cov_matrix
+
+'''
+Rainbow Option
+parameters of call_put:
+call on max: max(max(S1, S2, ..., Sn) - K, 0)
+call on min: max(min(S1, S2, ..., Sn) - K, 0)
+put on max: max(K - max(S1, S2, ..., Sn), 0)
+put on min: max(K - min(S1, S2, ..., Sn), 0)
+'''
+
+def rainbow_MC(asset_amount, S0_lst, K, T, r, q_lst, sigma_lst, rho_dict, sims, reps, call_put):
+    parameters = dict()
+    for j in range(asset_amount):
+        parameters[f'S{j+1}, sigma{j+1}, q{j+1}'] = (S0_lst[j], sigma_lst[j], q_lst[j])
+    # print(parameters)
+
+    # multiply sigma_lst with sqrt(T)
+    sigma_lst_T = []
+    for j in range(asset_amount):
+        sigma_lst_T.append(sigma_lst[j]*sqrt(T))
+    
+    cov_matrix = construct_cov_matrix(asset_amount, sigma_lst_T, rho_dict)
+    A = cholesky_decomposition(cov_matrix)
+    A = np.array(A)
+    # for row in cov_matrix:
+    #     print(row)
+
+    meanValuesLst = []
+    times = 0
+    while times < reps:
+        stockSamples = []
+        for _ in range(sims):
+            z = []
+            for j in range(asset_amount):
+                z.append(np.random.standard_normal())
+            z = np.array(z)
+            pairedSample = z.dot(A)
+
+            # 把 mean 加上去
+            means = []
+            for j in range(asset_amount):
+                Sj = parameters[f'S{j+1}, sigma{j+1}, q{j+1}'][0]
+                sigmaj = parameters[f'S{j+1}, sigma{j+1}, q{j+1}'][1]
+                qj = parameters[f'S{j+1}, sigma{j+1}, q{j+1}'][2]
+                meanj = log(Sj) + (r - qj - 0.5*(sigmaj**2)) * T
+                means.append(meanj)
+            for j in range(asset_amount):
+                pairedSample[j] += means[j]
+                pairedSample[j] = exp(pairedSample[j])
+            stockSamples.append(pairedSample.tolist())
+
+        optionValue = []
+        if call_put == 'call on max':
+            for pair in stockSamples:
+                callValue = max(max(pair) - K, 0)
+                optionValue.append(callValue)
+
+        elif call_put == 'call on min':
+            for pair in stockSamples:
+                callValue = max(min(pair) - K, 0)
+                optionValue.append(callValue)
+
+        elif call_put == 'put on max':
+            for pair in stockSamples:
+                putValue = max(K - max(pair), 0)
+                optionValue.append(putValue)
+
+        else:
+            for pair in stockSamples:
+                putValue = max(K - min(pair), 0)
+                optionValue.append(putValue)
+
+        discounted = np.mean(optionValue) * exp(-r * T)
+        meanValuesLst.append(discounted)
+        times += 1
+
+    temp_str = ''
+    str_lst = call_put.split(' ')
+    for word in str_lst:
+        if word == 'on':
+            temp_str = temp_str + word + ' '
+        else:
+            temp_str = temp_str + word.capitalize() + ' '
+    temp_str = temp_str.strip()
+
+    sdOfRep = np.std(meanValuesLst)
+    meanOfRep = np.mean(meanValuesLst)
+    upperBound = meanOfRep + 2*sdOfRep
+    upperBound = round(upperBound, 4)
+    lowerBound = meanOfRep - 2*sdOfRep
+    lowerBound = round(lowerBound, 4)
+    bounds = [lowerBound, upperBound]
+    print("==================================================")
+    print(f"Rainbow Option : European {temp_str}")
+    print("==================================================")
+    print(f"[ Asset amount = {asset_amount} ]")
+    print("--------------------------------------------------")
+    print(f"Mean : {round(meanOfRep, 4)}")
+    print(f"Standard Error : {round(sdOfRep, 4)}")
+    print(f"95% C.I. : {bounds}")
+    print()
+
+    return meanOfRep
 
 
 
-K = 100
-r = 0.1
-T = 0.5
-sims = 10000
-reps = 20
-n = 2
-S10, S20 = 95, 95
-q1, q2 = 0.05, 0.05
-sigma1, sigma2 = 0.5, 0.5
-rho12 = 1
 
 # main
-sqDict = dict()
-for i in range(n):
-    sqDict[f'S{i+1}, sigma{i+1}, q{i+1}'] = (locals()[f'S{i+1}0'], locals()[f'sigma{i+1}'], locals()[f'q{i+1}'])
-print(sqDict)
-print('==============================================================================================================')
+asset_amount = 2
+S0_lst = [95, 95]
+K = 100
+T = 0.5
+r = 0.01
+q_lst = [0.05, 0.05]
+sigma_lst = [0.5, 0.3]
+rho_dict = {'rho12': 0.2}
+sims = 10000
+reps = 20
 
-cov_matrix = [[sigma1**2*T, sigma1*sigma2*T],
-              [sigma1*sigma2*T, sigma2**2*T]]
-print('Covariance Matrix: ')
-print("--------------------")
-for row in cov_matrix:
-    print(row)
-print('==============================================================================================================')
-
-A = cholesky_decomposition(cov_matrix)
-A = np.array(A)
-meanValuesLst = []
-times = 0
-while times < reps:
-    stockSamples = []
-    for i in range(sims):
-        z = []
-        for i in range(n):
-            z.append(np.random.standard_normal())
-        z = np.array(z)
-        pairedSample = z.dot(A)
-
-        # 把 mean 加上去
-        means = []
-        for i in range(n):
-            SI = sqDict[f'S{i+1}, sigma{i+1}, q{i+1}'][0]
-            sigmaI = sqDict[f'S{i+1}, sigma{i+1}, q{i+1}'][1]
-            qI = sqDict[f'S{i+1}, sigma{i+1}, q{i+1}'][2]
-            meanI = log(SI) + (r - qI - 0.5*(sigmaI**2)) * T
-            means.append(meanI)
-        for i in range(n):
-            pairedSample[i] += means[i]
-        # 取指數
-        for i in range(n):
-            pairedSample[i] = exp(pairedSample[i])
-        stockSamples.append(pairedSample.tolist())
-
-    optionValue = []
-    for pair in stockSamples:
-        callValue = max(max(pair) - K, 0)
-        optionValue.append(callValue)
-
-    discounted = np.mean(optionValue) * exp(-r * T)
-    meanValuesLst.append(discounted)
-    times += 1
-
-
-sdOfRep = np.std(meanValuesLst)
-meanOfRep = np.mean(meanValuesLst)
-upperBound = meanOfRep + 2*sdOfRep
-upperBound = round(upperBound, 6)
-lowerBound = meanOfRep - 2*sdOfRep
-lowerBound = round(lowerBound, 6)
-bounds = [lowerBound, upperBound]
-print(f"Rainbow Option")
-print("--------------------")
-print(f"平均 : {round(meanOfRep, 6)}")
-print(f"標準誤 : {round(sdOfRep, 6)}")
-print(f"九十五趴信賴區間 : {bounds}")
+rainbow_MC(asset_amount, S0_lst, K, T, r, q_lst, sigma_lst, rho_dict, sims, reps, 'call on max')
+rainbow_MC(asset_amount, S0_lst, K, T, r, q_lst, sigma_lst, rho_dict, sims, reps, 'call on min')
+rainbow_MC(asset_amount, S0_lst, K, T, r, q_lst, sigma_lst, rho_dict, sims, reps, 'put on max')
+rainbow_MC(asset_amount, S0_lst, K, T, r, q_lst, sigma_lst, rho_dict, sims, reps, 'put on min')
